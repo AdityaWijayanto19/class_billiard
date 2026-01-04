@@ -65,8 +65,14 @@
                 -webkit-overflow-scrolling: touch;
             }
 
+            body {
+                font-family: 'Montserrat', sans-serif;
+                overflow-x: hidden;
+                background-color: black;
+            }
+
             /* Prevent unnecessary repaints */
-            body > * {
+            body>* {
                 /* Only enable will-change during scroll */
                 contain: layout style;
             }
@@ -98,15 +104,21 @@
 
             /* Disable GPU acceleration yang terlalu aggressive */
             /* Lebih smooth dengan CPU rendering yang optimal */
-            img, video {
+            img,
+            video {
                 backface-visibility: visible;
             }
-        </style>
+
             @font-face {
                 font-family: 'Rumonds';
                 src: url('/fonts/rumonds.otf') format('opentype');
                 font-weight: normal;
                 font-style: normal;
+                font-display: swap;
+            }
+
+            .font-rumonds {
+                font-family: 'Rumonds', serif !important;
             }
         </style>
     @endif
