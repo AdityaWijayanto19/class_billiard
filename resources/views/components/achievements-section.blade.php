@@ -12,21 +12,6 @@
 @if($achievements->count() > 0)
 <section id="achievements" 
     class="py-16 md:py-24 bg-[#0a0a0a] relative overflow-hidden"
-    x-data="{
-        active: 2, // default center card open (desktop)
-        isMobile: window.innerWidth < 768,
-        setActive(index) {
-            if (!this.isMobile) this.active = index;
-        },
-        toggle(index) {
-            if (this.isMobile) {
-                this.active = this.active === index ? -1 : index;
-            }
-        }
-    }"
-    x-init="window.addEventListener('resize', () => { this.isMobile = window.innerWidth < 768; if (!this.isMobile && this.active === -1) this.active = 2; })"
-<section id="achievements"
-    class="py-16 md:py-24 bg-[#0a0a0a] relative overflow-hidden"
     x-data="{ active: -1, isMobile: window.innerWidth < 768, toggle(index) { if (this.isMobile) { this.active = this.active === index ? -1 : index; } } }"
     x-init="window.addEventListener('resize', () => { this.isMobile = window.innerWidth < 768; })">
     ">
@@ -91,7 +76,7 @@
                         <div class="w-10 h-10 rounded-full border border-gold-400/30 flex items-center justify-center transition-all duration-300"
                              :class="active === {{ $index }} ? 'bg-gold-400 rotate-180' : 'bg-transparent'">
                             <i class="fa-solid fa-chevron-down text-sm transition-colors duration-300"
-                               :class="active === {{ $index }} ? 'text-black' : 'text-gold-400'"></i>
+                               :class="active === {{ $index }} ? 'text-black' : 'text-gold-400'"/>
                         </div>
                     </div>
                 </div>
