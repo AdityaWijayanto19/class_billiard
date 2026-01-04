@@ -3,40 +3,40 @@
 @section('title', 'Menu Gallery')
 
 @section('content')
-    <div class="space-y-8 animate-in fade-in duration-500">
+    <div class="space-y-6 md:space-y-8 animate-in fade-in duration-500">
 
         <!-- HEADER: Sleek & Aligned -->
         <div
-            class="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-200 dark:border-white/5 pb-8">
+            class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between border-b border-slate-200 dark:border-white/5 pb-6 md:pb-8">
             <div class="space-y-1">
-                <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+                <h1 class="text-xl md:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
                     Menu Gallery
                 </h1>
-                <p class="text-xs text-slate-500 dark:text-gray-500 font-medium font-['Plus_Jakarta_Sans']">
+                <p class="text-[10px] md:text-xs text-slate-500 dark:text-gray-500 font-medium font-['Plus_Jakarta_Sans']">
                     Manajemen katalog visual dan konfigurasi harga hidangan.
                 </p>
             </div>
 
-            <div class="flex items-center gap-4">
+            <div class="flex items-center">
                 <a href="{{ route('admin.menus.create') }}"
-                    class="inline-flex items-center gap-2 btn-primary text-black text-[10px] font-black uppercase tracking-widest py-2.5 px-6 rounded-md transition-all shadow-sm"
+                    class="inline-flex items-center gap-2 btn-primary text-black text-[9px] md:text-[10px] font-black uppercase tracking-widest py-2 md:py-2.5 px-4 md:px-6 rounded-md transition-all shadow-sm w-full md:w-auto justify-center"
                     style="background-color: var(--primary-color);">
-                    <i class="ri-add-circle-line text-lg"></i>
+                    <i class="ri-add-circle-line text-base md:text-lg"></i>
                     <span>Add New Menu</span>
                 </a>
             </div>
         </div>
 
         <!-- FILTER BAR: Dynamic Categories (Server-side filtering) -->
-        <div class="flex items-center gap-6 border-b border-slate-100 dark:border-white/5 pb-2 overflow-x-auto no-scrollbar">
+        <div class="flex items-center gap-4 md:gap-6 border-b border-slate-100 dark:border-white/5 pb-2 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
             <a href="{{ route('admin.menus.index') }}"
-                class="pb-2 px-1 border-b-2 text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all {{ !request('category') ? 'border-[var(--primary-color)] text-[var(--primary-color)]' : 'border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-slate-200' }}"
+                class="pb-2 px-1 border-b-2 text-[9px] md:text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all {{ !request('category') ? 'border-[var(--primary-color)] text-[var(--primary-color)]' : 'border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-slate-200' }}"
                 style="{{ !request('category') ? 'border-color: var(--primary-color); color: var(--primary-color);' : '' }}">
                 All Items
             </a>
             @foreach($categories as $category)
                 <a href="{{ route('admin.menus.index', ['category' => $category->id]) }}"
-                    class="pb-2 px-1 border-b-2 text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap {{ request('category') == $category->id ? 'border-[var(--primary-color)] text-[var(--primary-color)]' : 'border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-slate-200' }}"
+                    class="pb-2 px-1 border-b-2 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap {{ request('category') == $category->id ? 'border-[var(--primary-color)] text-[var(--primary-color)]' : 'border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-slate-200' }}"
                     style="{{ request('category') == $category->id ? 'border-color: var(--primary-color); color: var(--primary-color);' : '' }}">
                     {{ $category->name }}
                 </a>
@@ -44,7 +44,7 @@
         </div>
 
         <!-- MAIN GRID: Professional Sleek Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6">
             @foreach($menus as $menu)
                 <div class="group flex flex-col transition-all duration-300 block">
 
@@ -56,34 +56,34 @@
                             alt="{{ $menu->name }}">
 
                         <!-- Floating Price -->
-                        <div class="absolute bottom-3 right-3">
+                        <div class="absolute bottom-2 right-2 md:bottom-3 md:right-3">
                             <div
-                                class="text-black px-2.5 py-1 rounded text-[10px] font-black shadow-lg uppercase tracking-tighter"
+                                class="text-black px-1.5 md:px-2.5 py-0.5 md:py-1 rounded text-[8px] md:text-[10px] font-black shadow-lg uppercase tracking-tighter"
                                 style="background-color: var(--primary-color);">
                                 IDR {{ number_format($menu->price, 0, ',', '.') }}
                             </div>
                         </div>
 
                         <!-- Category Label -->
-                        <div class="absolute top-3 left-3">
+                        <div class="absolute top-2 left-2 md:top-3 md:left-3">
                             <span
-                                class="px-2 py-0.5 bg-black/60 backdrop-blur-md text-white text-[8px] font-bold uppercase tracking-[0.2em] rounded border border-white/10">
+                                class="px-1.5 md:px-2 py-0.5 bg-black/60 backdrop-blur-md text-white text-[6px] md:text-[8px] font-bold uppercase tracking-[0.15em] md:tracking-[0.2em] rounded border border-white/10">
                                 {{ $menu->categoryMenu->name }}
                             </span>
                         </div>
                     </div>
 
                     <!-- Content Area: Text Focused -->
-                    <div class="py-4 space-y-2 flex-1 flex flex-col">
+                    <div class="py-2 md:py-4 space-y-1 md:space-y-2 flex-1 flex flex-col">
 
-                        <h3 class="text-sm font-bold text-slate-900 dark:text-white transition-colors leading-tight"
+                        <h3 class="text-xs md:text-sm font-bold text-slate-900 dark:text-white transition-colors leading-tight line-clamp-2"
                             style="color: inherit;"
                             @mouseenter="$el.style.color = 'var(--primary-color)'"
                             @mouseleave="$el.style.color = ''">
                             {{ $menu->name }}
                         </h3>
 
-                        <p class="text-[11px] text-slate-500 dark:text-gray-500 font-medium leading-relaxed line-clamp-2">
+                        <p class="text-[9px] md:text-[11px] text-slate-500 dark:text-gray-500 font-medium leading-relaxed line-clamp-2 hidden md:block">
                             {{ $menu->short_description }}
                         </p>
 
@@ -102,19 +102,19 @@
                                     $textClass = 'text-red-600 dark:text-red-400';
                                 }
                             @endphp
-                            <div class="flex gap-2 mt-2">
-                                <span class="text-xs px-2 py-0.5 rounded {{ $bgClass }} {{ $textClass }} font-medium">{{ $labelText }}</span>
+                            <div class="flex gap-1 md:gap-2 mt-1 md:mt-2">
+                                <span class="text-[8px] md:text-xs px-1.5 md:px-2 py-0.5 rounded {{ $bgClass }} {{ $textClass }} font-medium">{{ $labelText }}</span>
                             </div>
                         @endif
 
                         <!-- Actions: Discrete -->
-                        <div class="pt-4 flex items-center justify-between mt-auto">
-                            <span class="text-[9px] font-bold text-slate-400 dark:text-gray-600 uppercase tracking-[0.2em]">Menu
-                                Item #{{ $menu->id }}</span>
+                        <div class="pt-2 md:pt-4 flex items-center justify-between mt-auto">
+                            <span class="text-[7px] md:text-[9px] font-bold text-slate-400 dark:text-gray-600 uppercase tracking-[0.1em] md:tracking-[0.2em] hidden sm:inline">Menu
+                                #{{ $menu->id }}</span>
 
-                            <div class="flex items-center gap-1">
+                            <div class="flex items-center gap-1 w-full sm:w-auto justify-end">
                                 <a href="{{ route('admin.menus.edit', $menu) }}"
-                                    class="w-8 h-8 flex items-center justify-center rounded border border-slate-200 dark:border-white/10 text-slate-400 transition-all"
+                                    class="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center rounded border border-slate-200 dark:border-white/10 text-slate-400 transition-all text-sm md:text-base"
                                     style="--hover-color: var(--primary-color);"
                                     @mouseenter="$el.style.borderColor = 'var(--primary-color)'; $el.style.color = 'var(--primary-color)';"
                                     @mouseleave="$el.style.borderColor = ''; $el.style.color = '';">
@@ -124,7 +124,7 @@
                                 <form action="{{ route('admin.menus.destroy', $menu) }}" method="POST" class="inline delete-form">
                                     @csrf @method('DELETE')
                                     <button type="button" onclick="confirmDelete(this)"
-                                        class="w-8 h-8 flex items-center justify-center rounded border border-slate-200 dark:border-white/10 text-slate-400 hover:border-red-500 hover:text-red-500 transition-all">
+                                        class="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center rounded border border-slate-200 dark:border-white/10 text-slate-400 hover:border-red-500 hover:text-red-500 transition-all text-sm md:text-base">
                                         <i class="ri-delete-bin-line"></i>
                                     </button>
                                 </form>
@@ -136,7 +136,7 @@
         </div>
 
         <!-- PAGINATION -->
-        <div class="pt-10 flex justify-center border-t border-slate-100 dark:border-white/5">
+        <div class="pt-6 md:pt-10 flex justify-center border-t border-slate-100 dark:border-white/5">
             {{ $menus->links() }}
         </div>
     </div>
