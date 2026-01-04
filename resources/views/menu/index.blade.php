@@ -86,49 +86,8 @@
 <body class="antialiased">
 
 
-    <!-- NAVBAR ala home -->
-    <nav class="fixed top-0 left-0 w-full z-50 h-24 transition-all duration-300" id="mainNavbar" x-data="{ mobileMenuOpen: false, isClosing: false }" @click.away="isClosing = true; setTimeout(() => { mobileMenuOpen = false; isClosing = false; }, 600);">
-        <div class="container mx-auto px-6 h-full flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <img src="/logo.png" alt="Logo" class="w-12 h-12 object-contain drop-shadow-[0_0_5px_rgba(255,215,0,0.5)]">
-                <span class="text-white font-bold tracking-[0.2em] text-sm hidden md:block">CLASS BILLIARD</span>
-            </div>
-            <button @click="mobileMenuOpen = !mobileMenuOpen; isClosing = false;" class="md:hidden flex flex-col gap-1.5 focus:outline-none p-2 z-50 relative">
-                <span :class="['w-6 h-0.5 bg-gold-400 transition-all duration-300', mobileMenuOpen && 'rotate-45 translate-y-2']"></span>
-                <span :class="['w-6 h-0.5 bg-gold-400 transition-all duration-300', mobileMenuOpen && 'opacity-0']"></span>
-                <span :class="['w-6 h-0.5 bg-gold-400 transition-all duration-300', mobileMenuOpen && '-rotate-45 -translate-y-2']"></span>
-            </button>
-        </div>
-        <!-- Luxury Mobile Menu -->
-        <div x-show="mobileMenuOpen" :class="isClosing ? 'animate-smooth-bounce-out' : 'animate-smooth-bounce-in'"
-            @click="isClosing = true; setTimeout(() => { mobileMenuOpen = false; isClosing = false; }, 600);"
-            class="fixed top-24 right-0 w-4/5 md:hidden bg-gradient-to-b from-black/95 via-black/98 to-black/99 border-l-2 border-gold-400/40 backdrop-blur-2xl shadow-2xl shadow-gold-400/20 z-40"
-            style="height: calc(100vh - 96px); overflow-y: auto; background: linear-gradient(135deg, rgba(0,0,0,0.98) 0%, rgba(215,170,30,0.05) 50%, rgba(0,0,0,0.99) 100%);">
-            <div class="px-6 pt-4 pb-8 space-y-2" @click.stop>
-                <a href="/" class="block px-6 py-4 font-bold tracking-[0.15em] text-base rounded-lg transition duration-400 hover:pl-8 hover:shadow-lg text-gold-400">HOME</a>
-                <a href="/menu" class="block px-6 py-4 font-semibold tracking-[0.1em] text-base rounded-lg transition duration-400 hover:pl-8 hover:shadow-lg text-gold-400 bg-gradient-to-r from-gold-400/20 to-transparent">MENU</a>
-                <a href="#reservation" class="block px-6 py-4 font-semibold tracking-[0.1em] text-base rounded-lg transition duration-400 hover:pl-8 hover:shadow-lg text-gray-200">RESERVATION</a>
-                <div class="my-4 h-px bg-gradient-to-r from-transparent via-gold-400/50 to-transparent"></div>
-                <a href="#contact" class="block w-full px-6 py-3 mt-4 border border-gold-400/60 text-gold-400 hover:bg-gold-400 hover:text-black text-sm font-bold tracking-[0.12em] transition duration-400 rounded-lg text-center hover:border-gold-400 hover:shadow-xl hover:shadow-gold-400/40">CONTACT US</a>
-            </div>
-        </div>
-    </nav>
-    <style>
-        @keyframes smoothBounceInRight {
-            0% { opacity: 0; transform: translateX(100%); }
-            70% { opacity: 1; transform: translateX(0); }
-            85% { transform: translateX(-8px); }
-            100% { transform: translateX(0); }
-        }
-        @keyframes smoothBounceOutRight {
-            0% { opacity: 1; transform: translateX(0); }
-            15% { transform: translateX(-8px); }
-            30% { transform: translateX(100%); }
-            100% { opacity: 0; transform: translateX(100%); }
-        }
-        .animate-smooth-bounce-in { animation: smoothBounceInRight 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
-        .animate-smooth-bounce-out { animation: smoothBounceOutRight 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
-    </style>
+    <!-- NAVBAR (pakai komponen utama agar logic, warna, dan toggle sama persis home) -->
+    <x-navbar />
 
     <div class="flex h-screen w-full overflow-hidden">
 
