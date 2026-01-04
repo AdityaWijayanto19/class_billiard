@@ -33,6 +33,15 @@
                 </div>
             @endif
 
+            @if(session('error'))
+                <div x-show="show" x-transition
+                    class="mb-8 flex items-center gap-3 bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-md">
+                    <i class="ri-error-warning-fill text-red-500"></i>
+                    <span
+                        class="text-[11px] font-black uppercase tracking-widest text-red-500">{{ session('error') }}</span>
+                </div>
+            @endif
+
             @if($errors->any())
                 <div x-show="show" x-transition class="mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-md">
                     <div class="flex items-center gap-2 mb-3">
@@ -48,7 +57,7 @@
             @endif
         </div>
 
-        <form action="{{ route('admin.cms.tentang-kami') }}" method="POST" enctype="multipart/form-data" class="space-y-12">
+        <form action="{{ route('admin.cms.tentang-kami.update') }}" method="POST" enctype="multipart/form-data" class="space-y-12">
             @csrf
 
             <!-- SECTION 1: NARRATIVE CONTENT -->
