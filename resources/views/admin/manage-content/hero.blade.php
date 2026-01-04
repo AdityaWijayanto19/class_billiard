@@ -84,11 +84,13 @@
                 <div class="flex items-center justify-between">
                     <div class="space-y-1">
                         <p class="text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-white">Visibility Status</p>
-                        <p class="text-[9px] text-slate-400 uppercase tracking-tighter">Enable/Disable Hero Section</p>
+                        <p class="text-[9px] text-slate-400 uppercase tracking-tighter" x-data="{ checked: {{ ($hero && $hero->is_active) ? 'true' : 'false' }} }" x-text="checked ? 'Hero Section Active' : 'Hero Section Disabled'"></p>
                     </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" name="is_active" value="1" {{ ($hero && $hero->is_active) ? 'checked' : '' }} class="sr-only peer">
-                        <div class="w-11 h-6 bg-slate-200 dark:bg-white/10 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all" style="background-color: var(--primary-color);" @change="$el.style.backgroundColor = $el.previousElementSibling.checked ? 'var(--primary-color)' : ''"></div>
+                    <label class="relative inline-flex items-center cursor-pointer" x-data="{ checked: {{ ($hero && $hero->is_active) ? 'true' : 'false' }} }">
+                        <input type="checkbox" name="is_active" value="1" x-model="checked" class="sr-only peer">
+                        <div class="w-11 h-6 rounded-full peer after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full transition-colors duration-300"
+                             :class="checked ? '' : 'bg-slate-300 dark:bg-white/20'"
+                             :style="checked ? 'background-color: var(--primary-color)' : ''"></div>
                     </label>
                 </div>
             </div>
