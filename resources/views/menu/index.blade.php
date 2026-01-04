@@ -93,7 +93,7 @@
 
 
     <!-- NAVBAR (pakai komponen utama agar logic, warna, dan toggle sama persis home) -->
-    @include('components.navbar')
+    <x-navbar />
 
     <div class="flex h-screen w-full overflow-hidden">
 
