@@ -139,28 +139,16 @@
                                             </div>
                                             <div class="space-y-2">
                                                 <label
-                                                    class="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500">Photo Update</label>
-                                                <input type="file" name="photo" accept="image/*"
-                                                    class="text-[10px] text-slate-400 file:mr-2 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-[9px] file:font-black file:uppercase file:text-black file:cursor-pointer file:transition-all">
-                                            </div>
-                                            <div class="space-y-2">
-                                                <label
-                                                    class="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500">Image (Alternative)</label>
-                                                <input type="file" name="image" accept="image/*"
-                                                    class="text-[10px] text-slate-400 file:mr-2 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-[9px] file:font-black file:uppercase file:text-black file:cursor-pointer file:transition-all">
-                                            </div>
-                                            <div class="space-y-2">
-                                                <label
-                                                    class="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500">Name (Alternative)</label>
-                                                <input type="text" name="name" value="{{ $testimoni->name ?? '' }}"
+                                                    class="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500">Name</label>
+                                                <input type="text" name="name" value="{{ $testimoni->name ?? $testimoni->customer_name ?? '' }}"
                                                     class="w-full bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/10 rounded-md px-3 py-1.5 text-sm text-slate-900 dark:text-white outline-none transition-all"
                                                     @focus="$el.style.borderColor = 'var(--primary-color)'"
                                                     @blur="$el.style.borderColor = ''">
                                             </div>
                                             <div class="space-y-2">
                                                 <label
-                                                    class="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500">Role (Alternative)</label>
-                                                <input type="text" name="role" value="{{ $testimoni->role ?? '' }}"
+                                                    class="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500">Role</label>
+                                                <input type="text" name="role" value="{{ $testimoni->role ?? $testimoni->customer_role ?? '' }}"
                                                     class="w-full bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/10 rounded-md px-3 py-1.5 text-sm text-slate-900 dark:text-white outline-none transition-all"
                                                     @focus="$el.style.borderColor = 'var(--primary-color)'"
                                                     @blur="$el.style.borderColor = ''">
