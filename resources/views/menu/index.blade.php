@@ -80,6 +80,12 @@
         .group:hover .sheen {
             opacity: 1;
         }
+             .navbar-bg-shape {
+            background: linear-gradient(to right, #1a1a1a 0%, #1a1a1a 80%, transparent 100%);
+            transform: skewX(-20deg);
+            transform-origin: top left;
+        }
+
     </style>
 </head>
 
@@ -218,6 +224,21 @@
     </div>
 
     <script>
+
+         // Navbar Scroll Effect
+        window.addEventListener('scroll', function () {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('bg-black/90', 'backdrop-blur-md', 'shadow-lg');
+                nav.classList.remove('h-24');
+                nav.classList.add('h-20');
+            } else {
+                nav.classList.remove('bg-black/90', 'backdrop-blur-md', 'shadow-lg');
+                nav.classList.remove('h-20');
+                nav.classList.add('h-24');
+            }
+        });
+
         // Category filtering with better styling
         document.querySelectorAll('.category-tab').forEach(btn => {
             btn.addEventListener('click', function () {
