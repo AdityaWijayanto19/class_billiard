@@ -25,6 +25,7 @@
         }
     }"
     x-init="window.addEventListener('resize', () => { this.isMobile = window.innerWidth < 768; if (!this.isMobile && this.active === -1) this.active = 2; })"
+    ">
     <!-- Diagonal Separator Top -->
     <div class="absolute top-0 left-0 w-full -mt-1">
         <div class="h-16 w-full bg-[#111111] transform -skew-y-2 origin-top-left"></div>
