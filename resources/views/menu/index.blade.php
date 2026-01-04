@@ -97,8 +97,8 @@
             <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-0 px-4 md:px-8 bg-bg-dark py-4"
                 style="width: calc(100% - 0px); transition: width 0.3s ease;">
                 <div class="min-w-0">
-                  <h1 class="text-4xl md:text-5xl mb-2 text-white font-rumonds tracking-widest">Class Billiard Menu</h1>
-                    <p class="text-gray-400 text-sm md:text-base tracking-[0.2em] uppercase font-light">
+                  <h1 class="text-2xl md:text-5xl mb-2 text-white font-rumonds tracking-widest">Class Billiard Menu</h1>
+                    <p class="text-gray-400 text-xs md:text-base tracking-[0.2em] uppercase font-light">
                         {{ \Carbon\Carbon::now()->translatedFormat('l, d M Y') }}
                     </p>
                 </div>
@@ -117,14 +117,14 @@
 
             <!-- Tabs Navigation -->
             <div class="border-b border-gray-700 mb-0 overflow-x-auto no-scrollbar bg-bg-dark" style="width: calc(100% - 0px); transition: width 0.3s ease;">
-                <div class="flex gap-12 px-8 py-6">
+                <div class="flex gap-4 md:gap-12 px-4 md:px-8 py-4 md:py-6">
                     <button
-                        class="category-tab pb-2 font-semibold text-sm md:text-base tracking-widest whitespace-nowrap transition-all duration-300"
+                        class="category-tab pb-2 font-semibold text-xs md:text-base tracking-widest whitespace-nowrap transition-all duration-300"
                         data-category="all"
                         style="color: #FFD700; border-bottom: 2px solid #FFD700;">All</button>
                     @foreach($categories as $category)
                         <button
-                            class="category-tab pb-2 font-semibold text-sm md:text-base tracking-widest whitespace-nowrap transition-all duration-300"
+                            class="category-tab pb-2 font-semibold text-xs md:text-base tracking-widest whitespace-nowrap transition-all duration-300"
                             data-category="{{ $category->slug }}"
                             style="color: #9ca3af; border-bottom: 2px solid transparent;"
                             onmouseenter="this.style.color = '#FFD700';"
@@ -136,13 +136,13 @@
             </div>
 
             <!-- Section Title -->
-            <div class="flex justify-between items-center mb-16 px-8 pt-8">
-                <h2 class="text-xl font-semibold">Choose Dishes</h2>
+            <div class="flex justify-between items-center mb-8 md:mb-16 px-4 md:px-8 pt-6 md:pt-8">
+                <h2 class="text-base md:text-xl font-semibold">Choose Dishes</h2>
             </div>
 
-            <!-- Grid of Dishes (Fixed card size, responsive grid) -->
-            <div class="px-8 pb-20">
-                <div class="grid gap-x-6 gap-y-12" id="menuGrid" style="grid-template-columns: repeat(5, 1fr);">
+            <!-- Grid of Dishes (Responsive grid) -->
+            <div class="px-4 md:px-8 pb-20">
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-3 gap-y-16 md:gap-x-6 md:gap-y-20" id="menuGrid">
                     @php
                         $allMenus = collect();
                         foreach ($categories as $category) {
@@ -168,7 +168,7 @@
                                 $labelDisplay = $menu->labels[0];
                             }
                         @endphp
-                        <a href="{{ route('menu.detail', $menu->slug) }}" class="menu-card group relative bg-bg-sidebar rounded-xl pt-16 pb-4 px-4 text-center cursor-pointer transform-gpu transition-all duration-500 smooth-ease hover:translate-y-[-5px] hover:scale-105 hover:shadow-[0_35px_60px_rgba(0,0,0,0.45)] hover:border-2 no-underline text-white"
+                        <a href="{{ route('menu.detail', $menu->slug) }}" class="menu-card group relative bg-bg-sidebar rounded-xl pt-10 md:pt-16 pb-3 md:pb-4 px-2 md:px-4 text-center cursor-pointer transform-gpu transition-all duration-500 smooth-ease hover:translate-y-[-5px] hover:scale-105 hover:shadow-[0_35px_60px_rgba(0,0,0,0.45)] hover:border-2 no-underline text-white"
                             data-category="{{ $category->slug }}" data-name="{{ $menu->name }}"
                             data-price="{{ $menu->price }}"
                             data-image="{{ $menu->image_url }}"
@@ -179,14 +179,13 @@
                             <div class="sheen rounded-xl"></div>
                             <img src="{{ $menu->image_url ?: 'https://via.placeholder.com/400' }}"
                                 alt="{{ $menu->name }}"
-                                class="w-48 h-48 rounded-full mx-auto -mt-36 object-cover group-hover:scale-110 transition-transform duration-500">
-                            <h3 class="text-[15px] font-medium mb-2 px-4 -mt-6 leading-snug line-clamp-2">{{ $menu->name }}</h3>
+                                class="w-20 h-20 md:w-48 md:h-48 rounded-full mx-auto -mt-14 md:-mt-36 object-cover group-hover:scale-110 transition-transform duration-500 border-2 border-white/10">
+                            <h3 class="text-[11px] md:text-[15px] font-medium mb-1 md:mb-2 px-1 md:px-4 mt-1 md:-mt-6 leading-snug line-clamp-2">{{ $menu->name }}</h3>
                             @if($menu->short_description)
-                                <p class="text-xs text-text-gray mb-2 px-2 line-clamp-2">{{ $menu->short_description }}</p>
+                                <p class="text-[9px] md:text-xs text-text-gray mb-1 md:mb-2 px-1 md:px-2 line-clamp-2 hidden md:block">{{ $menu->short_description }}</p>
                             @endif
-                            <p class="text-sm mb-3 font-medium">Rp{{ number_format($menu->price, 0, ',', '.') }}</p>
-                            <div class="flex gap-2 items-center justify-between">
-                                <div class="flex gap-1 flex-wrap flex-1">
+                            <p class="text-[10px] md:text-sm mb-1 md:mb-3 font-medium">Rp{{ number_format($menu->price, 0, ',', '.') }}</p>
+                            <div class="flex gap-1 items-center justify-center flex-wrap">
                                     @if($menu->labels && is_array($menu->labels) && count($menu->labels) > 0)
                                         @php
                                             $labelText = $menu->labels[0];
@@ -202,9 +201,8 @@
                                                 $textClass = 'text-red-500';
                                             }
                                         @endphp
-                                        <span class="text-xs px-2 py-0.5 rounded {{ $bgClass }} {{ $textClass }}">{{ $labelText }}</span>
+                                        <span class="text-[8px] md:text-xs px-1.5 md:px-2 py-0.5 rounded {{ $bgClass }} {{ $textClass }}">{{ $labelText }}</span>
                                     @endif
-                                </div>
                             </div>
                         </a>
                     @empty
