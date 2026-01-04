@@ -25,6 +25,10 @@
         }
     }"
     x-init="window.addEventListener('resize', () => { this.isMobile = window.innerWidth < 768; if (!this.isMobile && this.active === -1) this.active = 2; })"
+<section id="achievements"
+    class="py-16 md:py-24 bg-[#0a0a0a] relative overflow-hidden"
+    x-data="{ active: -1, isMobile: window.innerWidth < 768, toggle(index) { if (this.isMobile) { this.active = this.active === index ? -1 : index; } } }"
+    x-init="window.addEventListener('resize', () => { this.isMobile = window.innerWidth < 768; })">
     ">
     <!-- Diagonal Separator Top -->
     <div class="absolute top-0 left-0 w-full -mt-1">
@@ -39,18 +43,14 @@
         </h2>
 
         <!-- DESKTOP: Accordion Gallery -->
-        <div class="hidden md:flex flex-row gap-4 h-[500px] max-w-7xl mx-auto">
+            <!-- DESKTOP: Accordion Gallery (original style, no Alpine.js) -->
+            <div class="hidden md:flex flex-row gap-2 md:gap-4 h-[500px] max-w-7xl mx-auto px-4">
             @foreach($achievements as $index => $achievement)
             <div
                 @click="setActive({{ $index }})"
                 @mouseenter="setActive({{ $index }})"
                 :class="active === {{ $index }} 
-                    ? 'flex-[3] border-2 border-gold-400 shadow-[0_0_20px_rgba(255,215,0,0.3)]' 
-                    : 'flex-1 border-gray-800 hover:border-gold-400 grayscale-[60%] opacity-70 hover:opacity-100'"
-                class="relative transition-all duration-700 ease-in-out rounded-3xl overflow-hidden group cursor-pointer border bg-neutral-900">
-                @if($achievement->image)
-                <img src="{{ asset('storage/' . $achievement->image) }}"
-                    class="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110">
+                    class="relative {{ $isCenterCard ? 'flex-[3] hover:flex-[4]' : 'flex-1 hover:flex-[3]' }} transition-all duration-700 ease-in-out rounded-3xl overflow-hidden group cursor-pointer border {{ $isCenterCard ? 'border-2 border-gold-400 shadow-[0_0_20px_rgba(255,215,0,0.3)]' : 'border-gray-800 hover:border-gold-400' }}">
                 @else
                 <div class="absolute inset-0 w-full h-full bg-gray-900 flex items-center justify-center">
                     <p class="text-gray-600 text-sm">No image</p>
