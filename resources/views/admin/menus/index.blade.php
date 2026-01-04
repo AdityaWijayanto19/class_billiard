@@ -105,13 +105,9 @@
                             {{ $menu->short_description }}
                         </p>
 
-                        @if($menu->labels)
+                        @if($menu->labels && is_array($menu->labels) && count($menu->labels) > 0)
                             @php
-                                $labelText = $menu->labels;
-                                if (str_starts_with($labelText, '[')) {
-                                    $decoded = json_decode($labelText, true);
-                                    $labelText = is_array($decoded) && count($decoded) > 0 ? $decoded[0] : $labelText;
-                                }
+                                $labelText = is_array($menu->labels) ? $menu->labels[0] : $menu->labels;
                                 $label = strtolower((string)$labelText);
                                 if(strpos($label, 'best seller') !== false || strpos($label, 'rekomendasi') !== false) {
                                     $bgClass = 'bg-yellow-500/20';
