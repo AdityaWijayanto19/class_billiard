@@ -70,7 +70,7 @@ class MenuAdminController extends Controller
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
             'description' => 'required|string|min:10',
-            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:15360',
             'labels' => 'nullable|string',
         ], [
             'category_menu_id.required' => 'Kategori harus dipilih.',
@@ -148,7 +148,7 @@ class MenuAdminController extends Controller
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
             'description' => 'required|string|min:10',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:15360',
             'labels' => 'nullable|string',
         ], [
             'category_menu_id.required' => 'Kategori harus dipilih.',
