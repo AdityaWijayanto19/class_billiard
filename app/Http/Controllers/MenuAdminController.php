@@ -23,8 +23,11 @@ class MenuAdminController extends Controller
         $this->authorize('viewAny', Menu::class);
 
         // Eager load category to prevent N+1 queries
+        // Note: SoftDeletes are automatically excluded by Eloquent
+        // Order by latest created first so new menus appear at the top
         $menus = Menu::select('id', 'category_menu_id', 'name', 'slug', 'price', 'image_path', 'labels', 'short_description', 'created_at')
             ->with('categoryMenu:id,name')
+            ->orderBy('created_at', 'desc')
             ->paginate(12);
 
         // Get categories for filtering (optional enhancement)
