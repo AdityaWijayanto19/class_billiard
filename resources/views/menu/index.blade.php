@@ -95,7 +95,7 @@
     <!-- NAVBAR (pakai komponen utama agar logic, warna, dan toggle sama persis home) -->
     <x-navbar />
 
-    <div class="flex h-screen w-full overflow-hidden">
+    <div class="flex h-screen w-full">
 
         <!-- MAIN CONTENT -->
         <main class="flex-1 overflow-y-auto overflow-x-auto transition-all duration-300"
