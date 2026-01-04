@@ -37,7 +37,7 @@
                     
                     <div id="preview" class="w-full h-full flex items-center justify-center">
                         @if($hero && $hero->logo_image)
-                            <img src="{{ asset('storage/' . $hero->logo_image) }}" class="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-700">
+                            <img src="{{ asset('hero/' . basename($hero->logo_image)) }}" class="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-700">
                             <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-300">
                                 <i class="ri-camera-switch-line text-3xl text-white"></i>
                             </div>
@@ -62,7 +62,7 @@
                     
                     <div id="backgroundPreview" class="w-full h-full flex items-center justify-center">
                         @if($hero && $hero->background_image)
-                            <img src="{{ asset('storage/' . $hero->background_image) }}" class="max-w-full max-h-full object-cover group-hover:scale-105 transition-transform duration-700 rounded-lg">
+                            <img src="{{ asset('hero/' . basename($hero->background_image)) }}" class="max-w-full max-h-full object-cover group-hover:scale-105 transition-transform duration-700 rounded-lg">
                             <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-300">
                                 <i class="ri-camera-switch-line text-3xl text-white"></i>
                             </div>
