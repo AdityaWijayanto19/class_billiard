@@ -49,15 +49,56 @@
             overflow-x: hidden;
             background-color: #050505;
         }
-
+        html, body {
+            max-width: 100vw;
+        }
         .smooth-ease {
             transition-timing-function: cubic-bezier(.22, .61, .36, 1);
         }
-
         .glass-panel {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding-left: 0.5rem !important;
+                padding-right: 0.5rem !important;
+            }
+            .grid-cols-1, .lg\:grid-cols-12 {
+                grid-template-columns: 1fr !important;
+            }
+            h1.text-5xl, h1.md\:text-7xl {
+                font-size: 2rem !important;
+                line-height: 2.5rem !important;
+            }
+            .text-2xl {
+                font-size: 1.1rem !important;
+            }
+            .aspect-square {
+                aspect-ratio: 1/1 !important;
+                max-width: 90vw !important;
+            }
+            .w-3\/4, .h-3\/4 {
+                width: 90vw !important;
+                height: 90vw !important;
+                max-width: 320px !important;
+                max-height: 320px !important;
+            }
+            .pt-20 {
+                padding-top: 5rem !important;
+            }
+            .pb-10 {
+                padding-bottom: 2.5rem !important;
+            }
+            .glass-panel {
+                padding: 0.75rem !important;
+            }
+            .fixed.bottom-0.left-0.w-full.z-40.px-6.pb-6.pointer-events-none {
+                padding-left: 0.5rem !important;
+                padding-right: 0.5rem !important;
+                padding-bottom: 0.5rem !important;
+            }
         }
     </style>
 </head>
@@ -85,14 +126,14 @@
         </div>
     </nav>
 
-    <main class="min-h-screen flex items-center relative pt-20 pb-10">
+    <main class="min-h-screen flex items-center relative pt-20 pb-10 overflow-x-hidden">
         <!-- Background Elements -->
         <div
             class="absolute top-0 right-0 w-1/2 h-full bg-[#0a0a0a] -skew-x-12 translate-x-1/4 pointer-events-none z-0">
         </div>
         <div class="absolute bottom-0 left-0 w-96 h-96 bg-gold-600/5 rounded-full blur-3xl pointer-events-none"></div>
 
-        <div class="container mx-auto px-6 relative z-10">
+    <div class="container mx-auto px-6 relative z-10 max-w-full">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-20 items-center">
 
                 <!-- Left Content -->
