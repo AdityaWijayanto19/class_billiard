@@ -82,7 +82,7 @@
     <div class="container mx-auto px-6 h-full flex items-center justify-between">
         <!-- Left: Brand/Logo (Small) -->
         <div class="flex items-center gap-3">
-            <img src="{{ asset('images/logo.png') }}" alt="Logo"
+            <img src="{{ asset('logo.png') }}" alt="Logo"
                 class="w-12 h-12 object-contain drop-shadow-[0_0_5px_rgba(255,215,0,0.5)]">
             <span class="text-white font-bold tracking-[0.2em] text-sm hidden md:block">CLASS BILLIARD</span>
         </div>

@@ -250,7 +250,7 @@
             class="border-t border-white/10 mt-16 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
             @if($copyright)
             <div class="flex items-center gap-3">
-                <img src="{{ asset('images/logo.png') }}" alt="Logo"
+                <img src="{{ asset('logo.png') }}" alt="Logo"
                     class="w-8 h-8 object-contain opacity-50 grayscale hover:grayscale-0 transition-all">
                 <p class="text-gray-500 text-xs tracking-widest">{{ $copyright }}</p>
             </div>

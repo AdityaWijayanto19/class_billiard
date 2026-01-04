@@ -67,7 +67,7 @@
     <nav class="fixed top-0 left-0 w-full z-50 h-24 transition-all duration-300" id="navbar">
         <div class="container mx-auto px-6 h-full flex items-center justify-between">
             <a href="{{ url('/') }}" class="flex items-center gap-3 group">
-                <img src="{{ asset('images/logo.png') }}" alt="Logo"
+                <img src="{{ asset('logo.png') }}" alt="Logo"
                     class="w-10 h-10 object-contain transition-transform group-hover:scale-110">
                 <span
                     class="text-white font-bold tracking-[0.2em] text-sm hidden md:block group-hover:text-gold-400 transition-colors">CLASS
