@@ -27,44 +27,26 @@
             </div>
         </div>
 
-        <!-- FILTER BAR: Dynamic Categories -->
-        <div class="flex items-center gap-6 border-b border-slate-100 dark:border-white/5 pb-2 overflow-x-auto no-scrollbar"
-            x-data="{
-                selectedCategory: 'all',
-                filterItems(category) {
-                    this.selectedCategory = category;
-                    const items = document.querySelectorAll('[data-menu-category]');
-                    items.forEach(item => {
-                        if (category === 'all' || item.dataset.menuCategory === category) {
-                            item.classList.remove('hidden');
-                            item.classList.add('block');
-                        } else {
-                            item.classList.add('hidden');
-                            item.classList.remove('block');
-                        }
-                    });
-                }
-            }">
-            <button @click="filterItems('all')"
-                class="pb-2 px-1 border-b-2 text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all"
-                :style="selectedCategory === 'all' ? { borderColor: 'var(--primary-color)', color: 'var(--primary-color)' } : { borderColor: 'transparent', color: '' }"
-                :class="selectedCategory === 'all' ? '' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'">
+        <!-- FILTER BAR: Dynamic Categories (Server-side filtering) -->
+        <div class="flex items-center gap-6 border-b border-slate-100 dark:border-white/5 pb-2 overflow-x-auto no-scrollbar">
+            <a href="{{ route('admin.menus.index') }}"
+                class="pb-2 px-1 border-b-2 text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all {{ !request('category') ? 'border-[var(--primary-color)] text-[var(--primary-color)]' : 'border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-slate-200' }}"
+                style="{{ !request('category') ? 'border-color: var(--primary-color); color: var(--primary-color);' : '' }}">
                 All Items
-            </button>
+            </a>
             @foreach($categories as $category)
-                <button @click="filterItems('{{ $category->id }}')"
-                    class="pb-2 px-1 border-b-2 text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap"
-                    :style="selectedCategory === '{{ $category->id }}' ? { borderColor: 'var(--primary-color)', color: 'var(--primary-color)' } : { borderColor: 'transparent', color: '' }"
-                    :class="selectedCategory === '{{ $category->id }}' ? '' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'">
+                <a href="{{ route('admin.menus.index', ['category' => $category->id]) }}"
+                    class="pb-2 px-1 border-b-2 text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap {{ request('category') == $category->id ? 'border-[var(--primary-color)] text-[var(--primary-color)]' : 'border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-slate-200' }}"
+                    style="{{ request('category') == $category->id ? 'border-color: var(--primary-color); color: var(--primary-color);' : '' }}">
                     {{ $category->name }}
-                </button>
+                </a>
             @endforeach
         </div>
 
         <!-- MAIN GRID: Professional Sleek Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             @foreach($menus as $menu)
-                <div class="group flex flex-col transition-all duration-300 block" data-menu-category="{{ $menu->category_menu_id }}">
+                <div class="group flex flex-col transition-all duration-300 block">
 
                     <!-- Image Area: Precise Radius -->
                     <div

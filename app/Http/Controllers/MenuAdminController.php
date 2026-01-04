@@ -18,19 +18,26 @@ class MenuAdminController extends Controller
      * - Select specific columns
      * - Paginate for performance
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('viewAny', Menu::class);
 
-        // Eager load category to prevent N+1 queries
-        // Note: SoftDeletes are automatically excluded by Eloquent
-        // Order by latest created first so new menus appear at the top
-        $menus = Menu::select('id', 'category_menu_id', 'name', 'slug', 'price', 'image_path', 'labels', 'short_description', 'created_at')
-            ->with('categoryMenu:id,name')
-            ->orderBy('created_at', 'desc')
-            ->paginate(12);
+        // Build query with optional category filter
+        $query = Menu::select('id', 'category_menu_id', 'name', 'slug', 'price', 'image_path', 'labels', 'short_description', 'created_at')
+            ->with('categoryMenu:id,name');
 
-        // Get categories for filtering (optional enhancement)
+        // Filter by category if specified
+        if ($request->filled('category')) {
+            $query->where('category_menu_id', $request->category);
+        }
+
+        // Order by latest created first so new menus appear at the top
+        $menus = $query->orderBy('created_at', 'desc')->paginate(12);
+
+        // Preserve query parameters in pagination links
+        $menus->appends($request->query());
+
+        // Get categories for filtering
         $categories = CategoryMenu::select('id', 'name')
             ->orderBy('name', 'asc')
             ->get();
