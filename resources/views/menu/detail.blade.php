@@ -150,7 +150,7 @@
                         <!-- Main Image -->
                         <div
                             class="relative z-10 w-3/4 h-3/4 transition-transform duration-700 hover:scale-105 hover:rotate-2">
-                            <img src="{{ asset($item['image']) }}" alt="{{ $item['name'] }}"
+                            <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}"
                                 class="w-full h-full object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
                         </div>
 
@@ -179,7 +179,7 @@
                         </div>
                         <div
                             class="w-12 h-12 rounded-lg overflow-hidden border border-white/10 hidden sm:block shrink-0">
-                            <img src="{{ asset($prevItem['image']) }}" alt="{{ $prevItem['name'] }}"
+                            <img src="{{ $prevItem['image'] }}" alt="{{ $prevItem['name'] }}"
                                 class="w-full h-full object-cover">
                         </div>
                         <div class="hidden md:block">
@@ -199,7 +199,7 @@
                         </div>
                         <div
                             class="w-12 h-12 rounded-lg overflow-hidden border border-white/10 hidden sm:block shrink-0">
-                            <img src="{{ asset($nextItem['image']) }}" alt="{{ $nextItem['name'] }}"
+                            <img src="{{ $nextItem['image'] }}" alt="{{ $nextItem['name'] }}"
                                 class="w-full h-full object-cover">
                         </div>
                         <div class="hidden md:block">

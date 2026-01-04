@@ -37,7 +37,7 @@ class MenuDetailController extends Controller
             'name' => $menu->name,
             'slug' => $menu->slug,
             'price' => $menu->price,
-            'image' => $menu->image_path,
+            'image' => $menu->image_url,  // Use accessor for full URL
             'description' => $menu->description ?? $menu->short_description,
             'category' => $menu->categoryMenu?->name ?? 'Menu',
             'label' => is_array($menu->labels) && count($menu->labels) > 0 ? $menu->labels[0] : null,
@@ -50,14 +50,14 @@ class MenuDetailController extends Controller
             'id' => $prevItem->id,
             'name' => $prevItem->name,
             'slug' => $prevItem->slug,
-            'image' => $prevItem->image_path,
+            'image' => $prevItem->image_url,  // Use accessor for full URL
         ];
 
         $nextItemData = [
             'id' => $nextItem->id,
             'name' => $nextItem->name,
             'slug' => $nextItem->slug,
-            'image' => $nextItem->image_path,
+            'image' => $nextItem->image_url,  // Use accessor for full URL
         ];
 
         return view('menu.detail', [
