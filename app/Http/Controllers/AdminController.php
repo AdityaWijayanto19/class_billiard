@@ -44,12 +44,15 @@ class AdminController extends Controller
             'component_about',
             'component_founder', 
             'component_keunggulan',
-            'component_portfolio',
+            'component_achievements',  // Portfolio/Achievement section
             'component_team',
             'component_testimonials',
             'component_events',
             'component_contact',
             'component_footer',
+            // Navbar caches
+            'navbar_contact',
+            'navbar_hero',
         ];
         
         $keysToForget = empty($keys) ? $defaultKeys : $keys;
@@ -383,7 +386,8 @@ class AdminController extends Controller
             DB::commit();
             
             // Clear hero cache so homepage reflects changes immediately
-            $this->clearCmsCache(['component_hero']);
+            // Also clear navbar_hero since navbar uses hero logo
+            $this->clearCmsCache(['component_hero', 'navbar_hero']);
             
             return redirect()->route('admin.cms.hero')->with('success', 'Hero section berhasil diperbarui!');
             
@@ -710,7 +714,7 @@ class AdminController extends Controller
 
             PortfolioAchievement::create($validated);
 
-            $this->clearCmsCache(['component_portfolio']);
+            $this->clearCmsCache(['component_achievements']);
             return redirect()->route('admin.cms.portfolio-achievement')->with('success', 'Achievement berhasil ditambahkan!');
             
         } catch (\Exception $e) {
@@ -743,7 +747,7 @@ class AdminController extends Controller
             $item->is_active = $request->boolean('is_active');
             $item->save();
 
-            $this->clearCmsCache(['component_portfolio']);
+            $this->clearCmsCache(['component_achievements']);
             return redirect()->route('admin.cms.portfolio-achievement')->with('success', 'Achievement berhasil diperbarui!');
             
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -763,7 +767,7 @@ class AdminController extends Controller
             $this->safeDeleteFile($item->image);
             $item->delete();
 
-            $this->clearCmsCache(['component_portfolio']);
+            $this->clearCmsCache(['component_achievements']);
             return redirect()->route('admin.cms.portfolio-achievement')->with('success', 'Achievement berhasil dihapus!');
             
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -1177,7 +1181,8 @@ class AdminController extends Controller
             $contact->is_active = $request->boolean('is_active');
             $contact->save();
 
-            $this->clearCmsCache(['component_contact']);
+            // Also clear navbar_contact since navbar uses contact info
+            $this->clearCmsCache(['component_contact', 'navbar_contact']);
             return redirect()->route('admin.cms.contact')->with('success', 'Halaman kontak berhasil diperbarui!');
             
         } catch (\Exception $e) {
