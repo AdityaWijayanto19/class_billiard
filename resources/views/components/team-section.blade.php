@@ -44,7 +44,7 @@
 
                 <!-- Image -->
                 @if($member->image || $member->photo)
-                <img src="{{ $member->image ? asset('team/' . basename($member->image)) : asset('team/' . basename($member->photo)) }}" alt="{{ $member->name }}"
+                <img src="{{ $member->image ? asset('storage/' . $member->image) : asset('storage/' . $member->photo) }}" alt="{{ $member->name }}"
                     class="absolute inset-0 w-full h-full object-cover filter grayscale contrast-125 transition-all duration-700 group-hover:grayscale-0 group-hover:scale-110 z-10">
                 @else
                 <div class="absolute inset-0 w-full h-full bg-gray-900 flex items-center justify-center z-10">

@@ -142,7 +142,7 @@
                         <!-- Image Section -->
                         <div class="w-full lg:w-72 h-48 lg:h-auto bg-slate-100 dark:bg-white/5 relative overflow-hidden">
                             @if($event->image)
-                                <img src="{{ asset('events/' . basename($event->image)) }}" alt="{{ $event->event_title }}"
+                                <img src="{{ asset('storage/' . $event->image) }}" alt="{{ $event->event_title }}"
                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                             @else
                                 <div class="w-full h-full flex items-center justify-center text-slate-300 dark:text-white/5">

@@ -139,7 +139,7 @@
                             class="w-full lg:w-48 h-48 lg:h-auto bg-slate-50 dark:bg-white/[0.02] flex items-center justify-center p-6 border-r border-slate-100 dark:border-white/5">
                             <div class="relative w-full aspect-square max-w-[120px]">
                                 @if($member->photo)
-                                    <img src="{{ asset('team/' . basename($member->photo)) }}" alt="{{ $member->name }}"
+                                    <img src="{{ asset('storage/' . $member->photo) }}" alt="{{ $member->name }}"
                                         class="w-full h-full rounded-lg object-cover border border-slate-200 dark:border-white/10 group-hover:scale-105 transition-transform duration-500">
                                 @else
                                     <div

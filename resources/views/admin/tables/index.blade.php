@@ -52,7 +52,7 @@
 
                             @if($table->qrcode && Storage::disk('public')->exists($table->qrcode))
                                 <div class="p-4 bg-white rounded-md shadow-sm">
-                                    <img src="{{ asset('qrcodes/' . basename($table->qrcode)) }}" alt="QR {{ $table->name }}"
+                                    <img src="{{ asset('storage/' . $table->qrcode) }}" alt="QR {{ $table->name }}"
                                         class="w-40 h-40 object-contain">
                                 </div>
                             @else
@@ -87,7 +87,7 @@
                                 </a>
 
                                 @if($table->qrcode && Storage::disk('public')->exists($table->qrcode))
-                                    <a href="{{ asset('qrcodes/' . basename($table->qrcode)) }}" download="QR_{{ $table->slug }}.png"
+                                    <a href="{{ asset('storage/' . $table->qrcode) }}" download="QR_{{ $table->slug }}.png"
                                         class="w-10 h-10 bg-white text-black rounded-md flex items-center justify-center hover:scale-110 transition-transform shadow-lg"
                                         title="Download PNG">
                                         <i class="ri-download-2-line text-lg"></i>

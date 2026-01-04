@@ -9,7 +9,7 @@
     // Tidak ada fallback values - hanya menampilkan data dari database
     $title = $about && $about->title && trim($about->title) !== '' ? trim($about->title) : '';
     $content = $about && $about->subtitle && trim($about->subtitle) !== '' ? trim($about->subtitle) : '';
-    $image = $about && $about->image ? asset('tentang-kami/' . basename($about->image)) : '';
+    $image = $about && $about->image ? asset('storage/' . $about->image) : '';
     $videoUrl = $about && $about->video_url && trim($about->video_url) !== '' ? trim($about->video_url) : '';
     $videoDescription = $about && $about->video_description && trim($about->video_description) !== '' ? trim($about->video_description) : '';
 

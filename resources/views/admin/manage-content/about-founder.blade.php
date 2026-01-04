@@ -46,7 +46,7 @@
                         <div id="preview"
                             class="w-full h-full flex flex-col items-center justify-center text-slate-400 transition-all duration-300" @mouseenter="$el.style.color = 'var(--primary-color)'" @mouseleave="$el.style.color = ''">
                             @if($aboutFounder && ($aboutFounder->photo || $aboutFounder->image))
-                                <img src="{{ asset('founder/' . basename($aboutFounder->image ?? $aboutFounder->photo)) }}"
+                                <img src="{{ asset('storage/' . ($aboutFounder->image ?? $aboutFounder->photo)) }}"
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                                 <div
                                     class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
