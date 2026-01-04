@@ -251,14 +251,14 @@ class AdminController extends Controller
         $this->authorizeAdminOnly();
 
         $validated = $request->validate([
-            'logo_image' => [self::IMAGE_RULES],
-            'background_image' => [self::IMAGE_RULES],
-            'title' => ['required', 'string', 'max:100'],
-            'subtitle' => ['required', 'string', 'max:100'],
-            'tagline' => ['nullable', 'string', 'max:255'],
-            'cta_text_1' => ['nullable', 'string', 'max:50'],
-            'cta_link_1' => ['nullable', 'string', 'max:255'],
-            'cta_text_2' => ['nullable', 'string', 'max:50'],
+            'logo_image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'background_image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'title' => 'required|string|max:100',
+            'subtitle' => 'required|string|max:100',
+            'tagline' => 'nullable|string|max:255',
+            'cta_text_1' => 'nullable|string|max:50',
+            'cta_link_1' => 'nullable|string|max:255',
+            'cta_text_2' => 'nullable|string|max:50',
         ]);
 
         try {
@@ -341,14 +341,14 @@ class AdminController extends Controller
         $this->authorizeAdminOnly();
         
         $validated = $request->validate([
-            'title' => ['nullable', 'string', 'max:255'],
-            'subtitle' => ['nullable', 'string', 'max:1000'],
-            'image' => [self::IMAGE_RULES],
-            'visi' => ['nullable', 'string', 'max:2000'],
-            'misi' => ['nullable', 'string', 'max:2000'],
-            'arah_gerak' => ['nullable', 'string', 'max:2000'],
-            'video_url' => ['nullable', 'string', 'max:2048'],
-            'video_description' => ['nullable', 'string', 'max:500'],
+            'title' => 'nullable|string|max:255',
+            'subtitle' => 'nullable|string|max:1000',
+            'image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'visi' => 'nullable|string|max:2000',
+            'misi' => 'nullable|string|max:2000',
+            'arah_gerak' => 'nullable|string|max:2000',
+            'video_url' => 'nullable|string|max:2048',
+            'video_description' => 'nullable|string|max:500',
         ]);
 
         try {
@@ -456,17 +456,17 @@ class AdminController extends Controller
         $this->authorizeAdminOnly();
         
         $validated = $request->validate([
-            'title' => ['nullable', 'string', 'max:255'],
-            'subtitle' => ['nullable', 'string', 'max:255'],
-            'name' => ['nullable', 'string', 'max:100'],
-            'position' => ['nullable', 'string', 'max:100'],
-            'quote' => ['nullable', 'string', 'max:500'],
-            'signature' => ['nullable', 'string', 'max:100'],
-            'photo' => [self::IMAGE_RULES],
-            'image' => [self::IMAGE_RULES],
-            'facebook_url' => ['nullable', 'url', 'max:255'],
-            'instagram_url' => ['nullable', 'url', 'max:255'],
-            'linkedin_url' => ['nullable', 'url', 'max:255'],
+            'title' => 'nullable|string|max:255',
+            'subtitle' => 'nullable|string|max:255',
+            'name' => 'nullable|string|max:100',
+            'position' => 'nullable|string|max:100',
+            'quote' => 'nullable|string|max:500',
+            'signature' => 'nullable|string|max:100',
+            'photo' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'facebook_url' => 'nullable|url|max:255',
+            'instagram_url' => 'nullable|url|max:255',
+            'linkedin_url' => 'nullable|url|max:255',
         ]);
 
         try {
@@ -595,10 +595,10 @@ class AdminController extends Controller
         $this->authorizeAdminOnly();
         
         $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:1000'],
-            'image' => [self::IMAGE_REQUIRED_RULES],
-            'order' => ['nullable', 'integer', 'min:0', 'max:999'],
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string|max:1000',
+            'image' => 'required|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'order' => 'nullable|integer|min:0|max:999',
         ]);
 
         try {
@@ -625,10 +625,10 @@ class AdminController extends Controller
         $this->authorizeAdminOnly();
         
         $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:1000'],
-            'image' => [self::IMAGE_RULES],
-            'order' => ['nullable', 'integer', 'min:0', 'max:999'],
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string|max:1000',
+            'image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'order' => 'nullable|integer|min:0|max:999',
         ]);
 
         try {
@@ -687,14 +687,14 @@ class AdminController extends Controller
         $this->authorizeAdminOnly();
         
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:100'],
-            'position' => ['required', 'string', 'max:100'],
-            'bio' => ['nullable', 'string', 'max:500'],
-            'photo' => [self::IMAGE_REQUIRED_RULES],
-            'facebook_url' => ['nullable', 'url', 'max:255'],
-            'instagram_url' => ['nullable', 'url', 'max:255'],
-            'linkedin_url' => ['nullable', 'url', 'max:255'],
-            'order' => ['nullable', 'integer', 'min:0', 'max:999'],
+            'name' => 'required|string|max:100',
+            'position' => 'required|string|max:100',
+            'bio' => 'nullable|string|max:500',
+            'photo' => 'required|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'facebook_url' => 'nullable|url|max:255',
+            'instagram_url' => 'nullable|url|max:255',
+            'linkedin_url' => 'nullable|url|max:255',
+            'order' => 'nullable|integer|min:0|max:999',
         ]);
 
         try {
@@ -720,14 +720,14 @@ class AdminController extends Controller
         $this->authorizeAdminOnly();
         
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:100'],
-            'position' => ['required', 'string', 'max:100'],
-            'bio' => ['nullable', 'string', 'max:500'],
-            'photo' => [self::IMAGE_RULES],
-            'facebook_url' => ['nullable', 'url', 'max:255'],
-            'instagram_url' => ['nullable', 'url', 'max:255'],
-            'linkedin_url' => ['nullable', 'url', 'max:255'],
-            'order' => ['nullable', 'integer', 'min:0', 'max:999'],
+            'name' => 'required|string|max:100',
+            'position' => 'required|string|max:100',
+            'bio' => 'nullable|string|max:500',
+            'photo' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'facebook_url' => 'nullable|url|max:255',
+            'instagram_url' => 'nullable|url|max:255',
+            'linkedin_url' => 'nullable|url|max:255',
+            'order' => 'nullable|integer|min:0|max:999',
         ]);
 
         try {
@@ -785,12 +785,12 @@ class AdminController extends Controller
         $this->authorizeAdminOnly();
         
         $validated = $request->validate([
-            'customer_name' => ['required', 'string', 'max:100'],
-            'customer_role' => ['nullable', 'string', 'max:100'],
-            'testimonial' => ['required', 'string', 'max:1000'],
-            'rating' => ['required', 'integer', 'min:1', 'max:5'],
-            'photo' => [self::IMAGE_RULES],
-            'order' => ['nullable', 'integer', 'min:0', 'max:999'],
+            'customer_name' => 'required|string|max:100',
+            'customer_role' => 'nullable|string|max:100',
+            'testimonial' => 'required|string|max:1000',
+            'rating' => 'required|integer|min:1|max:5',
+            'photo' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'order' => 'nullable|integer|min:0|max:999',
         ]);
 
         try {
@@ -816,12 +816,12 @@ class AdminController extends Controller
         $this->authorizeAdminOnly();
         
         $validated = $request->validate([
-            'customer_name' => ['required', 'string', 'max:100'],
-            'customer_role' => ['nullable', 'string', 'max:100'],
-            'testimonial' => ['required', 'string', 'max:1000'],
-            'rating' => ['required', 'integer', 'min:1', 'max:5'],
-            'photo' => [self::IMAGE_RULES],
-            'order' => ['nullable', 'integer', 'min:0', 'max:999'],
+            'customer_name' => 'required|string|max:100',
+            'customer_role' => 'nullable|string|max:100',
+            'testimonial' => 'required|string|max:1000',
+            'rating' => 'required|integer|min:1|max:5',
+            'photo' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'order' => 'nullable|integer|min:0|max:999',
         ]);
 
         try {
@@ -879,13 +879,13 @@ class AdminController extends Controller
         $this->authorizeAdminOnly();
         
         $validated = $request->validate([
-            'event_title' => ['required', 'string', 'max:150'],
-            'event_description' => ['nullable', 'string', 'max:2000'],
-            'category' => ['nullable', 'string', 'max:50'],
-            'event_date' => ['nullable', 'date'],
-            'link_url' => ['nullable', 'url', 'max:255'],
-            'image' => [self::IMAGE_REQUIRED_RULES],
-            'order' => ['nullable', 'integer', 'min:0', 'max:999'],
+            'event_title' => 'required|string|max:150',
+            'event_description' => 'nullable|string|max:2000',
+            'category' => 'nullable|string|max:50',
+            'event_date' => 'nullable|date',
+            'link_url' => 'nullable|url|max:255',
+            'image' => 'required|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'order' => 'nullable|integer|min:0|max:999',
         ]);
 
         try {
@@ -911,13 +911,13 @@ class AdminController extends Controller
         $this->authorizeAdminOnly();
         
         $validated = $request->validate([
-            'event_title' => ['required', 'string', 'max:150'],
-            'event_description' => ['nullable', 'string', 'max:2000'],
-            'category' => ['nullable', 'string', 'max:50'],
-            'event_date' => ['nullable', 'date'],
-            'link_url' => ['nullable', 'url', 'max:255'],
-            'image' => [self::IMAGE_RULES],
-            'order' => ['nullable', 'integer', 'min:0', 'max:999'],
+            'event_title' => 'required|string|max:150',
+            'event_description' => 'nullable|string|max:2000',
+            'category' => 'nullable|string|max:50',
+            'event_date' => 'nullable|date',
+            'link_url' => 'nullable|url|max:255',
+            'image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'order' => 'nullable|integer|min:0|max:999',
         ]);
 
         try {
