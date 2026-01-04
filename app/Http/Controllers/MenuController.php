@@ -13,7 +13,7 @@ class MenuController extends Controller
     public function index()
     {
         // Ambil semua kategori dengan menu yang aktif (tidak dihapus) - optimized
-        $categories = CategoryMenu::select('id', 'name', 'order_priority')
+        $categories = CategoryMenu::select('id', 'name', 'slug', 'order_priority')
             ->with(['menus' => function ($query) {
                 $query->select('id', 'category_menu_id', 'name', 'slug', 'price', 'image_path', 'labels', 'short_description')
                     ->orderBy('name', 'asc');
@@ -30,7 +30,7 @@ class MenuController extends Controller
     public function createOrder()
     {
         // Ambil semua kategori dengan menu yang aktif (tidak dihapus) - optimized
-        $categories = CategoryMenu::select('id', 'name', 'order_priority')
+        $categories = CategoryMenu::select('id', 'name', 'slug', 'order_priority')
             ->with(['menus' => function ($query) {
                 $query->select('id', 'category_menu_id', 'name', 'slug', 'price', 'image_path', 'labels', 'short_description')
                     ->orderBy('name', 'asc');
