@@ -85,8 +85,27 @@
 
 <body class="antialiased">
 
+
     <!-- NAVBAR -->
-    <x-navbar />
+    <nav class="fixed top-0 left-0 w-full z-50 h-20 bg-bg-dark flex items-center justify-between px-4 md:px-8 border-b border-border-base">
+        <a href="/" class="flex items-center gap-2">
+            <img src="/logo.png" alt="Logo" class="w-8 h-8 object-contain">
+        </a>
+        <button id="menuToggle" class="block md:hidden text-gold-400 text-3xl focus:outline-none">
+            <i class="ri-menu-line"></i>
+        </button>
+    </nav>
+    <script>
+        // Example toggle logic (replace with your sidebar/menu logic)
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggle = document.getElementById('menuToggle');
+            if(toggle) {
+                toggle.addEventListener('click', function() {
+                    alert('Toggle menu clicked! (implement your sidebar logic here)');
+                });
+            }
+        });
+    </script>
 
     <div class="flex h-screen w-full overflow-hidden">
 
