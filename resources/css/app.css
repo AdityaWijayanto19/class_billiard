@@ -1,0 +1,66 @@
+@import 'tailwindcss';
+@import 'remixicon/fonts/remixicon.css';
+
+@font-face {
+    font-family: 'Rumonds';
+    src: url('/fonts/rumonds.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-rumonds: 'Rumonds', sans-serif;
+    --color-gold-400: #ffd700;
+    --color-gold-500: #e6c200;
+    --color-gold-600: #b39700;
+}
+
+/* Dark mode configuration - class-based untuk Tailwind v4 */
+/* Hanya aktif untuk Admin & Dapur dashboard, tidak untuk public pages */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Pastikan public pages (home, menu) tidak terpengaruh dark mode */
+/* Home selalu menggunakan tema dark fixed (tidak toggle) */
+/* CSS dark mode hanya aktif jika HTML memiliki class 'dark' */
+/* Home tidak akan memiliki class 'dark', jadi tidak terpengaruh */
+
+/* x-cloak untuk Alpine.js - mencegah flicker */
+[x-cloak] {
+    display: none !important;
+}
+
+/* Custom styles for complex elements */
+.menu--active {
+    @apply opacity-100 visible translate-x-0;
+}
+
+.hero-diagonal-lines::before,
+.hero-diagonal-lines::after {
+    content: '';
+    @apply absolute w-[150%] h-3 bg-[#fa9a08] rotate-[25deg];
+}
+
+.hero-diagonal-lines::before {
+    @apply top-[20%] -left-[20%];
+}
+
+.hero-diagonal-lines::after {
+    @apply top-[50%] -left-[20%];
+}
+
+/* Dapur page styles */
+.filter-tab-btn.active {
+    @apply bg-[#fa9a08] text-white;
+}
+
+.filter-input-group:not(.hidden),
+#reportsSummary:not(.hidden) {
+    @apply flex;
+}
