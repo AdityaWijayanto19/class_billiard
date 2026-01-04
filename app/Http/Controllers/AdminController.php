@@ -18,6 +18,7 @@ use App\Models\TentangKami;
 use App\Models\TestimoniPelanggan;
 use App\Models\TimKami;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -30,6 +31,33 @@ class AdminController extends Controller
      */
     private const IMAGE_RULES = 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048';
     private const IMAGE_REQUIRED_RULES = 'required|image|mimes:jpeg,jpg,png,webp|max:2048';
+
+    /**
+     * Clear CMS component caches after update
+     * This ensures homepage reflects changes immediately
+     */
+    private function clearCmsCache(array $keys = []): void
+    {
+        // Default cache keys used by blade components
+        $defaultKeys = [
+            'component_hero',
+            'component_about',
+            'component_founder', 
+            'component_keunggulan',
+            'component_portfolio',
+            'component_team',
+            'component_testimonials',
+            'component_events',
+            'component_contact',
+            'component_footer',
+        ];
+        
+        $keysToForget = empty($keys) ? $defaultKeys : $keys;
+        
+        foreach ($keysToForget as $key) {
+            Cache::forget($key);
+        }
+    }
 
     /**
      * Get the correct storage path for both local and Hostinger production
@@ -353,6 +381,10 @@ class AdminController extends Controller
             $hero->save();
 
             DB::commit();
+            
+            // Clear hero cache so homepage reflects changes immediately
+            $this->clearCmsCache(['component_hero']);
+            
             return redirect()->route('admin.cms.hero')->with('success', 'Hero section berhasil diperbarui!');
             
         } catch (\Exception $e) {
@@ -432,6 +464,7 @@ class AdminController extends Controller
             $tentangKami->save();
 
             DB::commit();
+            $this->clearCmsCache(['component_about']);
             return redirect()->route('admin.cms.tentang-kami')->with('success', 'Tentang Kami berhasil diperbarui!');
             
         } catch (\Exception $e) {
@@ -550,6 +583,7 @@ class AdminController extends Controller
             $aboutFounder->save();
 
             DB::commit();
+            $this->clearCmsCache(['component_founder']);
             return redirect()->route('admin.cms.about-founder')->with('success', 'About Founder berhasil diperbarui!');
             
         } catch (\Exception $e) {
@@ -587,6 +621,7 @@ class AdminController extends Controller
             
             KeunggulanFasilitas::create($validated);
 
+            $this->clearCmsCache(['component_keunggulan']);
             return redirect()->route('admin.cms.keunggulan-fasilitas')->with('success', 'Fasilitas berhasil ditambahkan!');
             
         } catch (\Exception $e) {
@@ -614,6 +649,7 @@ class AdminController extends Controller
             $fasilitas->is_active = $request->boolean('is_active');
             $fasilitas->save();
 
+            $this->clearCmsCache(['component_keunggulan']);
             return redirect()->route('admin.cms.keunggulan-fasilitas')->with('success', 'Fasilitas berhasil diperbarui!');
             
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -632,6 +668,7 @@ class AdminController extends Controller
             $fasilitas = KeunggulanFasilitas::findOrFail($id);
             $fasilitas->delete();
 
+            $this->clearCmsCache(['component_keunggulan']);
             return redirect()->route('admin.cms.keunggulan-fasilitas')->with('success', 'Fasilitas berhasil dihapus!');
             
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -673,6 +710,7 @@ class AdminController extends Controller
 
             PortfolioAchievement::create($validated);
 
+            $this->clearCmsCache(['component_portfolio']);
             return redirect()->route('admin.cms.portfolio-achievement')->with('success', 'Achievement berhasil ditambahkan!');
             
         } catch (\Exception $e) {
@@ -705,6 +743,7 @@ class AdminController extends Controller
             $item->is_active = $request->boolean('is_active');
             $item->save();
 
+            $this->clearCmsCache(['component_portfolio']);
             return redirect()->route('admin.cms.portfolio-achievement')->with('success', 'Achievement berhasil diperbarui!');
             
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -724,6 +763,7 @@ class AdminController extends Controller
             $this->safeDeleteFile($item->image);
             $item->delete();
 
+            $this->clearCmsCache(['component_portfolio']);
             return redirect()->route('admin.cms.portfolio-achievement')->with('success', 'Achievement berhasil dihapus!');
             
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -768,6 +808,7 @@ class AdminController extends Controller
 
             TimKami::create($validated);
 
+            $this->clearCmsCache(['component_team']);
             return redirect()->route('admin.cms.tim-kami')->with('success', 'Anggota tim berhasil ditambahkan!');
             
         } catch (\Exception $e) {
@@ -803,6 +844,7 @@ class AdminController extends Controller
             $member->is_active = $request->boolean('is_active');
             $member->save();
 
+            $this->clearCmsCache(['component_team']);
             return redirect()->route('admin.cms.tim-kami')->with('success', 'Anggota tim berhasil diperbarui!');
             
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -822,6 +864,7 @@ class AdminController extends Controller
             $this->safeDeleteFile($member->photo);
             $member->delete();
 
+            $this->clearCmsCache(['component_team']);
             return redirect()->route('admin.cms.tim-kami')->with('success', 'Anggota tim berhasil dihapus!');
             
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -864,6 +907,7 @@ class AdminController extends Controller
 
             TestimoniPelanggan::create($validated);
 
+            $this->clearCmsCache(['component_testimonials']);
             return redirect()->route('admin.cms.testimoni-pelanggan')->with('success', 'Testimoni pelanggan berhasil ditambahkan!');
             
         } catch (\Exception $e) {
@@ -897,6 +941,7 @@ class AdminController extends Controller
             $testimoni->is_active = $request->boolean('is_active');
             $testimoni->save();
 
+            $this->clearCmsCache(['component_testimonials']);
             return redirect()->route('admin.cms.testimoni-pelanggan')->with('success', 'Testimoni pelanggan berhasil diperbarui!');
             
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -916,6 +961,7 @@ class AdminController extends Controller
             $this->safeDeleteFile($testimoni->photo);
             $testimoni->delete();
 
+            $this->clearCmsCache(['component_testimonials']);
             return redirect()->route('admin.cms.testimoni-pelanggan')->with('success', 'Testimoni pelanggan berhasil dihapus!');
             
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -959,6 +1005,7 @@ class AdminController extends Controller
 
             Event::create($validated);
 
+            $this->clearCmsCache(['component_events']);
             return redirect()->route('admin.cms.event')->with('success', 'Event berhasil ditambahkan!');
             
         } catch (\Exception $e) {
@@ -993,6 +1040,7 @@ class AdminController extends Controller
             $event->is_active = $request->boolean('is_active');
             $event->save();
 
+            $this->clearCmsCache(['component_events']);
             return redirect()->route('admin.cms.event')->with('success', 'Event berhasil diperbarui!');
             
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -1012,6 +1060,7 @@ class AdminController extends Controller
             $this->safeDeleteFile($event->image);
             $event->delete();
 
+            $this->clearCmsCache(['component_events']);
             return redirect()->route('admin.cms.event')->with('success', 'Event berhasil dihapus!');
             
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -1064,6 +1113,7 @@ class AdminController extends Controller
             $footer->is_active = $request->boolean('is_active');
             $footer->save();
 
+            $this->clearCmsCache(['component_footer']);
             return redirect()->route('admin.cms.footer')->with('success', 'Footer berhasil diperbarui!');
             
         } catch (\Exception $e) {
@@ -1127,6 +1177,7 @@ class AdminController extends Controller
             $contact->is_active = $request->boolean('is_active');
             $contact->save();
 
+            $this->clearCmsCache(['component_contact']);
             return redirect()->route('admin.cms.contact')->with('success', 'Halaman kontak berhasil diperbarui!');
             
         } catch (\Exception $e) {
