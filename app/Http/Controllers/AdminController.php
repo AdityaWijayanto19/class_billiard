@@ -60,6 +60,19 @@ class AdminController extends Controller
         foreach ($keysToForget as $key) {
             Cache::forget($key);
         }
+        
+        // Also clear application cache, views, and OPcache for immediate effect
+        try {
+            \Illuminate\Support\Facades\Artisan::call('cache:clear');
+            \Illuminate\Support\Facades\Artisan::call('view:clear');
+            
+            // Clear OPcache if available
+            if (function_exists('opcache_reset')) {
+                @opcache_reset();
+            }
+        } catch (\Exception $e) {
+            Log::warning('Failed to clear system caches', ['error' => $e->getMessage()]);
+        }
     }
 
     /**
