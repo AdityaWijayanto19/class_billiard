@@ -33,18 +33,17 @@ class AdminController extends Controller
 
     /**
      * Get the correct storage path for both local and Hostinger production
-     * Hostinger: public_html/storage/  (document root is public_html)
+     * Hostinger: public_html/storage/  (document root is public_html, NOT public_html/public)
      * Local: public/storage/ (standard Laravel)
      */
     private function getStoragePath(string $relativePath = ''): string
     {
-        // Check if we're on Hostinger (public_html structure)
-        $hostingerPath = base_path('../storage/' . $relativePath);
-        if (str_contains(base_path(), 'public_html') && is_dir(dirname($hostingerPath))) {
-            return $hostingerPath;
+        // On Hostinger, base_path() = public_html, so storage is at base_path('storage/')
+        // On local, public_path('storage/') is correct
+        if (str_contains(base_path(), 'public_html')) {
+            return base_path('storage/' . $relativePath);
         }
         
-        // Standard Laravel path
         return public_path('storage/' . $relativePath);
     }
 
@@ -57,8 +56,8 @@ class AdminController extends Controller
         
         // Try multiple possible locations
         $possiblePaths = [
-            base_path('../storage/' . $path),           // Hostinger: public_html/../storage/
-            public_path('storage/' . $path),            // Standard Laravel
+            base_path('storage/' . $path),              // Hostinger: public_html/storage/
+            public_path('storage/' . $path),            // Standard Laravel: public/storage/
             storage_path('app/public/' . $path),        // Laravel storage disk
         ];
         
@@ -95,15 +94,12 @@ class AdminController extends Controller
             $relativePath = $folder . '/' . $filename;
             
             // Determine correct storage directory
-            // Hostinger structure: public_html/storage/ (sibling to public_html/public/)
-            $hostingerPath = base_path('../storage/' . $folder);
-            $standardPath = public_path('storage/' . $folder);
-            
-            // Use Hostinger path if we detect that structure
+            // Hostinger: base_path('storage/') = public_html/storage/
+            // Local: public_path('storage/') = public/storage/
             if (str_contains(base_path(), 'public_html')) {
-                $directoryPath = $hostingerPath;
+                $directoryPath = base_path('storage/' . $folder);
             } else {
-                $directoryPath = $standardPath;
+                $directoryPath = public_path('storage/' . $folder);
             }
             
             // Ensure directory exists
