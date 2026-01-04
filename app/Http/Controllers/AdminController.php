@@ -914,11 +914,14 @@ class AdminController extends Controller
         $this->authorizeAdminOnly();
         
         $validated = $request->validate([
-            'customer_name' => 'required|string|max:100',
+            'customer_name' => 'nullable|string|max:100',
+            'name' => 'nullable|string|max:100',
             'customer_role' => 'nullable|string|max:100',
+            'role' => 'nullable|string|max:100',
             'testimonial' => 'required|string|max:1000',
             'rating' => 'required|integer|min:1|max:5',
-            'photo' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'photo' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:15360',
+            'image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:15360',
             'order' => 'nullable|integer|min:0|max:999',
         ]);
 
@@ -926,8 +929,21 @@ class AdminController extends Controller
             $validated['is_active'] = $request->boolean('is_active');
             $validated['order'] = $validated['order'] ?? TestimoniPelanggan::max('order') + 1;
 
+            // Handle photo upload (check both 'photo' and 'image' fields)
             if ($request->hasFile('photo')) {
                 $validated['photo'] = $this->safeStoreFile($request->file('photo'), 'testimoni');
+            } elseif ($request->hasFile('image')) {
+                $validated['photo'] = $this->safeStoreFile($request->file('image'), 'testimoni');
+            }
+
+            // Use name as fallback for customer_name
+            if (empty($validated['customer_name']) && !empty($validated['name'])) {
+                $validated['customer_name'] = $validated['name'];
+            }
+            
+            // Use role as fallback for customer_role
+            if (empty($validated['customer_role']) && !empty($validated['role'])) {
+                $validated['customer_role'] = $validated['role'];
             }
 
             TestimoniPelanggan::create($validated);
@@ -946,20 +962,37 @@ class AdminController extends Controller
         $this->authorizeAdminOnly();
         
         $validated = $request->validate([
-            'customer_name' => 'required|string|max:100',
+            'customer_name' => 'nullable|string|max:100',
+            'name' => 'nullable|string|max:100',
             'customer_role' => 'nullable|string|max:100',
+            'role' => 'nullable|string|max:100',
             'testimonial' => 'required|string|max:1000',
             'rating' => 'required|integer|min:1|max:5',
-            'photo' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'photo' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:15360',
+            'image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:15360',
             'order' => 'nullable|integer|min:0|max:999',
         ]);
 
         try {
             $testimoni = TestimoniPelanggan::findOrFail($id);
 
+            // Handle photo upload (check both 'photo' and 'image' fields)
             if ($request->hasFile('photo')) {
                 $this->safeDeleteFile($testimoni->photo);
                 $testimoni->photo = $this->safeStoreFile($request->file('photo'), 'testimoni');
+            } elseif ($request->hasFile('image')) {
+                $this->safeDeleteFile($testimoni->photo);
+                $testimoni->photo = $this->safeStoreFile($request->file('image'), 'testimoni');
+            }
+
+            // Use name as fallback for customer_name
+            if (empty($validated['customer_name']) && !empty($validated['name'])) {
+                $validated['customer_name'] = $validated['name'];
+            }
+            
+            // Use role as fallback for customer_role
+            if (empty($validated['customer_role']) && !empty($validated['role'])) {
+                $validated['customer_role'] = $validated['role'];
             }
 
             // Remove photo from validated to prevent overwriting with temp path
