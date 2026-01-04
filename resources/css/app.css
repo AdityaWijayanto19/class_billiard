@@ -1,12 +1,7 @@
 @import 'tailwindcss';
 @import 'remixicon/fonts/remixicon.css';
 
-@font-face {
-    font-family: 'Rumonds';
-    src: url('/public/fonts/rumonds.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
-}
+/* Rumonds font removed - using system fonts instead */
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
