@@ -32,26 +32,53 @@ class AdminController extends Controller
     private const IMAGE_REQUIRED_RULES = 'required|image|mimes:jpeg,jpg,png,webp|max:2048';
 
     /**
-     * Safe delete file from storage
+     * Safe delete file from storage (supports both standard and direct public storage)
      */
     private function safeDeleteFile(?string $path): void
     {
-        if ($path && Storage::disk('public')->exists($path)) {
+        if (!$path) return;
+        
+        // Try deleting from direct public/storage path first (production)
+        $directPath = public_path('storage/' . $path);
+        if (file_exists($directPath)) {
+            try {
+                @unlink($directPath);
+                return;
+            } catch (\Exception $e) {
+                Log::warning('Failed to delete direct file: ' . $path, ['error' => $e->getMessage()]);
+            }
+        }
+        
+        // Fallback to standard Laravel storage disk
+        if (Storage::disk('public')->exists($path)) {
             try {
                 Storage::disk('public')->delete($path);
             } catch (\Exception $e) {
-                Log::warning('Failed to delete file: ' . $path, ['error' => $e->getMessage()]);
+                Log::warning('Failed to delete storage file: ' . $path, ['error' => $e->getMessage()]);
             }
         }
     }
 
     /**
-     * Safe store file to storage
+     * Safe store file directly to public/storage folder (works on LiteSpeed/shared hosting)
      */
     private function safeStoreFile($file, string $folder): ?string
     {
         try {
-            return $file->store($folder, 'public');
+            // Generate unique filename
+            $filename = \Illuminate\Support\Str::random(40) . '.' . $file->getClientOriginalExtension();
+            $relativePath = $folder . '/' . $filename;
+            
+            // Ensure directory exists in public/storage
+            $directoryPath = public_path('storage/' . $folder);
+            if (!is_dir($directoryPath)) {
+                @mkdir($directoryPath, 0755, true);
+            }
+            
+            // Move file directly to public/storage/{folder}/
+            $file->move($directoryPath, $filename);
+            
+            return $relativePath;
         } catch (\Exception $e) {
             Log::error('Failed to store file', ['folder' => $folder, 'error' => $e->getMessage()]);
             return null;
