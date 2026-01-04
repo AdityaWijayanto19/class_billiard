@@ -40,7 +40,7 @@ class MenuDetailController extends Controller
             'image' => $menu->image_path,
             'description' => $menu->description ?? $menu->short_description,
             'category' => $menu->categoryMenu?->name ?? 'Menu',
-            'label' => json_decode($menu->labels, true)[0] ?? null,
+            'label' => is_array($menu->labels) && count($menu->labels) > 0 ? $menu->labels[0] : null,
             'servings' => '1',
             'prep_time' => '5m',
             'cook_time' => '10m',
