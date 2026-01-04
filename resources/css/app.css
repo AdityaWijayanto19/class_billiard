@@ -3,7 +3,7 @@
 
 @font-face {
     font-family: 'Rumonds';
-    src: url('/fonts/rumonds.otf') format('opentype');
+    src: url('/public/fonts/rumonds.otf') format('opentype');
     font-weight: normal;
     font-style: normal;
 }
