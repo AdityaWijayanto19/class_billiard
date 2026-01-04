@@ -471,6 +471,8 @@ class AdminController extends Controller
                 $tentangKami->image = $this->safeStoreFile($request->file('image'), 'tentang-kami');
             }
 
+            // Remove image from validated to prevent overwriting with temp path
+            unset($validated['image']);
             $tentangKami->fill($validated);
 
             if (!empty($validated['video_url'])) {
@@ -595,6 +597,8 @@ class AdminController extends Controller
                 $aboutFounder->image = $this->safeStoreFile($request->file('image'), 'founder');
             }
 
+            // Remove file fields from validated to prevent overwriting with temp path
+            unset($validated['photo'], $validated['image']);
             $aboutFounder->fill($validated);
             $aboutFounder->is_active = $request->boolean('is_active');
             $aboutFounder->save();
@@ -755,6 +759,8 @@ class AdminController extends Controller
                 $item->image = $this->safeStoreFile($request->file('image'), 'portfolio');
             }
 
+            // Remove image from validated to prevent overwriting with temp path
+            unset($validated['image']);
             $item->fill($validated);
             $item->type = 'gallery';
             $item->is_active = $request->boolean('is_active');
@@ -857,6 +863,8 @@ class AdminController extends Controller
                 $member->photo = $this->safeStoreFile($request->file('photo'), 'team');
             }
 
+            // Remove photo from validated to prevent overwriting with temp path
+            unset($validated['photo']);
             $member->fill($validated);
             $member->is_active = $request->boolean('is_active');
             $member->save();
@@ -954,6 +962,8 @@ class AdminController extends Controller
                 $testimoni->photo = $this->safeStoreFile($request->file('photo'), 'testimoni');
             }
 
+            // Remove photo from validated to prevent overwriting with temp path
+            unset($validated['photo']);
             $testimoni->fill($validated);
             $testimoni->is_active = $request->boolean('is_active');
             $testimoni->save();
@@ -1053,6 +1063,8 @@ class AdminController extends Controller
                 $event->image = $this->safeStoreFile($request->file('image'), 'events');
             }
 
+            // Remove image from validated to prevent overwriting with temp path
+            unset($validated['image']);
             $event->fill($validated);
             $event->is_active = $request->boolean('is_active');
             $event->save();
