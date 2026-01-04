@@ -11,7 +11,7 @@
     $position = $founder && $founder->position && trim($founder->position) !== '' ? trim($founder->position) : '';
     $subtitle = $founder && $founder->subtitle && trim($founder->subtitle) !== '' ? trim($founder->subtitle) : '';
     $quote = $founder && $founder->quote && trim($founder->quote) !== '' ? trim($founder->quote) : '';
-    $image = ($founder && $founder->image ? asset('storage/' . $founder->image) : ($founder && $founder->photo ? asset('storage/' . $founder->photo) : ''));
+    $image = ($founder && $founder->image ? asset('founder/' . basename($founder->image)) : ($founder && $founder->photo ? asset('founder/' . basename($founder->photo)) : ''));
     $videoUrl = $founder && $founder->video_url && trim($founder->video_url) !== '' ? trim($founder->video_url) : '';
     $signature = $founder && $founder->signature && trim($founder->signature) !== '' ? trim($founder->signature) : '';
     $facebookUrl = $founder && $founder->facebook_url && trim($founder->facebook_url) !== '' ? trim($founder->facebook_url) : '';

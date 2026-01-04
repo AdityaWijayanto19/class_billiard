@@ -39,7 +39,7 @@ class HeroSection extends Model
      */
     public function getLogoImageUrlAttribute(): string
     {
-        return $this->logo_image ? asset('storage/' . $this->logo_image) : '';
+        return $this->logo_image ? asset('hero/' . basename($this->logo_image)) : '';
     }
 
     /**

@@ -53,7 +53,7 @@
                             <div class="lg:w-64 space-y-4 shrink-0">
                                 <div class="relative w-24 h-24 mx-auto lg:mx-0">
                                     @if($testimoni->photo)
-                                        <img src="{{ asset('storage/' . $testimoni->photo) }}" alt="{{ $testimoni->customer_name }}"
+                                        <img src="{{ asset('team/' . basename($testimoni->photo)) }}" alt="{{ $testimoni->customer_name }}"
                                             class="w-full h-full rounded-md object-cover border border-slate-200 dark:border-white/10">
                                     @else
                                         <div

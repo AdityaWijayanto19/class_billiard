@@ -113,7 +113,7 @@
             <div
                 class="relative p-6 bg-white border border-slate-100 rounded-lg shadow-[0_10px_30px_-10px_rgba(0,0,0,0.1)] mb-10 transition-transform hover:scale-[1.02] duration-500">
                 @if($table->qrcode && Storage::disk('public')->exists($table->qrcode))
-                    <img src="{{ asset('storage/' . $table->qrcode) }}" alt="QR {{ $table->name }}"
+                    <img src="{{ asset('qrcodes/' . basename($table->qrcode)) }}" alt="QR {{ $table->name }}"
                         class="w-[240px] h-[240px] object-contain relative z-10">
                 @else
                     <div

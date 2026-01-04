@@ -56,7 +56,7 @@
                 data-aos="fade-up" data-aos-delay="{{ ($index + 1) * 100 }}">
                 <!-- Image -->
                 @if($event->image)
-                <img src="{{ asset('storage/' . $event->image) }}" alt="{{ $event->event_title ?? $event->title ?? 'Event' }}"
+                <img src="{{ asset('events/' . basename($event->image)) }}" alt="{{ $event->event_title ?? $event->title ?? 'Event' }}"
                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 filter brightness-75 group-hover:brightness-100">
                 @else
                 <div class="w-full h-full bg-gray-900 flex items-center justify-center">

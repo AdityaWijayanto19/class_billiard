@@ -71,7 +71,7 @@
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
                                     @if($inventory->menu->image)
-                                        <img src="{{ asset('storage/' . $inventory->menu->image) }}" 
+                                        <img src="{{ asset('menus/' . basename($inventory->menu->image)) }}" 
                                             alt="{{ $inventory->menu->name }}"
                                             class="w-10 h-10 rounded-md object-cover">
                                     @else

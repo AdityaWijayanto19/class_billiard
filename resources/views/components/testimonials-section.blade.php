@@ -42,7 +42,7 @@
                 <div class="flex items-center gap-4 mb-6 pl-4">
                     <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-gold-400/30 p-1">
                         @if($testimonial->image || $testimonial->photo)
-                        <img src="{{ $testimonial->image ? asset('storage/' . $testimonial->image) : asset('storage/' . $testimonial->photo) }}" alt="{{ $testimonial->name ?? $testimonial->customer_name }}"
+                        <img src="{{ $testimonial->image ? asset('team/' . basename($testimonial->image)) : asset('team/' . basename($testimonial->photo)) }}" alt="{{ $testimonial->name ?? $testimonial->customer_name }}"
                             class="w-full h-full object-cover rounded-full filter grayscale group-hover:grayscale-0 transition-all duration-300">
                         @else
                         <div class="w-full h-full bg-gray-700 rounded-full flex items-center justify-center">

@@ -127,7 +127,7 @@
                             <!-- Image Preview -->
                             <div class="aspect-video bg-slate-100 dark:bg-white/5 relative overflow-hidden">
                                 @if($item->image)
-                                    <img src="{{ asset('storage/' . $item->image) }}"
+                                    <img src="{{ asset('portfolio/' . basename($item->image)) }}"
                                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                                 @else
                                     <div class="w-full h-full flex items-center justify-center text-slate-400 dark:text-gray-600">

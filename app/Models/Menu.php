@@ -25,7 +25,7 @@ class Menu extends Model
      */
     public function getImageUrlAttribute(): string
     {
-        return $this->image_path ? asset('storage/' . $this->image_path) : '';
+        return $this->image_path ? asset('menus/' . basename($this->image_path)) : '';
     }
 
     public function categoryMenu(): BelongsTo

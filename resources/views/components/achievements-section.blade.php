@@ -33,7 +33,7 @@
             <div
                 class="relative {{ $isCenterCard ? 'flex-[3] hover:flex-[4]' : 'flex-1 hover:flex-[3]' }} transition-all duration-700 ease-in-out rounded-3xl overflow-hidden group cursor-pointer border {{ $isCenterCard ? 'border-2 border-gold-400 shadow-[0_0_20px_rgba(255,215,0,0.3)]' : 'border-gray-800 hover:border-gold-400' }}">
                 @if($achievement->image)
-                <img src="{{ asset('storage/' . $achievement->image) }}"
+                <img src="{{ asset('portfolio/' . basename($achievement->image)) }}"
                     class="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110 {{ $isCenterCard ? '' : 'grayscale group-hover:grayscale-0' }}">
                 @else
                 <div class="absolute inset-0 w-full h-full bg-gray-900 flex items-center justify-center">
