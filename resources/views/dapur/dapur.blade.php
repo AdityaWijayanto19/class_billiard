@@ -722,9 +722,26 @@
                     if (response.ok && data.orders) {
                     // Normalize IDs to numbers to avoid string/number mismatch
                     const orderIds = new Set(data.orders.map(o => Number(o.id)));
-                    currentOrderIds = orderIds;
-                    updateOrdersDisplay(data.orders);
-                    isFirstLoad = false;
+
+                    // If the server already rendered the same set of orders (server-side blade),
+                    // skip re-rendering to avoid duplicate cards on refresh. We compare the
+                    // currently tracked IDs (populated from server-rendered `initialOrders`)
+                    // with the freshly fetched IDs. If they're identical, do nothing.
+                    const areSetsEqual = (a, b) => {
+                        if (a.size !== b.size) return false;
+                        for (const v of a) if (!b.has(v)) return false;
+                        return true;
+                    };
+
+                    if (areSetsEqual(currentOrderIds, orderIds)) {
+                        // No change in orders; just ensure internal tracking and mark first load done
+                        currentOrderIds = orderIds;
+                        isFirstLoad = false;
+                    } else {
+                        currentOrderIds = orderIds;
+                        updateOrdersDisplay(data.orders);
+                        isFirstLoad = false;
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching initial orders:', error);
