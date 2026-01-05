@@ -723,6 +723,26 @@
             updateStopwatches();
         }
 
+        // Remove duplicate DOM nodes that share the same data-order-id
+        function dedupeDOMOrders() {
+            try {
+                const seen = new Set();
+                const nodes = Array.from(document.querySelectorAll('[data-order-id]'));
+                nodes.forEach(node => {
+                    const id = String(node.getAttribute('data-order-id'));
+                    if (! id) return;
+                    if (seen.has(id)) {
+                        try { console.debug(`dedupeDOMOrders: removing duplicate node for id ${id}`); } catch(e) {}
+                        node.remove();
+                    } else {
+                        seen.add(id);
+                    }
+                });
+            } catch (e) {
+                // ignore
+            }
+        }
+
         // Function untuk fetch initial orders
         async function fetchInitialOrders() {
             try {
@@ -750,10 +770,14 @@
                         try { console.debug('fetchInitialOrders: sets equal, skipping re-render'); } catch(e) {}
                         currentOrderIds = orderIds;
                         isFirstLoad = false;
+                        // Clean any accidental duplicate DOM nodes after skipping re-render
+                        dedupeDOMOrders();
                     } else {
                         try { console.debug('fetchInitialOrders: sets differ, re-rendering orders'); } catch(e) {}
                         currentOrderIds = orderIds;
                         updateOrdersDisplay(data.orders);
+                        // Ensure no duplicates after rendering
+                        dedupeDOMOrders();
                         isFirstLoad = false;
                     }
                 }
@@ -933,6 +957,8 @@
             initialOrders.forEach(order => {
                 currentOrderIds.add(Number(order.id));
             });
+            // Remove duplicate DOM nodes that might exist from server render + client render
+            dedupeDOMOrders();
             
             // Initial fetch dan setup SSE
             fetchInitialOrders().then(() => {
