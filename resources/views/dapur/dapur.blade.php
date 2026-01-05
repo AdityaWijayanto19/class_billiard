@@ -94,151 +94,8 @@
 
     <div class="max-w-7xl mx-auto">
         <div id="ordersSection">
-        @if($orders->count() > 0)
-            <div class="grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-6 max-md:grid-cols-1 max-md:gap-4">
-                    @foreach($orders as $order)
-                        <div class="order-card-modern group relative bg-gradient-to-br from-[var(--primary-color)] to-[var(--primary-hover)] rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-[rgba(var(--primary-color-rgb),0.2)]" data-order-id="{{ $order->id }}">
-                            {{-- Decorative Pattern --}}
-                            <div class="absolute inset-0 opacity-10">
-                                <div class="absolute top-0 right-0 w-32 h-32 bg-white rounded-full -mr-16 -mt-16"></div>
-                                <div class="absolute bottom-0 left-0 w-24 h-24 bg-white rounded-full -ml-12 -mb-12"></div>
-                            </div>
-                            
-                            {{-- Card Header --}}
-                            <div class="relative px-6 pt-6 pb-4 border-b border-white/20">
-                                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center gap-3">
-                                        <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/30">
-                            <i class="ri-restaurant-line text-white text-xl"></i>
-                        </div>
-                                        <div>
-                                            <p class="text-white font-bold text-sm">Order #{{ $order->id }}</p>
-                                            <p class="text-white/80 text-xs">{{ \Carbon\Carbon::parse($order->created_at)->utc()->setTimezone('Asia/Jakarta')->format('d M Y, H:i') }} WIB</p>
-                    </div>
-                </div>
-                                    <div class="flex items-center gap-2">
-                                        @php
-                                            $minutesElapsed = \Carbon\Carbon::parse($order->created_at)->utc()->setTimezone('Asia/Jakarta')->diffInMinutes(\Carbon\Carbon::now('Asia/Jakarta'));
-                                            $isWarning = $minutesElapsed >= 15;
-                                        @endphp
-                                        @if($order->status === 'pending')
-                                            <div class="px-3 py-1.5 bg-yellow-500/30 backdrop-blur-sm rounded-lg border border-yellow-500/50">
-                                                <span class="text-yellow-200 text-xs font-bold uppercase tracking-wider">⏳ Belum Selesai</span>
-                                            </div>
-                                        @elseif($order->status === 'processing')
-                                            <div class="px-3 py-1.5 bg-blue-500/30 backdrop-blur-sm rounded-lg border border-blue-500/50">
-                                                <span class="text-blue-200 text-xs font-bold uppercase tracking-wider">🟡 Sedang Diproses</span>
-                                            </div>
-                                        @endif
-                                        <div class="px-3 py-1.5 bg-white/20 backdrop-blur-sm rounded-lg border border-white/30">
-                                            <span class="text-white text-xs font-bold uppercase tracking-wider">{{ $order->room }}</span>
-                                        </div>
-                </div>
-            </div>
-
-                                {{-- Time Indicator --}}
-                                @php
-                                    $minutesElapsed = \Carbon\Carbon::parse($order->created_at)->utc()->setTimezone('Asia/Jakarta')->diffInMinutes(\Carbon\Carbon::now('Asia/Jakarta'));
-                                    $secondsElapsed = \Carbon\Carbon::parse($order->created_at)->utc()->setTimezone('Asia/Jakarta')->diffInSeconds(\Carbon\Carbon::now('Asia/Jakarta'));
-                                    $isWarning = $minutesElapsed >= 15;
-                                    $stopwatchMinutes = floor($secondsElapsed / 60);
-                                    $stopwatchSeconds = $secondsElapsed % 60;
-                                @endphp
-                                <div class="flex items-center gap-2 mb-3">
-                                    <div class="flex-1 h-1.5 rounded-full {{ $isWarning ? 'bg-red-500/50' : 'bg-white/20' }}">
-                                        <div class="h-full rounded-full {{ $isWarning ? 'bg-red-500' : 'bg-white/40' }}" style="width: {{ min(100, ($minutesElapsed / 30) * 100) }}%"></div>
-            </div>
-                                    <span class="text-white/70 text-xs font-medium {{ $isWarning ? 'text-red-300 font-bold' : '' }} stopwatch-timer" data-order-id="{{ $order->id }}" data-start-time="{{ \Carbon\Carbon::parse($order->created_at)->utc()->setTimezone('Asia/Jakarta')->timestamp }}">
-                                        ⏱ <span class="stopwatch-display">{{ str_pad($stopwatchMinutes, 2, '0', STR_PAD_LEFT) }}:{{ str_pad($stopwatchSeconds, 2, '0', STR_PAD_LEFT) }}</span>
-                                    </span>
-                                </div>
-
-                                {{-- Menu Items Preview --}}
-                                <div class="flex flex-wrap gap-2">
-                                    @foreach($order->orderItems->take(4) as $item)
-                                        <div class="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-lg px-2 py-1 border border-white/30">
-                                    <img src="{{ $item->image ? asset($item->image) : asset('assets/img/default.png') }}" 
-                                         alt="{{ $item->menu_name }}" 
-                                                 class="w-6 h-6 rounded-full object-cover border border-white/50"
-                                         onerror="this.src='{{ asset('assets/img/default.png') }}'">
-                                            <span class="text-white text-xs font-semibold">{{ $item->quantity }}x</span>
-                                        </div>
-                                @endforeach
-                                    @if($order->orderItems->count() > 4)
-                                        <div class="flex items-center bg-white/20 backdrop-blur-sm rounded-lg px-2 py-1 border border-white/30">
-                                            <span class="text-white text-xs font-semibold">+{{ $order->orderItems->count() - 4 }}</span>
-                            </div>
-                                    @endif
-                            </div>
-            </div>
-
-                            {{-- Card Body --}}
-                            <div class="relative px-6 py-5 bg-white/5 backdrop-blur-sm">
-                                <div class="space-y-3">
-                                    <div class="flex items-start gap-3">
-                                        <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center shrink-0 border border-white/30">
-                                            <i class="ri-user-line text-white text-sm"></i>
-                        </div>
-                                        <div class="flex-1">
-                                            <p class="text-white/70 text-xs font-medium mb-0.5">Nama Pemesan</p>
-                                            <p class="text-white font-bold text-sm">{{ $order->customer_name }}</p>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="flex items-start gap-3">
-                                        <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center shrink-0 border border-white/30">
-                                            <i class="ri-table-line text-white text-sm"></i>
-                        </div>
-                                        <div class="flex-1">
-                                            <p class="text-white/70 text-xs font-medium mb-0.5">Meja</p>
-                                            <p class="text-white font-bold text-sm">Meja {{ $order->table_number }}</p>
-                    </div>
-                </div>
-
-                                    <div class="flex items-start gap-3">
-                                        <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center shrink-0 border border-white/30">
-                                            <i class="ri-shopping-bag-line text-white text-sm"></i>
-                                        </div>
-                                        <div class="flex-1">
-                                            <p class="text-white/70 text-xs font-medium mb-1">Pesanan</p>
-                                            <div class="flex flex-wrap gap-1.5">
-                                @foreach($order->orderItems as $item)
-                                                    <span class="inline-block bg-white/20 backdrop-blur-sm px-2 py-1 rounded-md border border-white/30 text-white text-xs font-medium">
-                                                        {{ $item->quantity }}x {{ $item->menu_name }}
-                                                    </span>
-                                @endforeach
-                            </div>
-                            </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            {{-- Card Footer --}}
-                            <div class="relative px-6 py-4 bg-white/10 backdrop-blur-sm border-t border-white/20 flex items-center justify-between">
-                                <div>
-                                    <p class="text-white/70 text-xs font-medium mb-0.5">Total Harga</p>
-                                    <p class="text-white font-bold text-lg">Rp{{ number_format($order->total_price, 0, ',', '.') }}</p>
-                                </div>
-                                @if($order->status === 'pending')
-                                    <button class="start-cooking-btn bg-blue-500 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 flex items-center gap-2 group/btn" data-order-id="{{ $order->id }}">
-                                        <i class="ri-play-circle-line text-base group-hover/btn:scale-110 transition-transform"></i>
-                                        <span>Mulai Masak</span>
-                                    </button>
-                                @elseif($order->status === 'processing')
-                                    <button class="complete-order-btn bg-white text-[var(--primary-color)] px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 flex items-center gap-2 group/btn" data-order-id="{{ $order->id }}">
-                                        <i class="ri-checkbox-circle-line text-base group-hover/btn:rotate-12 transition-transform"></i>
-                                        <span>Selesai</span>
-                                    </button>
-                                @endif
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="text-center py-16 px-8 text-gray-600 dark:text-gray-500 text-lg">
-                    <p>Belum ada pesanan</p>
-                </div>
-            @endif
+            <!-- Client will render orders into this grid. Server will not pre-render order cards to avoid duplication -->
+            <div class="grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-6 max-md:grid-cols-1 max-md:gap-4"></div>
         </div>
     </div>
 
@@ -954,15 +811,22 @@
         // Initialize order IDs on page load
         (function() {
             const initialOrders = @json($orders);
-            initialOrders.forEach(order => {
-                currentOrderIds.add(Number(order.id));
-            });
-            // Remove duplicate DOM nodes that might exist from server render + client render
-            dedupeDOMOrders();
-            
-            // Initial fetch dan setup SSE
+
+            // Render initial orders client-side to ensure single source-of-truth
+            if (initialOrders && initialOrders.length > 0) {
+                const ids = new Set(initialOrders.map(o => Number(o.id)));
+                currentOrderIds = ids;
+                updateOrdersDisplay(initialOrders);
+            } else {
+                // Ensure 'no orders' placeholder is shown
+                updateOrdersDisplay([]);
+            }
+
+            // Mark first load complete so SSE notifications will be shown for new incoming orders
+            isFirstLoad = false;
+
+            // Still fetch server state to reconcile any differences, then connect SSE
             fetchInitialOrders().then(() => {
-                // Connect to SSE after initial load
                 connectSSE();
             });
         })();
