@@ -172,23 +172,4 @@
 
     </div>
 </section>
-
-<style>
-    /* Custom Social Button Style */
-    .social-btn {
-        @apply w-8 h-8 border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-gold-400 hover:border-gold-400 hover:text-black transition-all duration-300;
-    }
-
-    /* Fallback CSS jika AOS gagal dimuat di production agar data tidak transparan */
-    [data-aos] {
-        opacity: 1 !important;
-        transform: translate(0) scale(1) !important;
-    }
-    .aos-init[data-aos] {
-        opacity: 0;
-    }
-    .aos-animate[data-aos] {
-        opacity: 1;
-    }
-</style>
-@endif
+@endify
