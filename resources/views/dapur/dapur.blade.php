@@ -665,6 +665,7 @@
         // Function untuk handle new orders dari SSE
         function handleNewOrders(newOrders) {
             if (!newOrders || newOrders.length === 0) return;
+            try { console.debug('handleNewOrders received IDs:', newOrders.map(o => Number(o.id))); } catch(e) {}
             const ordersSection = document.getElementById('ordersSection');
             if (!ordersSection) return;
 
@@ -689,6 +690,7 @@
                 // If DOM anywhere already contains this order, track and skip insertion
                 const existingDomGlobal = document.querySelector(`[data-order-id="${order.id}"]`);
                 if (existingDomGlobal) {
+                    try { console.debug(`handleNewOrders: skipping id ${order.id} because DOM already present`); } catch(e) {}
                     currentOrderIds.add(order.id);
                     return;
                 }
@@ -699,6 +701,7 @@
                 // During the first load we avoid inserting cards coming from SSE/push
                 // to prevent duplicates when server-rendered HTML already contains them.
                 if (isFirstLoad) {
+                    try { console.debug(`handleNewOrders: first load, tracking id ${order.id} but not inserting`); } catch(e) {}
                     currentOrderIds.add(order.id);
                     return;
                 }
@@ -707,6 +710,7 @@
                 currentOrderIds.add(order.id);
 
                 // Insert new order at the beginning
+                try { console.info(`handleNewOrders: inserting id ${order.id}`); } catch(e) {}
                 const newOrderCard = renderOrderCard(order);
                 ordersGrid.insertAdjacentHTML('afterbegin', newOrderCard);
 
@@ -729,6 +733,8 @@
                     // Normalize IDs to numbers to avoid string/number mismatch
                     const orderIds = new Set(data.orders.map(o => Number(o.id)));
 
+                    try { console.debug('fetchInitialOrders fetched IDs:', Array.from(orderIds)); } catch(e) {}
+
                     // If the server already rendered the same set of orders (server-side blade),
                     // skip re-rendering to avoid duplicate cards on refresh. We compare the
                     // currently tracked IDs (populated from server-rendered `initialOrders`)
@@ -741,9 +747,11 @@
 
                     if (areSetsEqual(currentOrderIds, orderIds)) {
                         // No change in orders; just ensure internal tracking and mark first load done
+                        try { console.debug('fetchInitialOrders: sets equal, skipping re-render'); } catch(e) {}
                         currentOrderIds = orderIds;
                         isFirstLoad = false;
                     } else {
+                        try { console.debug('fetchInitialOrders: sets differ, re-rendering orders'); } catch(e) {}
                         currentOrderIds = orderIds;
                         updateOrdersDisplay(data.orders);
                         isFirstLoad = false;
@@ -783,24 +791,30 @@
                 
                 eventSource.onmessage = function(event) {
                     try {
+                        // Log raw SSE payload for debugging
+                        try { console.debug('SSE message raw:', event.data); } catch(e) {}
                         const data = JSON.parse(event.data);
-                        
+
                         if (data.type === 'new_orders' && data.orders) {
                             handleNewOrders(data.orders);
+                        } else {
+                            try { console.debug('SSE message ignored, type:', data.type); } catch(e) {}
                         }
                     } catch (error) {
-                        console.error('Error parsing SSE data:', error);
+                        console.error('Error parsing SSE data:', error, event.data);
                     }
                 };
                 
                 eventSource.onerror = function(error) {
                     console.error('SSE connection error:', error);
+                    try { console.debug('EventSource readyState:', eventSource && eventSource.readyState); } catch(e) {}
                     eventSource.close();
                     
                     // Reconnect dengan exponential backoff
                     reconnectAttempts++;
                     if (reconnectAttempts < maxReconnectAttempts) {
                         const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000); // Max 30 seconds
+                        try { console.debug(`Reconnecting SSE in ${delay}ms (attempt ${reconnectAttempts})`); } catch(e) {}
                         reconnectTimeout = setTimeout(() => {
                             console.log('Reconnecting to SSE...');
                             connectSSE();
@@ -813,7 +827,7 @@
                 };
                 
                 eventSource.onopen = function() {
-                    console.log('SSE connection established');
+                    console.info('SSE connection established');
                     reconnectAttempts = 0; // Reset reconnect attempts on successful connection
                 };
                 
