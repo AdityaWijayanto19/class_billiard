@@ -1,160 +1,122 @@
 {{-- Team Section Component --}}
 @php
-    // Debug: coba tangkap error dan log jika gagal
     try {
-        $teamMembers = \App\Models\TimKami::where('is_active', true)->orderBy('order', 'asc')->get();
+        // Ambil data tanpa cache untuk memastikan sinkronisasi admin
+        $teamMembers = \App\Models\TimKami::where('is_active', 1)->orderBy('order', 'asc')->get();
         $proTeams = \App\Models\ProTeam::where('is_active', 1)->orderBy('order', 'asc')->get();
-        $teamMembersError = null;
     } catch (\Exception $e) {
         $teamMembers = collect();
         $proTeams = collect();
-        $teamMembersError = $e->getMessage();
-        \Log::error('[TeamSection] Gagal ambil TimKami: ' . $e->getMessage());
     }
 @endphp
 
-<section id="team" class="py-32 bg-[#050505] relative overflow-hidden">
+{{-- Debug Ringkas (Hapus jika sudah muncul) --}}
+<div class="hidden">Data Terdeteksi: {{ $teamMembers->count() }} elite, {{ $proTeams->count() }} pro</div>
+
+<section id="team" class="py-24 bg-[#050505] relative overflow-hidden">
     
-    <!-- LUXURY FLOW BACKGROUND -->
-    <div class="absolute inset-0 z-0 pointer-events-none">
-        <svg class="absolute top-0 left-0 w-full h-full opacity-20" viewBox="0 0 1440 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M-100 200C200 400 600 -100 900 300C1200 700 1300 900 1600 800" stroke="url(#gold_line_grad)" stroke-width="1.5" stroke-dasharray="15 10" />
-            <path d="M-50 250C250 450 650 -50 950 350C1250 750 1350 950 1650 850" stroke="url(#gold_line_grad)" stroke-width="0.5" opacity="0.4" />
-            <path d="M0 1000C300 950 600 1100 900 950C1200 800 1440 850 1440 850V1200H0V1000Z" fill="url(#gold_bottom_glow)" opacity="0.15" />
-            <defs>
-                <linearGradient id="gold_line_grad" x1="0" y1="0" x2="1440" y2="1000" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#fbbf24" stop-opacity="0" />
-                    <stop offset="0.5" stop-color="#fbbf24" />
-                    <stop offset="1" stop-color="#fbbf24" stop-opacity="0" />
-                </linearGradient>
-                <radialGradient id="gold_bottom_glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(720 1200) rotate(-90) scale(400 1000)">
-                    <stop stop-color="#fbbf24" />
-                    <stop offset="1" stop-color="#050505" stop-opacity="0" />
-                </radialGradient>
-            </defs>
+    <!-- BACKGROUND (Disederhanakan agar tidak menutupi konten) -->
+    <div class="absolute inset-0 z-0 pointer-events-none opacity-30">
+        <svg class="w-full h-full" viewBox="0 0 1440 1200" fill="none">
+            <path d="M-100 200C200 400 600 -100 900 300C1200 700 1300 900 1600 800" stroke="#fbbf24" stroke-width="1" stroke-dasharray="10 5" />
         </svg>
     </div>
 
     <div class="container mx-auto px-6 relative z-10">
         
-        {{-- DEBUG INFO --}}
-        <div class="mb-4 p-2 bg-black/60 text-xs text-yellow-400 rounded">
-            <b>Debug TeamSection:</b>
-            teamMembers count: {{ $teamMembers->count() }} |
-            proTeams count: {{ $proTeams->count() }}
-            @if(isset($teamMembersError) && $teamMembersError)
-                <br><span class="text-red-400">Error: {{ $teamMembersError }}</span>
-            @endif
-        </div>
-
         {{-- SECTION 1: THE MASTERS --}}
-        @if($teamMembers->count() > 0)
-        <div class="text-center mb-24" data-aos="fade-up">
+        <div class="text-center mb-20">
             <span class="text-gold-400 font-bold tracking-[0.5em] text-xs uppercase mb-4 block">The Masters</span>
-            <h2 class="text-5xl md:text-7xl text-white font-serif tracking-tight uppercase italic">
+            <h2 class="text-5xl md:text-7xl text-white font-serif uppercase italic">
                 OUR <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 via-white to-gold-400">ELITE TEAM</span>
             </h2>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-40">
+        {{-- ELITE GRID - Dibuat "Bandel" (Pasti Muncul) --}}
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-32">
             @foreach($teamMembers as $index => $member)
-                <div class="group relative h-[650px] overflow-hidden rounded-sm cursor-pointer {{ $index == 1 ? 'md:-mt-12' : '' }}"
-                    data-aos="fade-up" data-aos-delay="{{ ($index + 1) * 200 }}">
-                    <div class="absolute inset-0 flex items-center justify-center z-0 opacity-[0.07] group-hover:opacity-15 transition-opacity duration-700">
-                        <span class="text-[140px] font-black text-white transform -rotate-90 whitespace-nowrap select-none uppercase font-serif tracking-tighter">
-                            {{ strtoupper(explode(' ', $member->name)[0]) }}
-                        </span>
+            <div class="group relative h-[550px] w-full bg-neutral-900 rounded-sm overflow-hidden border border-white/10 {{ $index == 1 ? 'md:-mt-8' : '' }}">
+                
+                <!-- Background Name (Bisa dihapus jika mengganggu) -->
+                <div class="absolute inset-0 flex items-center justify-center opacity-10 z-0">
+                    <span class="text-8xl font-black text-white transform -rotate-90 uppercase select-none">
+                        {{ substr($member->name, 0, 1) }}
+                    </span>
+                </div>
+
+                <!-- IMAGE HANDLING (Custom Path) -->
+                @php 
+                    $photo = $member->photo ?? $member->image;
+                    // Jika kamu tidak pakai storage:link, sesuaikan path di bawah ini
+                    // Misal: asset('uploads/' . $photo) atau lainnya
+                    $imageSource = $photo ? asset('storage/' . $photo) : null; 
+                @endphp
+
+                @if($imageSource)
+                    <img src="{{ $imageSource }}" alt="{{ $member->name }}"
+                        class="absolute inset-0 w-full h-full object-cover z-10 grayscale group-hover:grayscale-0 transition-all duration-700">
+                @else
+                    <div class="absolute inset-0 flex items-center justify-center z-10 bg-neutral-800">
+                        <i class="fas fa-user-circle text-6xl text-white/10"></i>
                     </div>
+                @endif
 
-                    @php $photo = $member->photo ?? $member->image; @endphp
-                    @if($photo)
-                    <img src="{{ asset('storage/' . $photo) }}" alt="{{ $member->name }}"
-                        class="absolute inset-0 w-full h-full object-cover filter grayscale contrast-[1.1] transition-all duration-1000 group-hover:grayscale-0 group-hover:scale-110 z-10">
-                    @else
-                    <div class="absolute inset-0 w-full h-full bg-neutral-900 flex items-center justify-center z-10">
-                        <i class="fas fa-user text-neutral-800 text-6xl"></i>
-                    </div>
-                    @endif
+                <!-- Content Always Visible -->
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-20"></div>
 
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent z-20 transition-opacity duration-700 group-hover:opacity-90"></div>
+                <div class="absolute bottom-0 left-0 w-full p-8 z-30">
+                    <div class="border-l-4 border-gold-400 pl-4">
+                        <h3 class="text-2xl md:text-3xl text-white font-serif italic mb-1">{{ $member->name }}</h3>
+                        <p class="text-gold-400 text-[10px] font-black uppercase tracking-widest mb-3">{{ $member->position }}</p>
+                        
+                        @if($member->bio)
+                        <p class="text-gray-400 text-xs font-light line-clamp-2 mb-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                            {{ $member->bio }}
+                        </p>
+                        @endif
 
-                    <div class="absolute bottom-0 left-0 w-full p-10 z-30 transform translate-y-6 group-hover:translate-y-0 transition-transform duration-700">
-                        <div class="border-l-[3px] border-gold-400 pl-6">
-                            <h3 class="{{ $index == 1 ? 'text-4xl' : 'text-3xl' }} text-white font-serif italic mb-2 tracking-wide leading-tight">{{ $member->name }}</h3>
-                            <p class="text-gold-400 text-[10px] font-black uppercase tracking-[0.3em] mb-5">{{ $member->position }}</p>
-                            
-                            @if($member->bio)
-                            <p class="text-gray-300 text-sm font-light opacity-0 group-hover:opacity-100 transition-all duration-500 delay-100 line-clamp-3 mb-6 leading-relaxed">
-                                {{ $member->bio }}
-                            </p>
+                        <div class="flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                            @if($member->instagram_url)
+                                <a href="{{ $member->instagram_url }}" class="text-white hover:text-gold-400"><i class="fab fa-instagram"></i></a>
                             @endif
-                            
-                            <div class="flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-700 delay-200">
-                                @if($member->facebook_url)<a href="{{ $member->facebook_url }}" target="_blank" class="social-btn"><i class="fab fa-facebook-f text-xs"></i></a>@endif
-                                @if($member->instagram_url)<a href="{{ $member->instagram_url }}" target="_blank" class="social-btn"><i class="fab fa-instagram text-xs"></i></a>@endif
-                                @if($member->linkedin_url)<a href="{{ $member->linkedin_url }}" target="_blank" class="social-btn"><i class="fab fa-linkedin-in text-xs"></i></a>@endif
-                            </div>
+                            @if($member->facebook_url)
+                                <a href="{{ $member->facebook_url }}" class="text-white hover:text-gold-400"><i class="fab fa-facebook-f"></i></a>
+                            @endif
                         </div>
                     </div>
                 </div>
+            </div>
             @endforeach
-        </div>
-        @endif
-
-        {{-- CONNECTOR --}}
-        <div class="relative flex flex-col items-center mb-32" data-aos="zoom-in">
-            <div class="w-px h-32 bg-gradient-to-b from-gold-400 via-gold-400/20 to-transparent"></div>
-            <div class="absolute -bottom-4 w-1.5 h-1.5 rounded-full bg-gold-400 shadow-[0_0_15px_#fbbf24]"></div>
         </div>
 
         {{-- SECTION 2: PRO TEAM --}}
-        @if($proTeams->count() > 0)
-        <div class="relative">
-            <div class="text-center mb-20" data-aos="fade-up">
-                <span class="text-gold-400 font-bold tracking-[0.5em] text-xs uppercase mb-4 block">Rising Stars</span>
-                <h3 class="text-4xl md:text-6xl text-white font-serif tracking-wide uppercase italic">PRO TEAM</h3>
-            </div>
+        <div class="text-center mb-16">
+            <span class="text-gold-400 font-bold tracking-[0.5em] text-xs uppercase mb-4 block">Rising Stars</span>
+            <h3 class="text-4xl md:text-6xl text-white font-serif uppercase italic">PRO <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 to-white">TEAM</span></h3>
+        </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                @foreach($proTeams as $team)
-                <div class="bg-white/[0.03] backdrop-blur-md p-10 rounded-sm border border-white/5 hover:border-gold-400/30 transition-all duration-700 group hover:-translate-y-3"
-                    data-aos="fade-up" data-aos-delay="{{ $loop->index * 150 }}">
-                    
-                    <div class="flex items-start justify-between mb-8">
-                        <h4 class="text-2xl text-white font-serif font-bold group-hover:text-gold-400 transition-colors leading-tight">
-                            {!! nl2br(e($team->name)) !!}
-                        </h4>
-                        <div class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-neutral-600 group-hover:border-gold-400 group-hover:text-gold-400 transition-all duration-500">
-                            <i class="fas fa-user-tie text-base"></i>
-                        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            @foreach($proTeams as $team)
+            <div class="bg-white/[0.03] p-8 border border-white/5 hover:border-gold-400/30 transition-all group">
+                <div class="flex justify-between items-start mb-6">
+                    <h4 class="text-xl text-white font-serif font-bold group-hover:text-gold-400 transition-colors">{{ $team->name }}</h4>
+                    <i class="fas fa-user-tie text-white/10 group-hover:text-gold-400"></i>
+                </div>
+                <div class="space-y-3 text-[11px] uppercase tracking-widest text-neutral-500">
+                    <div class="flex justify-between border-b border-white/5 pb-2">
+                        <span>Age</span> <span class="text-white">{{ $team->age }}</span>
                     </div>
-
-                    <div class="space-y-5">
-                        <div class="flex items-center justify-between border-b border-white/5 pb-3">
-                            <span class="text-[9px] text-neutral-500 uppercase tracking-widest">Age</span>
-                            <span class="text-white text-sm font-mono tracking-tighter">{{ $team->age }} Yrs</span>
-                        </div>
-                        <div class="flex items-center justify-between border-b border-white/5 pb-3">
-                            <span class="text-[9px] text-neutral-500 uppercase tracking-widest">Origin</span>
-                            <span class="text-white text-sm">{{ $team->origin }}</span>
-                        </div>
-                        <div class="pt-2">
-                            <span class="text-[9px] text-neutral-500 uppercase tracking-widest block mb-1">Address</span>
-                            <p class="text-neutral-400 text-xs font-light leading-relaxed line-clamp-2">
-                                {{ $team->address }}
-                            </p>
-                        </div>
+                    <div class="flex justify-between border-b border-white/5 pb-2">
+                        <span>Origin</span> <span class="text-white">{{ $team->origin }}</span>
+                    </div>
+                    <div class="pt-2">
+                        <span class="block mb-1">Address</span>
+                        <p class="text-neutral-400 normal-case tracking-normal">{{ $team->address }}</p>
                     </div>
                 </div>
-                @endforeach
             </div>
+            @endforeach
         </div>
-        @endif
+
     </div>
 </section>
-
-<style>
-    .social-btn {
-        @apply w-9 h-9 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-gold-400 hover:border-gold-400 hover:text-black transition-all duration-500;
-    }
-</style>
