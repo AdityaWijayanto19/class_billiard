@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\meja_billiard;
+use App\Policies\TablePolicy;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\ErrorCorrectionLevel;
@@ -183,9 +184,9 @@ class TableController extends Controller
      */
     public function destroy($id)
     {
-        $this->authorize('delete', meja_billiard::class);
-
         $table = meja_billiard::findOrFail($id);
+
+        $this->authorize('delete', $table);
 
         // Delete QR Code file if exists
         if ($table->qrcode && Storage::disk('public')->exists($table->qrcode)) {
