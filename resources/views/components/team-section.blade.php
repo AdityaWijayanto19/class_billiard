@@ -93,9 +93,9 @@
                         
                         <!-- Social Media Icons (Muncul Saat Hover) -->
                         @php
-                            $fb = trim($member->facebook_url ?? '');
-                            $ig = trim($member->instagram_url ?? '');
-                            $li = trim($member->linkedin_url ?? '');
+                            $fb = trim($member->facebook_url ?? '#');
+                            $ig = trim($member->instagram_url ?? '#');
+                            $li = trim($member->linkedin_url ?? '#');
                         @endphp
                         @if($fb || $ig || $li)
                         <div class="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-200">
