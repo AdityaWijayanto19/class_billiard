@@ -1,5 +1,9 @@
-// Tab switching functionality
-document.addEventListener('DOMContentLoaded', () => {
+// If inline dapur script exists, skip this component to prevent duplicate execution in browser
+if (window && window.__DapurInlineInitialized) {
+    try { console.debug('resources/components/dapur.js: inline dapur present, skipping component'); } catch (e) {}
+} else {
+    // Tab switching functionality
+    document.addEventListener('DOMContentLoaded', () => {
     const tabButtons = document.querySelectorAll('.tab-btn');
     const ordersSection = document.getElementById('ordersSection');
     const reportsSection = document.getElementById('reportsSection');
@@ -287,4 +291,5 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+}
 
