@@ -77,6 +77,16 @@ class DapurController extends Controller
 
         $orders = $query->get();
 
+        // Log active orders IDs for debugging duplicate-send issues
+        try {
+            Log::info('DapurController::activeOrders - returning active order ids', [
+                'user_id' => $user->id ?? null,
+                'order_ids' => $orders->pluck('id')->toArray(),
+            ]);
+        } catch (\Throwable $e) {
+            // ignore logging errors
+        }
+
         return response()->json([
             'orders' => $orders->map(function ($order) {
                 return [
@@ -184,6 +194,16 @@ class DapurController extends Controller
                     });
 
                     $lastOrderId = $orders->max('id');
+
+                    // Log outgoing SSE IDs for debugging
+                    try {
+                        Log::info('SSE sending new_orders', [
+                            'user_id' => $user->id ?? null,
+                            'order_ids' => $orders->pluck('id')->toArray(),
+                        ]);
+                    } catch (\Throwable $e) {
+                        // ignore logging errors
+                    }
 
                     // send SSE id so client can track last event
                     echo "id: {$lastOrderId}\n";
