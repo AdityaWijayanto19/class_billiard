@@ -139,10 +139,10 @@ class DapurController extends Controller
             $lastOrderId = (int) $initialQuery->max('id');
             $isLocal = app()->environment('local');
             // Polling interval between checks (seconds)
-            $checkInterval = $isLocal ? 2.0 : 1.5;
+            $checkInterval = $isLocal ? 1.0 : 0.8; // Faster polling for better real-time feel
             $startedAt = microtime(true);
             // Keep SSE connections open for a long time in production to avoid frequent reconnects
-            $maxConnectionSeconds = $isLocal ? 300 : 86400; // 5 minutes local, 24 hours prod
+            $maxConnectionSeconds = $isLocal ? 300 : 3600; // 5 minutes local, 1 hour prod (prevent extremely long-lived PHP worker)
 
             // Track IDs we've already sent to this client connection to avoid duplicates
             $sentOrderIds = [];
@@ -164,7 +164,10 @@ class DapurController extends Controller
                 $query = orders::select('id', 'customer_name', 'table_number', 'room', 'status', 'total_price', 'created_at', 'updated_at', 'shift_id')
                     ->with('orderItems:id,order_id,menu_name,price,quantity,image')
                     ->whereIn('status', ['pending', 'processing'])
-                    ->where('id', '>', $lastOrderId)
+                    ->where(function($q) use ($lastOrderId) {
+                        $q->where('id', '>', $lastOrderId)
+                          ->orWhere('updated_at', '>', Carbon::now()->subSeconds(10));
+                    })
                     ->orderBy('created_at', 'asc');
 
                 // Apply shift filter
@@ -240,8 +243,8 @@ class DapurController extends Controller
                     }
                     flush();
                 } else {
-                    // Send heartbeat
-                    echo ": heartbeat\n\n";
+                    // Send heartbeat padding to keep connection alive (esp. through proxies)
+                    echo ": heartbeat " . time() . "\n\n";
                     if (ob_get_level() > 0) {
                         ob_flush();
                     }

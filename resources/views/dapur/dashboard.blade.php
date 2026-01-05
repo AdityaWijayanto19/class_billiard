@@ -377,6 +377,21 @@
         }
     }
     
+    // Polling fallback
+    let pollingInterval = null;
+    function startPollingFallback() {
+        if (pollingInterval) return;
+        console.log('Starting polling fallback...');
+        pollingInterval = setInterval(fetchActiveOrders, 10000); // Poll every 10 seconds
+    }
+
+    function stopPollingFallback() {
+        if (pollingInterval) {
+            clearInterval(pollingInterval);
+            pollingInterval = null;
+        }
+    }
+
     // Connect to SSE
     function connectSSE() {
         if (eventSource) {
@@ -387,16 +402,21 @@
         
         eventSource.onmessage = function(event) {
             try {
+                // Connection is healthy, stop polling if it was running
+                stopPollingFallback();
+                
                 const data = JSON.parse(event.data);
                 lastSSEEventId = event.lastEventId || null;
                 
                 if (data.type === 'new_orders' && data.orders) {
-                    if (data.orders.length > 0) {
+                    // Check if there are truly new orders not yet rendered
+                    const hasNew = data.orders.some(o => !renderedOrderIds.has(o.id));
+                    if (hasNew) {
                         playNotificationSound();
                     }
                     updateOrdersDisplay(data.orders);
-                    sseReconnectAttempts = 0; // Reset pada koneksi sukses
-                    sseReconnectDelay = 3000; // Reset delay
+                    sseReconnectAttempts = 0; // Reset on success
+                    sseReconnectDelay = 3000;
                 }
             } catch (error) {
                 console.error('Error parsing SSE data:', error);
@@ -407,13 +427,21 @@
             console.error('SSE connection error:', error);
             eventSource.close();
             
-            // Exponential backoff: 3s, 6s, 12s, 30s (max)
+            // Start polling if we're having trouble with SSE
+            startPollingFallback();
+            
+            // Exponential backoff
             sseReconnectAttempts++;
             const delay = Math.min(3000 * Math.pow(2, Math.min(sseReconnectAttempts - 1, 3)), 30000);
             sseReconnectDelay = delay;
             
             console.log(`Reconnecting SSE in ${delay}ms (attempt ${sseReconnectAttempts})`);
             setTimeout(connectSSE, delay);
+        };
+
+        eventSource.onopen = function() {
+            console.log('SSE connection opened');
+            stopPollingFallback();
         };
     }
 
@@ -459,6 +487,13 @@
             notificationAudio = null;
         }
     }
+
+    // Listen for storage changes to sync audio settings across tabs
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'kitchenNotificationAudio' || e.key === 'kitchenNotificationAudioType') {
+            loadNotificationAudioFromSettings();
+        }
+    });
 
     function setupSoundUnlock() {
         const unlock = async () => {

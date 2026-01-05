@@ -328,6 +328,13 @@
         // Load active sound on page load
         loadActiveNotificationSound();
 
+        // Listen for storage changes to sync audio settings across tabs
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'kitchenNotificationAudio' || e.key === 'kitchenNotificationAudioType') {
+                loadActiveNotificationSound();
+            }
+        });
+
         // Sound unlock state (browsers block autoplay) and pending play flag
         let isSoundUnlocked = false;
         let pendingNotificationPlay = false;
@@ -697,15 +704,7 @@
 
                 // Play notification sound for incoming order (unless this is the very first load)
                 if (!isFirstLoad) {
-                    const source = notificationSound ? notificationSound.querySelector('#notificationSoundSource') : null;
-                    if (notificationSound && source && source.src && source.src !== '' && source.src !== window.location.href) {
-                        if (isSoundUnlocked) {
-                            notificationSound.currentTime = 0;
-                            notificationSound.play().catch(() => {});
-                        } else {
-                            pendingNotificationPlay = true;
-                        }
-                    }
+                    playNewOrderSound();
                 }
             });
             
@@ -726,6 +725,19 @@
                 }
             } catch (error) {
                 console.error('Error fetching initial orders:', error);
+            }
+        }
+
+        // Helper function for playing sound
+        function playNewOrderSound() {
+            const source = notificationSound ? notificationSound.querySelector('#notificationSoundSource') : null;
+            if (notificationSound && source && source.src && source.src !== '' && source.src !== window.location.href) {
+                if (isSoundUnlocked) {
+                    notificationSound.currentTime = 0;
+                    notificationSound.play().catch(() => {});
+                } else {
+                    pendingNotificationPlay = true;
+                }
             }
         }
 
@@ -757,6 +769,7 @@
                 
                 eventSource.onmessage = function(event) {
                     try {
+                        stopPollingFallback();
                         const data = JSON.parse(event.data);
                         
                         if (data.type === 'new_orders' && data.orders) {
@@ -771,23 +784,21 @@
                     console.error('SSE connection error:', error);
                     eventSource.close();
                     
+                    // Fallback to polling
+                    startPollingFallback();
+                    
                     // Reconnect dengan exponential backoff
                     reconnectAttempts++;
-                    if (reconnectAttempts < maxReconnectAttempts) {
-                        const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000); // Max 30 seconds
-                        reconnectTimeout = setTimeout(() => {
-                            console.log('Reconnecting to SSE...');
-                            connectSSE();
-                        }, delay);
-                    } else {
-                        console.error('Max reconnect attempts reached. Falling back to polling.');
-                        // Fallback ke polling jika SSE gagal
-                        startPollingFallback();
-                    }
+                    const delay = Math.min(1000 * Math.pow(2, Math.min(reconnectAttempts - 1, 3)), 30000);
+                    reconnectTimeout = setTimeout(() => {
+                        console.log('Reconnecting to SSE...');
+                        connectSSE();
+                    }, delay);
                 };
                 
                 eventSource.onopen = function() {
                     console.log('SSE connection established');
+                    stopPollingFallback();
                     reconnectAttempts = 0; // Reset reconnect attempts on successful connection
                 };
                 
@@ -795,6 +806,13 @@
                 console.error('Error creating SSE connection:', error);
                 // Fallback ke polling jika SSE tidak didukung
                 startPollingFallback();
+            }
+        }
+
+        function stopPollingFallback() {
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+                pollingInterval = null;
             }
         }
 
