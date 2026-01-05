@@ -58,10 +58,8 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-40">
             @foreach($teamMembers as $index => $member)
-                @if($member->is_active) {{-- Filter di sini agar lebih aman --}}
                 <div class="group relative h-[650px] overflow-hidden rounded-sm cursor-pointer {{ $index == 1 ? 'md:-mt-12' : '' }}"
                     data-aos="fade-up" data-aos-delay="{{ ($index + 1) * 200 }}">
-                    
                     <div class="absolute inset-0 flex items-center justify-center z-0 opacity-[0.07] group-hover:opacity-15 transition-opacity duration-700">
                         <span class="text-[140px] font-black text-white transform -rotate-90 whitespace-nowrap select-none uppercase font-serif tracking-tighter">
                             {{ strtoupper(explode(' ', $member->name)[0]) }}
@@ -99,7 +97,6 @@
                         </div>
                     </div>
                 </div>
-                @endif
             @endforeach
         </div>
         @endif
