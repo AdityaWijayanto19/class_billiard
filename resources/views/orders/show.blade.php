@@ -1,464 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Pesanan - Billiard Class</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.min.css">
+    <title>Order Detail - Class Billiard</title>
+    <!-- Google Font Montserrat -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Montserrat', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        :root {
-            --gold: #FFD700;
-            --gold-light: #E6C200;
-            --gold-dark: #B39700;
-            --purple: #8B5CF6;
-            --purple-dark: #6366F1;
-            --bg-dark: #0F1117;
-            --bg-card: #1a1a2e;
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Remixicon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.min.css" rel="stylesheet">
+    <!-- Tailwind CSS 4.0 CDN -->
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+        @theme {
+            --color-bg-dark: #0a0a0a;
+            --color-bg-sidebar: #1a1a1a;
+            --color-primary: #FFD700;
+            --color-text-gray: #abbbc2;
+            --color-border-base: #393c49;
+            --font-montserrat: "Montserrat", sans-serif;
         }
 
         body {
-            background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1a2e 100%);
-            color: #fff;
+            background-color: var(--color-bg-dark);
+            color: white;
+            font-family: var(--font-montserrat);
         }
 
-        .order-detail-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-            min-height: 100vh;
-            background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1a2e 100%);
+        .premium-glow {
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.1);
         }
-
-        .order-header {
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%);
-            border: 1.5px solid rgba(255, 215, 0, 0.2);
-            border-radius: 1.5rem;
-            padding: 2.5rem;
-            margin-bottom: 2.5rem;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(255, 215, 0, 0.1);
-        }
-
-        .order-header h1 {
-            color: #fff;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            margin-bottom: 0.5rem;
-        }
-
-        .order-header p {
-            color: rgba(255, 215, 0, 0.7);
-            margin-bottom: 0.25rem;
-        }
-
-        .order-header strong {
-            color: var(--gold);
-        }
-
-        .order-status {
-            display: inline-block;
-            padding: 0.75rem 1.5rem;
-            border-radius: 1rem;
-            font-size: 0.875rem;
-            font-weight: 700;
-            margin-top: 1rem;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            backdrop-filter: blur(10px);
-        }
-
-        .status-processing {
-            background: rgba(59, 130, 246, 0.15);
-            color: #60a5fa;
-            border: 1.5px solid rgba(59, 130, 246, 0.4);
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
-        }
-
-        .status-completed {
-            background: rgba(34, 197, 94, 0.15);
-            color: #4ade80;
-            border: 1.5px solid rgba(34, 197, 94, 0.4);
-            box-shadow: 0 0 20px rgba(34, 197, 94, 0.2);
-        }
-
-        .order-items-section {
-            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9) 0%, rgba(30, 30, 50, 0.9) 100%);
-            border: 1.5px solid rgba(255, 215, 0, 0.15);
-            border-radius: 1.5rem;
-            padding: 2.5rem;
-            margin-bottom: 2.5rem;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-
-        .order-items-section h2 {
-            color: #fff;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, #fff 0%, var(--gold) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .order-item {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            padding: 1.5rem;
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
-            border-radius: 1.2rem;
-            margin-bottom: 1rem;
-            border: 1.5px solid rgba(255, 215, 0, 0.1);
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .order-item:hover {
-            border-color: rgba(255, 215, 0, 0.3);
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(255, 215, 0, 0.15);
-        }
-
-        .order-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .item-image {
-            width: 90px;
-            height: 90px;
-            object-fit: cover;
-            border-radius: 1rem;
-            border: 2px solid rgba(255, 215, 0, 0.2);
-            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.1);
-        }
-
-        .item-info {
-            flex: 1;
-        }
-
-        .item-name {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.3px;
-        }
-
-        .item-price {
-            color: var(--gold);
-            font-weight: 600;
-            font-size: 1.05rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .item-quantity {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.95rem;
-        }
-
-        .order-summary {
-            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9) 0%, rgba(30, 30, 50, 0.9) 100%);
-            border: 1.5px solid rgba(255, 215, 0, 0.15);
-            border-radius: 1.5rem;
-            padding: 2.5rem;
-            margin-bottom: 2.5rem;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 1.2rem;
-            padding-bottom: 1.2rem;
-            border-bottom: 1.5px solid rgba(255, 215, 0, 0.1);
-        }
-
-        .summary-row:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .summary-label {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 1rem;
-        }
-
-        .summary-value {
-            color: #fff;
-            font-weight: 600;
-            font-size: 1rem;
-        }
-
-        .summary-total {
-            font-size: 1.3rem;
-        }
-
-        .summary-total .summary-label {
-            color: #fff;
-            font-weight: 700;
-        }
-
-        .summary-total .summary-value {
-            color: var(--gold);
-            font-size: 1.5rem;
-            font-weight: 900;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2.5rem;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 1rem;
-            border-radius: 1rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            cursor: pointer;
-            border: none;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            font-size: 0.95rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
-            color: #000;
-            box-shadow: 0 8px 24px rgba(255, 215, 0, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(255, 215, 0, 0.4);
-        }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(99, 102, 241, 0.2) 100%);
-            color: #a78bfa;
-            border: 1.5px solid rgba(139, 92, 246, 0.4);
-        }
-
-        .btn-secondary:hover {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(99, 102, 241, 0.3) 100%);
-            border-color: rgba(139, 92, 246, 0.6);
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* Popup */
-        .order-completed-popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, rgba(34, 197, 94, 0.95) 0%, rgba(16, 185, 129, 0.95) 100%);
-            border: 2px solid rgba(34, 197, 94, 0.6);
-            border-radius: 1.8rem;
-            padding: 3.5rem;
-            z-index: 10000;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(34, 197, 94, 0.3);
-            text-align: center;
-            max-width: 500px;
-            width: 90%;
-            animation: popupSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            backdrop-filter: blur(10px);
-        }
-
-        @keyframes popupSlideIn {
-            from {
-                opacity: 0;
-                transform: translate(-50%, -60%) scale(0.8);
-            }
-            to {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
-        }
-
-        .order-completed-popup h2 {
-            color: #fff;
-            font-size: 1.9rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-            letter-spacing: -0.5px;
-        }
-
-        .order-completed-popup p {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1.05rem;
-            line-height: 1.6;
-            margin-bottom: 2rem;
-        }
-
-        .order-completed-popup button {
-            padding: 0.875rem 2.5rem;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(200, 200, 200, 0.9) 100%);
-            color: #10b981;
-            border: none;
-            border-radius: 1rem;
-            font-weight: 700;
-            font-size: 1rem;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .order-completed-popup button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        @media (max-width: 768px) {
-            .order-detail-container {
-                padding: 1rem;
-            }
-
-            .order-header,
-            .order-items-section,
-            .order-summary {
-                padding: 1.5rem;
-                border-radius: 1.2rem;
-                margin-bottom: 1.5rem;
-            }
-
-            .order-header h1 {
-                font-size: 1.5rem;
-            }
-
-            .order-item {
-                flex-direction: column;
-                text-align: center;
-                padding: 1.2rem;
-            }
-
-            .item-image {
-                width: 120px;
-                height: 120px;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-            }
-        }
+        
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #393c49; border-radius: 10px; }
     </style>
 </head>
-<body>
-    <div class="order-detail-container">
-        <!-- Order Header -->
-        <div class="order-header">
-            <h1>Order Details</h1>
-            <p>Order ID: <strong>#{{ $order->id }}</strong></p>
-            <p>Table: <strong>{{ $order->table_number ?? 'N/A' }}</strong></p>
-            <p>Room: <strong>{{ $order->room ?? 'N/A' }}</strong></p>
-            <span class="order-status {{ $order->status === 'completed' ? 'status-completed' : 'status-processing' }}">
-                {{ ucfirst($order->status) }}
-            </span>
-        </div>
 
-        <!-- Order Items -->
-        <div class="order-items-section">
-            <h2>Order Items</h2>
-            @forelse($order->orderItems as $item)
-                <div class="order-item">
-                    @if($item->menu && $item->menu->image_url)
-                        <img src="{{ $item->menu->image_url }}" alt="{{ $item->menu_name }}" class="item-image">
-                    @else
-                        <div class="item-image" style="display: flex; align-items: center; justify-content: center; background: rgba(139, 92, 246, 0.1);"><i class="ri-image-line" style="font-size: 2.5rem; color: #8B5CF6;"></i></div>
-                    @endif
-                    <div class="item-info">
-                        <div class="item-name">{{ $item->menu_name }}</div>
-                        <div class="item-price">Rp{{ number_format($item->price, 0, ',', '.') }}</div>
-                        <div class="item-quantity">Quantity: {{ $item->quantity }}</div>
-                    </div>
-                    <div style="text-align: right;">
-                        <div style="color: var(--gold); font-weight: 700; font-size: 1.15rem;">Rp{{ number_format($item->price * $item->quantity, 0, ',', '.') }}</div>
+<body class="antialiased min-h-screen pb-12">
+
+    <!-- NAVBAR -->
+    <x-navbar />
+
+    <div class="max-w-4xl mx-auto px-4 pt-32">
+        <!-- Back Button -->
+        <a href="{{ route('orders.create') }}" class="inline-flex items-center gap-2 text-text-gray hover:text-primary transition-all mb-8 group">
+            <i class="ri-arrow-left-line text-xl group-hover:-translate-x-1 transition-transform"></i>
+            <span class="text-sm font-bold uppercase tracking-widest">Back to Menu</span>
+        </a>
+
+        <!-- Order Header Card -->
+        <div class="bg-bg-sidebar rounded-3xl p-6 md:p-10 border border-white/5 premium-glow mb-8 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl -mr-16 -mt-16 rounded-full"></div>
+            
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-black mb-2 tracking-tight">Order #{{ $order->id }}</h1>
+                    <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
+                        <div class="flex items-center gap-2 text-text-gray">
+                            <i class="ri-calendar-line text-primary"></i>
+                            <span class="text-xs md:text-sm font-medium">{{ $order->created_at->format('d M Y, H:i') }}</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-text-gray">
+                            <i class="ri-map-pin-line text-primary"></i>
+                            <span class="text-xs md:text-sm font-medium">{{ $order->table_number }} - {{ $order->room }}</span>
+                        </div>
                     </div>
                 </div>
-            @empty
-                <div style="text-align: center; padding: 2rem; color: rgba(255, 255, 255, 0.5);">
-                    <p>No items in this order</p>
+                
+                <div class="flex items-center gap-3">
+                    @php
+                        $statusData = [
+                            'pending' => ['label' => 'Pending', 'class' => 'bg-amber-500/10 text-amber-500 border-amber-500/20'],
+                            'processing' => ['label' => 'Processing', 'class' => 'bg-blue-500/10 text-blue-500 border-blue-500/20'],
+                            'completed' => ['label' => 'Completed', 'class' => 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'],
+                            'cancelled' => ['label' => 'Cancelled', 'class' => 'bg-red-500/10 text-red-500 border-red-500/20'],
+                        ];
+                        $status = $statusData[$order->status] ?? ['label' => ucfirst($order->status), 'class' => 'bg-gray-500/10 text-gray-500 border-gray-500/20'];
+                    @endphp
+                    <span class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest border {{ $status['class'] }}">
+                        {{ $status['label'] }}
+                    </span>
                 </div>
-            @endforelse
-        </div>
-
-        <!-- Order Summary -->
-        <div class="order-summary">
-            <div class="summary-row">
-                <span class="summary-label">Subtotal</span>
-                <span class="summary-value">Rp{{ number_format($order->orderItems->sum(fn($item) => $item->price * $item->quantity), 0, ',', '.') }}</span>
-            </div>
-            <div class="summary-row">
-                <span class="summary-label">Discount</span>
-                <span class="summary-value">Rp0</span>
-            </div>
-            <div class="summary-row summary-total">
-                <span class="summary-label">Total</span>
-                <span class="summary-value">Rp{{ number_format($order->orderItems->sum(fn($item) => $item->price * $item->quantity), 0, ',', '.') }}</span>
             </div>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="action-buttons">
-            <a href="{{ route('orders.create') }}" class="btn btn-primary">Back to Menu</a>
-            @if($order->status !== 'completed')
-                <button class="btn btn-secondary" id="cancelOrderBtn">Cancel Order</button>
-            @endif
+        <!-- Items Section -->
+        <div class="mb-8">
+            <h2 class="text-lg font-black uppercase tracking-widest mb-6 text-text-gray">Your Items</h2>
+            <div class="space-y-4">
+                @foreach($order->orderItems as $item)
+                <div class="bg-bg-sidebar/50 backdrop-blur-sm border border-white/5 rounded-2xl p-4 flex items-center gap-4 transition-all hover:bg-bg-sidebar hover:border-white/10 group">
+                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden border border-white/10 flex-shrink-0 group-hover:scale-105 transition-transform">
+                        @if($item->menu && $item->menu->image_url)
+                            <img src="{{ $item->menu->image_url }}" class="w-full h-full object-cover">
+                        @else
+                            <div class="w-full h-full bg-white/5 flex items-center justify-center">
+                                <i class="ri-image-line text-2xl text-text-gray"></i>
+                            </div>
+                        @endif
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-sm md:text-base font-bold mb-1 line-clamp-1 tracking-tight">{{ $item->menu_name }}</h3>
+                        <p class="text-[10px] md:text-xs text-text-gray font-medium">Rp {{ number_format($item->price, 0, ',', '.') }} × {{ $item->quantity }}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm md:text-base font-black text-primary">Rp {{ number_format($item->price * $item->quantity, 0, ',', '.') }}</p>
+                    </div>
+                </div>
+                @endforeach
+            </div>
         </div>
+
+        <!-- Summary Section -->
+        <div class="bg-bg-sidebar rounded-3xl p-6 md:p-8 border border-white/5 premium-glow relative overflow-hidden mb-8">
+            <div class="absolute bottom-0 left-0 w-32 h-32 bg-primary/5 blur-3xl -ml-16 -mb-16 rounded-full"></div>
+            
+            <div class="space-y-4 relative z-10">
+                <div class="flex justify-between items-center text-text-gray">
+                    <span class="text-xs md:text-sm font-bold uppercase tracking-widest">Subtotal</span>
+                    <span class="font-bold">Rp {{ number_format($order->orderItems->sum(fn($i) => $i->price * $i->quantity), 0, ',', '.') }}</span>
+                </div>
+                <div class="flex justify-between items-center text-text-gray">
+                    <span class="text-xs md:text-sm font-bold uppercase tracking-widest">Discount</span>
+                    <span class="font-bold">Rp 0</span>
+                </div>
+                <div class="pt-4 border-t border-white/5 flex justify-between items-end">
+                    <span class="text-sm md:text-base font-bold uppercase">Total Amount</span>
+                    <span class="text-2xl md:text-4xl font-black text-primary">Rp {{ number_format($order->orderItems->sum(fn($i) => $i->price * $i->quantity), 0, ',', '.') }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        @if($order->status === 'pending')
+        <div class="flex flex-col gap-4">
+            <button id="cancelOrderBtn" class="w-full bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 py-4 rounded-2xl font-black uppercase tracking-widest text-sm transition-all active:scale-95">
+                Cancel Order
+            </button>
+        </div>
+        @endif
     </div>
 
+    <!-- Script for Cancel -->
     <script>
         document.getElementById('cancelOrderBtn')?.addEventListener('click', async function() {
-            if(confirm('Are you sure you want to cancel this order?')) {
-                try {
-                    const response = await fetch('{{ route("orders.cancel", $order->id) }}', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        }
-                    });
+            if (!confirm('Are you sure you want to cancel this order?')) return;
+            
+            const btn = this;
+            btn.disabled = true;
+            btn.textContent = 'Processing...';
 
-                    const data = await response.json();
-                    
-                    if(response.ok) {
-                        const popup = document.createElement('div');
-                        popup.className = 'order-completed-popup';
-                        popup.style.background = 'linear-gradient(135deg, rgba(34, 197, 94, 0.95) 0%, rgba(16, 185, 129, 0.95) 100%)';
-                        popup.innerHTML = `
-                            <h2>Order Cancelled</h2>
-                            <p>Your order has been successfully cancelled.</p>
-                            <button onclick="window.location.href='{{ route('orders.create') }}'">Back to Menu</button>
-                        `;
-                        document.body.appendChild(popup);
-                    } else {
-                        alert(data.message || 'Failed to cancel order');
+            try {
+                const response = await fetch('{{ route("orders.cancel", $order->id) }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
                     }
-                } catch (error) {
-                    alert('Error cancelling order');
+                });
+
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    const data = await response.json();
+                    alert(data.message || 'Failed to cancel order');
+                    btn.disabled = false;
+                    btn.textContent = 'Cancel Order';
                 }
+            } catch (error) {
+                alert('An error occurred. Please try again.');
+                btn.disabled = false;
+                btn.textContent = 'Cancel Order';
             }
         });
     </script>
+
 </body>
+
 </html>
+
 

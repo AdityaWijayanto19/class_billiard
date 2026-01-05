@@ -5,8 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Class Billiard - Create Order</title>
-    <!-- Google Font Barlow -->
-    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Font Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Remixicon -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.min.css" rel="stylesheet">
     <!-- Tailwind CSS 4.0 CDN -->
@@ -18,13 +20,13 @@
             --color-primary: #FFD700;
             --color-text-gray: #abbbc2;
             --color-border-base: #393c49;
-            --font-barlow: "Barlow", sans-serif;
+            --font-montserrat: "Montserrat", sans-serif;
         }
 
         body {
             background-color: var(--color-bg-dark);
             color: white;
-            font-family: var(--font-barlow);
+            font-family: var(--font-montserrat);
             overflow-x: hidden;
         }
 
@@ -34,6 +36,36 @@
         
         * {
             box-sizing: border-box;
+        }
+
+        .smooth-ease {
+            transition-timing-function: cubic-bezier(.22, .61, .36, 1);
+        }
+        
+        @media (max-width: 768px) {
+            #orderPanel {
+                position: fixed !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                top: auto !important;
+                height: 0;
+                width: 100% !important;
+                border-l-0: ;
+                border-t: 1px solid var(--color-border-base);
+                border-radius: 2rem 2rem 0 0;
+                background: var(--color-bg-sidebar);
+            }
+            #orderPanel.open {
+                height: 80vh !important;
+            }
+            #mainContent {
+                padding-top: 6rem !important;
+            }
+            #header-create {
+                padding-top: 1rem !important;
+                padding-bottom: 1rem !important;
+            }
         }
     </style>
 </head>
@@ -46,45 +78,41 @@
         <main class="flex-1 overflow-y-auto overflow-x-hidden transition-all duration-300"
             style="width: calc(100% - 0px); padding-top: 8rem; box-sizing: border-box;" id="mainContent">
             <!-- Header -->
-            <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-0 px-4 md:px-8 fixed top-0 left-0 right-0 bg-bg-dark z-30 py-4"
-                style="width: calc(100% - 0px); transition: width 0.3s ease;">
+            <header id="header-create" class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-0 px-4 md:px-8 fixed top-0 left-0 right-0 bg-bg-dark z-30 py-4"
+                style="width: 100%; transition: all 0.3s ease;">
                 <div class="min-w-0">
-                    <h1 class="text-2xl md:text-3xl font-semibold mb-1">Class Billiard</h1>
-                    <p class="text-text-gray font-medium text-xs md:text-base">{{ \Carbon\Carbon::now()->format('l, d M Y') }}</p>
+                    <h1 class="text-xl md:text-3xl font-bold mb-1 tracking-tight">Class Billiard</h1>
+                    <p class="text-text-gray font-medium text-[10px] md:text-sm uppercase tracking-widest">{{ \Carbon\Carbon::now()->format('l, d M Y') }}</p>
                 </div>
                 <div class="relative w-full md:w-72">
                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-text-gray">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="11" cy="11" r="8" />
-                            <path d="m21 21-4.3-4.3" />
-                        </svg>
+                        <i class="ri-search-line"></i>
                     </span>
-                    <input type="text" id="searchInput" placeholder="Search for food, menu, etc.."
-                        class="w-full bg-bg-sidebar border border-border-base rounded-lg py-2.5 md:py-3 pl-10 pr-4 text-xs md:text-sm focus:outline-none focus:border-primary placeholder:text-text-gray">
+                    <input type="text" id="searchInput" placeholder="Search menu..."
+                        class="w-full bg-bg-sidebar border border-border-base rounded-xl py-2 md:py-3 pl-10 pr-4 text-xs md:text-sm focus:outline-none focus:border-primary placeholder:text-text-gray transition-all">
                 </div>
             </header>
 
             <!-- Tabs Navigation -->
-            <div class="flex gap-8 border-b border-border-base mb-8 overflow-x-auto no-scrollbar px-8 fixed top-24 left-0 right-0 bg-bg-dark z-20" style="width: calc(100% - 0px); transition: width 0.3s ease;">
+            <div class="flex gap-4 md:gap-8 border-b border-border-base mb-8 overflow-x-auto no-scrollbar px-4 md:px-8 fixed top-20 md:top-24 left-0 right-0 bg-bg-dark z-20" style="width: 100%; transition: all 0.3s ease;">
                 <button
-                    class="category-tab pb-3 text-primary border-b-2 border-primary font-semibold text-sm whitespace-nowrap"
+                    class="category-tab pb-3 text-primary border-b-2 border-primary font-bold text-xs md:text-sm whitespace-nowrap transition-all"
                     data-category="all">All</button>
                 @foreach($categories as $category)
                     <button
-                        class="category-tab pb-3 text-white font-semibold text-sm opacity-60 hover:opacity-100 whitespace-nowrap"
+                        class="category-tab pb-3 text-white font-bold text-xs md:text-sm opacity-60 hover:opacity-100 whitespace-nowrap transition-all"
                         data-category="{{ $category->slug }}">{{ $category->name }}</button>
                 @endforeach
             </div>
 
             <!-- Section Title -->
-            <div class="flex justify-between items-center mb-16 px-8 pt-8">
-                <h2 class="text-xl font-semibold">Choose Dishes</h2>
+            <div class="flex justify-between items-center mb-8 md:mb-16 px-4 md:px-8 pt-4 md:pt-8">
+                <h2 class="text-base md:text-xl font-bold tracking-tight">Choose Dishes</h2>
             </div>
 
-            <!-- Grid of Dishes (Fixed card size, responsive grid) -->
-            <div class="px-8 pb-20">
-                <div class="grid gap-x-6 gap-y-12 w-full" id="menuGrid" style="grid-template-columns: repeat(auto-fit, 240px); justify-content: flex-start; box-sizing: border-box;">
+            <!-- Grid of Dishes -->
+            <div class="px-4 md:px-8 pb-32">
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-3 gap-y-12 md:gap-x-6 md:gap-y-16 w-full" id="menuGrid">
                     @php
                         $allMenus = collect();
                         foreach ($categories as $category) {
@@ -108,21 +136,21 @@
                                 $labelDisplay = $menu->labels[0];
                             }
                         @endphp
-                        <div class="menu-card bg-bg-sidebar rounded-xl pt-16 pb-4 px-4 text-center relative group cursor-pointer"
+                        <div class="menu-card bg-bg-sidebar rounded-xl pt-10 md:pt-16 pb-3 md:pb-4 px-3 md:px-4 text-center relative group cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-black/40 border border-transparent hover:border-primary/50"
                             data-category="{{ $category->slug }}" data-name="{{ $menu->name }}"
                             data-price="{{ $menu->price }}"
                             data-image="{{ $menu->image_url }}"
                             data-label="{{ $labelDisplay }}">
                             <img src="{{ $menu->image_url ?: 'https://via.placeholder.com/400' }}"
                                 alt="{{ $menu->name }}"
-                                class="w-48 h-48 rounded-full mx-auto -mt-36 object-cover group-hover:scale-105 transition-transform">
-                            <h3 class="text-[15px] font-medium mb-2 px-4 -mt-6 leading-snug line-clamp-2">{{ $menu->name }}</h3>
+                                class="w-20 h-20 md:w-48 md:h-48 rounded-full mx-auto -mt-14 md:-mt-36 object-cover group-hover:scale-105 transition-transform duration-300 border-2 border-white/5">
+                            <h3 class="text-[11px] md:text-[15px] font-bold mb-1 md:mb-2 px-1 md:px-4 mt-1 md:-mt-6 leading-snug line-clamp-2 tracking-tight">{{ $menu->name }}</h3>
                             @if($menu->short_description)
-                                <p class="text-xs text-text-gray mb-2 px-2 line-clamp-2">{{ $menu->short_description }}</p>
+                                <p class="text-[9px] md:text-xs text-text-gray mb-1 md:mb-2 px-1 md:px-2 line-clamp-2 hidden md:block">{{ $menu->short_description }}</p>
                             @endif
-                            <p class="text-sm mb-3 font-medium">Rp{{ number_format($menu->price, 0, ',', '.') }}</p>
-                            <div class="flex gap-2 items-center justify-between">
-                                <div class="flex gap-1 flex-wrap flex-1">
+                            <p class="text-[10px] md:text-sm mb-2 md:mb-3 font-bold text-primary">Rp{{ number_format($menu->price, 0, ',', '.') }}</p>
+                            <div class="flex gap-2 items-center justify-between mt-auto">
+                                <div class="flex gap-1 flex-wrap flex-1 min-w-0">
                                     @if($menu->labels && is_array($menu->labels) && count($menu->labels) > 0)
                                         @php
                                             $labelText = $menu->labels[0];
@@ -138,11 +166,13 @@
                                                 $textClass = 'text-red-500';
                                             }
                                         @endphp
-                                        <span class="text-xs px-2 py-0.5 rounded {{ $bgClass }} {{ $textClass }}">{{ $labelText }}</span>
+                                        <span class="text-[7px] md:text-[10px] px-1.5 md:px-2 py-0.5 rounded {{ $bgClass }} {{ $textClass }} font-bold whitespace-nowrap">{{ $labelText }}</span>
                                     @endif
                                 </div>
                                 <button
-                                    class="add-to-cart bg-primary text-white text-black w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg hover:brightness-110 transition-all flex-shrink-0">+</button>
+                                    class="add-to-cart bg-primary text-black w-7 h-7 md:w-10 md:h-10 rounded-full flex items-center justify-center font-bold text-sm md:text-lg hover:brightness-110 active:scale-95 transition-all flex-shrink-0 shadow-lg shadow-primary/20">
+                                    <i class="ri-add-line"></i>
+                                </button>
                             </div>
                         </div>
                     @empty
@@ -154,133 +184,125 @@
             </div>
         </main>
 
-        <!-- RIGHT ORDER PANEL (Push content, not overlay) -->
+        <!-- RIGHT ORDER PANEL (Push content, not overlay on desktop, slide-up on mobile) -->
         <aside id="orderPanel"
-            class="bg-bg-sidebar border-l border-border-base shadow-2xl transition-all duration-300 overflow-hidden flex flex-col z-20"
+            class="bg-bg-sidebar border-l md:border-l border-border-base shadow-2xl transition-all duration-500 overflow-hidden flex flex-col z-40"
             style="width: 0; min-width: 0;">
-            <div class="p-6 flex flex-col flex-1" style="width: 420px;">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-semibold">Keranjang</h2>
+            <div class="p-4 md:p-6 flex flex-col flex-1 h-full w-full md:w-[420px]">
+                <div class="flex justify-between items-center mb-4 md:mb-6">
+                    <h2 class="text-lg md:text-xl font-bold tracking-tight">Keranjang</h2>
                     <button id="closeOrderPanel"
-                        class="text-primary opacity-50 hover:opacity-100 cursor-pointer transition-all">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="18" x2="6" y1="6" y2="18" />
-                            <line x1="6" x2="18" y1="6" y2="18" />
-                        </svg>
+                        class="text-primary hover:scale-110 cursor-pointer transition-all p-2">
+                        <i class="ri-close-fill text-2xl"></i>
                     </button>
                 </div>
 
                 <!-- Table Header -->
-                <div class="grid grid-cols-6 text-sm font-semibold border-b border-border-base pb-4 mb-6">
+                <div class="grid grid-cols-6 text-[10px] md:text-sm font-bold border-b border-border-base pb-3 mb-4 md:mb-6 uppercase tracking-widest text-text-gray">
                     <div class="col-span-4">Item</div>
                     <div class="text-center">Qty</div>
                     <div class="text-right">Price</div>
                 </div>
 
                 <!-- Order Items List (Scrollable) -->
-                <div class="flex-1 overflow-y-auto space-y-6 pr-2" id="orderItemsList">
+                <div class="flex-1 overflow-y-auto space-y-4 md:space-y-6 pr-1 md:pr-2 no-scrollbar" id="orderItemsList">
                     <!-- Items added here -->
                 </div>
 
                 <!-- Checkout Summary -->
-                <div class="border-t border-border-base pt-6 mt-6 space-y-4">
-                    <div class="flex justify-between text-sm">
-                        <span class="text-text-gray font-medium">Discount</span>
-                        <span class="font-semibold">Rp 0</span>
-                    </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-text-gray font-medium">Sub total</span>
-                        <span class="font-semibold" id="orderTotal">Rp 0</span>
+                <div class="border-t border-border-base pt-4 md:pt-6 mt-4 md:mt-6 space-y-3 md:space-y-4">
+                    <div class="flex justify-between text-xs md:text-sm">
+                        <span class="text-text-gray font-bold uppercase tracking-wider">Sub total</span>
+                        <span class="font-bold text-primary" id="orderTotal">Rp 0</span>
                     </div>
                     <button id="checkoutBtn"
-                        class="w-full bg-primary text-white text-black py-4 rounded-xl font-bold shadow-[0_8px_24px_rgba(250,154,8,0.3)] hover:brightness-110 active:scale-[0.98] transition-all">
+                        class="w-full bg-primary text-black py-3 md:py-4 rounded-xl font-bold shadow-lg shadow-primary/20 hover:brightness-110 active:scale-[0.98] transition-all text-xs md:text-base">
                         Continue to Payment
                     </button>
                 </div>
             </div>
         </aside>
 
-        <!-- BOTTOM FOOTER BAR (Centered by default, moves left and shrinks when sidebar opens) -->
+        <!-- BOTTOM FOOTER BAR -->
         <div id="footerBar"
-            class="hidden fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-bg-sidebar border border-border-base rounded-2xl p-4 shadow-2xl z-10 transition-all duration-300"
-            style="width: 800px;">
-            <div class="flex justify-between items-center gap-8">
-                <div class="flex items-center gap-3 cursor-pointer" onclick="togglePanel()">
-                    <div class="bg-primary text-white text-black rounded-full w-10 h-10 flex items-center justify-center font-bold text-sm"
+            class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-bg-sidebar/90 backdrop-blur-xl border border-white/10 rounded-2xl p-3 md:p-4 shadow-2xl z-30 transition-all duration-500 w-[90%] md:w-[600px] lg:w-[800px]">
+            <div class="flex justify-between items-center gap-4 md:gap-8">
+                <div class="flex items-center gap-2 md:gap-3 cursor-pointer group" onclick="togglePanel()">
+                    <div class="bg-primary text-black rounded-lg md:rounded-full w-8 h-8 md:w-12 md:h-12 flex items-center justify-center font-black text-sm md:text-lg shadow-lg shadow-primary/30 group-hover:scale-110 transition-transform"
                         id="itemCount">0</div>
-                    <span class="text-white font-semibold">Items in Order</span>
+                    <div class="flex flex-col">
+                        <span class="text-white font-bold text-xs md:text-base leading-none">Items in Order</span>
+                        <span class="text-primary font-black text-[10px] md:text-sm mt-0.5" id="footerTotal">Rp 0</span>
+                    </div>
                 </div>
                 <button
-                    class="bg-primary text-white text-black px-6 py-3 rounded-lg font-bold hover:brightness-110 transition-all flex items-center gap-2"
+                    class="bg-primary text-black px-4 md:px-8 py-2 md:py-3 rounded-xl font-black text-xs md:text-base hover:brightness-110 active:scale-95 transition-all flex items-center gap-2 shadow-lg shadow-primary/20"
                     onclick="togglePanel()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="9" cy="21" r="1" />
-                        <circle cx="20" cy="21" r="1" />
-                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-                    </svg>
-                    View Cart
+                    <i class="ri-shopping-cart-2-fill text-sm md:text-xl"></i>
+                    <span class="hidden md:inline">View Cart</span>
+                    <span class="md:hidden">Cart</span>
                 </button>
             </div>
         </div>
 
         <!-- CHECKOUT MODAL -->
         <div id="checkoutModal"
-            class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden"
+            class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[100] hidden p-4"
             onclick="if(event.target === this) closeCheckoutModal()">
-            <div class="bg-bg-sidebar border border-border-base rounded-2xl shadow-2xl w-96 p-8 space-y-6">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold">Informasi Pesanan</h3>
+            <div class="bg-bg-sidebar border border-white/10 rounded-2xl shadow-2xl w-full max-w-md p-6 md:p-8 space-y-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-black tracking-tight">Informasi Pesanan</h3>
                     <button type="button" onclick="closeCheckoutModal()"
-                        class="text-text-gray hover:text-white transition">
+                        class="text-text-gray hover:text-white transition-all p-2 bg-white/5 rounded-lg">
                         <i class="ri-close-line text-2xl"></i>
                     </button>
                 </div>
 
                 <form id="checkoutForm" class="space-y-4">
                     <!-- Nama Pelanggan -->
-                    <div>
-                        <label class="block text-xs font-semibold text-text-gray mb-2">Nama Pelanggan</label>
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-black text-text-gray uppercase tracking-widest">Nama Pelanggan</label>
                         <input type="text" id="customerName" name="customer_name" required
-                            class="w-full bg-bg-dark border border-border-base rounded-lg py-2.5 px-4 text-sm focus:outline-none focus:border-primary text-white placeholder:text-text-gray"
+                            class="w-full bg-bg-dark border border-border-base rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-primary text-white placeholder:text-text-gray transition-all"
                             placeholder="Masukkan nama Anda">
                     </div>
 
-                    <!-- Nomor Meja (Auto-filled from barcode) -->
-                    <div>
-                        <label class="block text-xs font-semibold text-text-gray mb-2">Nomor Meja</label>
-                        <input type="text" id="tableNumber" name="table_number" required
-                            class="w-full bg-bg-dark border border-border-base rounded-lg py-2.5 px-4 text-sm focus:outline-none focus:border-primary text-white"
-                            placeholder="Auto-filled">
-                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Nomor Meja -->
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-text-gray uppercase tracking-widest">Nomor Meja</label>
+                            <input type="text" id="tableNumber" name="table_number" required
+                                class="w-full bg-bg-dark border border-border-base rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-primary text-white"
+                                placeholder="-">
+                        </div>
 
-                    <!-- Ruangan (Auto-filled from barcode) -->
-                    <div>
-                        <label class="block text-xs font-semibold text-text-gray mb-2">Ruangan</label>
-                        <input type="text" id="room" name="room" required
-                            class="w-full bg-bg-dark border border-border-base rounded-lg py-2.5 px-4 text-sm focus:outline-none focus:border-primary text-white"
-                            placeholder="Auto-filled">
+                        <!-- Ruangan -->
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-text-gray uppercase tracking-widest">Ruangan</label>
+                            <input type="text" id="room" name="room" required
+                                class="w-full bg-bg-dark border border-border-base rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-primary text-white"
+                                placeholder="-">
+                        </div>
                     </div>
 
                     <!-- Order ID (Hidden) -->
                     <input type="hidden" id="orderId" name="order_id">
 
-                    <!-- Total Items -->
-                    <div class="bg-bg-dark/50 border border-border-base rounded-lg p-4">
-                        <div class="flex justify-between text-sm mb-2">
-                            <span class="text-text-gray">Total Items:</span>
-                            <span class="font-bold" id="checkoutItemCount">0</span>
+                    <!-- Total Items Summary -->
+                    <div class="bg-bg-dark/50 border border-white/5 rounded-xl p-4 md:p-5 space-y-2 shadow-inner">
+                        <div class="flex justify-between text-xs text-text-gray font-bold uppercase">
+                            <span>Total Items</span>
+                            <span id="checkoutItemCount">0</span>
                         </div>
-                        <div class="flex justify-between text-base font-bold">
-                            <span>Total:</span>
-                            <span id="checkoutTotal">Rp 0</span>
+                        <div class="flex justify-between items-end border-t border-white/5 pt-2">
+                            <span class="text-sm font-bold uppercase">Grand Total</span>
+                            <span class="text-2xl font-black text-primary" id="checkoutTotal">Rp 0</span>
                         </div>
                     </div>
 
                     <!-- Submit Button -->
                     <button type="submit"
-                        class="w-full bg-primary text-black py-3 rounded-xl font-bold hover:brightness-110 transition-all">
+                        class="w-full bg-primary text-black py-4 rounded-xl font-black uppercase tracking-widest text-sm shadow-xl shadow-primary/20 hover:brightness-110 active:scale-95 transition-all">
                         Konfirmasi Pesanan
                     </button>
                 </form>
@@ -528,24 +550,33 @@
             const main = document.querySelector('main');
             const header = document.querySelector('header');
             const footerBar = document.getElementById('footerBar');
+            const orderPanel = document.getElementById('orderPanel');
+            const isMobile = window.innerWidth <= 768;
 
             if (orderPanelOpen) {
-                // Open sidebar - push content left, footer moves left too
-                orderPanel.style.width = '420px';
-                main.style.maxWidth = 'calc(100vw - 420px)';
-                header.style.maxWidth = 'calc(100vw - 420px)';
-                // Footer: move to center of available space (100vw - 420px) / 2 = 50vw - 210px
-                footerBar.style.left = 'calc(50vw - 210px)';
-                footerBar.style.width = '700px';
-                document.body.style.overflowY = 'hidden';
+                if (isMobile) {
+                    orderPanel.classList.add('open');
+                    document.body.style.overflowY = 'hidden';
+                } else {
+                    // Desktop sidebar
+                    orderPanel.style.width = '420px';
+                    main.style.maxWidth = 'calc(100vw - 420px)';
+                    header.style.maxWidth = 'calc(100vw - 420px)';
+                    // Move footer to center of available space
+                    footerBar.style.left = 'calc(50vw - 210px)';
+                    document.body.style.overflowY = 'hidden';
+                }
             } else {
-                // Close sidebar - reset everything
-                orderPanel.style.width = '0';
-                main.style.maxWidth = '100%';
-                header.style.maxWidth = '100%';
-                footerBar.style.left = '50%';
-                footerBar.style.width = '800px';
-                document.body.style.overflowY = 'auto';
+                if (isMobile) {
+                    orderPanel.classList.remove('open');
+                    document.body.style.overflowY = 'auto';
+                } else {
+                    orderPanel.style.width = '0';
+                    main.style.maxWidth = '100%';
+                    header.style.maxWidth = '100%';
+                    footerBar.style.left = '50%';
+                    document.body.style.overflowY = 'auto';
+                }
             }
         }
 
@@ -554,31 +585,19 @@
         // Show/hide footer based on items
         function updateFooterBar() {
             const items = document.querySelectorAll('#orderItemsList > div').length;
-            console.log('Current items count:', items, 'orderPanelOpen:', orderPanelOpen);
-
+            const footerBar = document.getElementById('footerBar');
+            const footerTotal = document.getElementById('footerTotal');
+            const orderTotal = document.getElementById('orderTotal').textContent;
+            
             orderItemCount = items;
             document.getElementById('itemCount').textContent = items;
+            if (footerTotal) footerTotal.textContent = orderTotal;
 
             if (items > 0) {
-                // Show footer
                 footerBar.classList.remove('hidden');
             } else {
-                // Hide footer
                 footerBar.classList.add('hidden');
-
-                // Close sidebar jika dibuka
-                if (orderPanelOpen) {
-                    console.log('Force closing panel...');
-                    const main = document.querySelector('main');
-                    const header = document.querySelector('header');
-                    orderPanel.style.width = '0';
-                    main.style.maxWidth = '100%';
-                    header.style.maxWidth = '100%';
-                    footerBar.style.left = '50%';
-                    footerBar.style.width = '800px';
-                    orderPanelOpen = false;
-                    document.body.style.overflowY = 'auto';
-                }
+                if (orderPanelOpen) togglePanel();
             }
         }
 
