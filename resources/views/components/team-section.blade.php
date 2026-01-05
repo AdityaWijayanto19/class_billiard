@@ -1,5 +1,9 @@
+{{-- Team Section Component --}}
 @php
-    // Ambil data tanpa cache dulu bro, buat mastiin data muncul di production
+    /**
+     * PRODUCTION READY CODE
+     * Mengambil data segar langsung dari DB tanpa cache sementara.
+     */
     try {
         $teamMembers = \App\Models\TimKami::where('is_active', 1)->orderBy('order', 'asc')->get();
         $proTeams = \App\Models\ProTeam::where('is_active', 1)->orderBy('order', 'asc')->get();
@@ -12,12 +16,16 @@
 @if($teamMembers->count() > 0 || $proTeams->count() > 0)
 <section id="team" class="py-32 bg-[#050505] relative overflow-hidden">
     
-    <!-- LUXURY BACKGROUND ELEMENTS -->
+    <!-- LUXURY FLOWING BACKGROUND (Tanpa Lingkaran Kaku) -->
     <div class="absolute inset-0 z-0 pointer-events-none">
+        <!-- Abstract Silk Curves -->
         <svg class="absolute top-0 left-0 w-full h-full opacity-20" viewBox="0 0 1440 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M-100 200C200 400 600 -100 900 300C1200 700 1300 900 1600 800" stroke="url(#gold_line_grad)" stroke-width="1.5" stroke-dasharray="15 10" />
             <path d="M-50 250C250 450 650 -50 950 350C1250 750 1350 950 1650 850" stroke="url(#gold_line_grad)" stroke-width="0.5" opacity="0.4" />
+            
+            <!-- Shadow Flow -->
             <path d="M0 1000C300 950 600 1100 900 950C1200 800 1440 850 1440 850V1200H0V1000Z" fill="url(#gold_bottom_glow)" opacity="0.15" />
+
             <defs>
                 <linearGradient id="gold_line_grad" x1="0" y1="0" x2="1440" y2="1000" gradientUnits="userSpaceOnUse">
                     <stop stop-color="#fbbf24" stop-opacity="0" />
@@ -30,6 +38,8 @@
                 </radialGradient>
             </defs>
         </svg>
+
+        <!-- Dynamic Ambient Light (Bukan Lingkaran, tapi Glow Halus) -->
         <div class="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-gold-400/5 to-transparent"></div>
     </div>
 
@@ -37,7 +47,7 @@
         
         {{-- SECTION 1: THE MASTERS --}}
         @if($teamMembers->count() > 0)
-        <div class="text-center mb-24" data-aos="fade-up">
+        <div class="text-center mb-24" data-aos="fade-up" data-aos-duration="1000">
             <span class="text-gold-400 font-bold tracking-[0.5em] text-xs uppercase mb-4 block">The Masters</span>
             <h2 class="text-5xl md:text-7xl text-white font-serif tracking-tight uppercase italic">
                 OUR <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 via-white to-gold-400">ELITE TEAM</span>
@@ -47,18 +57,19 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-40">
             @foreach($teamMembers as $index => $member)
             <div class="group relative h-[650px] overflow-hidden rounded-sm cursor-pointer {{ $index == 1 ? 'md:-mt-12' : '' }}"
-                data-aos="fade-up" data-aos-delay="{{ ($index + 1) * 200 }}">
+                data-aos="fade-up" data-aos-delay="{{ ($index + 1) * 200 }}" data-aos-duration="1000">
                 
+                <!-- Silhouette Background Name -->
                 <div class="absolute inset-0 flex items-center justify-center z-0 opacity-[0.07] group-hover:opacity-15 transition-opacity duration-700">
                     <span class="text-[140px] font-black text-white transform -rotate-90 whitespace-nowrap select-none uppercase font-serif tracking-tighter">
                         {{ strtoupper(explode(' ', $member->name)[0]) }}
                     </span>
                 </div>
 
-                {{-- PATH GAMBAR --}}
-                @php $photoPath = $member->image ?? $member->photo; @endphp
-                @if($photoPath)
-                <img src="{{ asset('storage/' . $photoPath) }}" alt="{{ $member->name }}"
+                <!-- Profile Image -->
+                @php $photo = $member->photo ?? $member->image; @endphp
+                @if($photo)
+                <img src="{{ asset('storage/' . $photo) }}" alt="{{ $member->name }}"
                     class="absolute inset-0 w-full h-full object-cover filter grayscale contrast-[1.1] transition-all duration-1000 group-hover:grayscale-0 group-hover:scale-110 z-10">
                 @else
                 <div class="absolute inset-0 w-full h-full bg-neutral-900 flex items-center justify-center z-10">
@@ -66,8 +77,10 @@
                 </div>
                 @endif
 
-                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent z-20 group-hover:opacity-90 transition-opacity"></div>
+                <!-- Luxury Gradient Overlay -->
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent z-20 transition-opacity duration-700 group-hover:opacity-90"></div>
 
+                <!-- Data Information -->
                 <div class="absolute bottom-0 left-0 w-full p-10 z-30 transform translate-y-6 group-hover:translate-y-0 transition-transform duration-700">
                     <div class="border-l-[3px] border-gold-400 pl-6">
                         <h3 class="{{ $index == 1 ? 'text-4xl' : 'text-3xl' }} text-white font-serif italic mb-2 tracking-wide leading-tight">{{ $member->name }}</h3>
@@ -79,24 +92,30 @@
                         </p>
                         @endif
                         
-                        {{-- SOSIAL MEDIA --}}
+                        <!-- Socials -->
                         <div class="flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-700 delay-200">
-                            @if($member->facebook_url)<a href="{{ $member->facebook_url }}" target="_blank" class="social-btn"><i class="fab fa-facebook-f text-xs"></i></a>@endif
-                            @if($member->instagram_url)<a href="{{ $member->instagram_url }}" target="_blank" class="social-btn"><i class="fab fa-instagram text-xs"></i></a>@endif
-                            @if($member->linkedin_url)<a href="{{ $member->linkedin_url }}" target="_blank" class="social-btn"><i class="fab fa-linkedin-in text-xs"></i></a>@endif
+                            @if($member->facebook_url)<a href="{{ $member->facebook_url }}" class="social-btn"><i class="fab fa-facebook-f text-xs"></i></a>@endif
+                            @if($member->instagram_url)<a href="{{ $member->instagram_url }}" class="social-btn"><i class="fab fa-instagram text-xs"></i></a>@endif
+                            @if($member->linkedin_url)<a href="{{ $member->linkedin_url }}" class="social-btn"><i class="fab fa-linkedin-in text-xs"></i></a>@endif
                         </div>
                     </div>
                 </div>
+
+                @if($index == 1) 
+                    <div class="absolute inset-0 border border-gold-400/0 group-hover:border-gold-400/30 transition-all duration-700 z-30 pointer-events-none"></div> 
+                @endif
             </div>
             @endforeach
         </div>
         @endif
 
-        {{-- CONNECTOR --}}
-        <div class="relative flex flex-col items-center mb-32" data-aos="zoom-in">
+
+        {{-- ELEGANT CONNECTOR --}}
+        <div class="relative flex flex-col items-center mb-32" data-aos="zoom-in" data-aos-duration="1500">
             <div class="w-px h-32 bg-gradient-to-b from-gold-400 via-gold-400/20 to-transparent"></div>
             <div class="absolute -bottom-4 w-1.5 h-1.5 rounded-full bg-gold-400 shadow-[0_0_15px_#fbbf24]"></div>
         </div>
+
 
         {{-- SECTION 2: PRO TEAM --}}
         @if($proTeams->count() > 0)
@@ -117,7 +136,7 @@
                         <h4 class="text-2xl text-white font-serif font-bold group-hover:text-gold-400 transition-colors leading-tight">
                             {!! nl2br(e($team->name)) !!}
                         </h4>
-                        <div class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-neutral-600 group-hover:border-gold-400 transition-all duration-500">
+                        <div class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-neutral-600 group-hover:text-gold-400 group-hover:border-gold-400 transition-all duration-500">
                             <i class="fas fa-user-tie text-base"></i>
                         </div>
                     </div>
@@ -133,7 +152,7 @@
                         </div>
                         <div class="pt-2">
                             <span class="text-[9px] text-neutral-500 uppercase tracking-widest block mb-1">Address</span>
-                            <p class="text-neutral-400 text-xs font-light leading-relaxed line-clamp-2 italic">
+                            <p class="text-neutral-400 text-xs font-light leading-relaxed line-clamp-2">
                                 {{ $team->address }}
                             </p>
                         </div>
@@ -143,12 +162,23 @@
             </div>
         </div>
         @endif
+
     </div>
 </section>
 
 <style>
+    /* Tombol Social Media dengan Glow Mewah */
     .social-btn {
         @apply w-9 h-9 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-gold-400 hover:border-gold-400 hover:text-black hover:shadow-[0_0_20px_rgba(251,191,36,0.4)] transition-all duration-500;
+    }
+
+    /* Support Smooth Scroll & Animation */
+    img {
+        will-change: transform, filter;
+    }
+
+    #team {
+        background-attachment: fixed; /* Membuat background terasa lebih solid */
     }
 </style>
 @endif
