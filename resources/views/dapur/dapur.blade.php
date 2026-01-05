@@ -664,7 +664,7 @@
 
         // Function untuk handle new orders dari SSE
         function handleNewOrders(newOrders) {
-                if (!newOrders || newOrders.length === 0) return;
+            if (!newOrders || newOrders.length === 0) return;
             const ordersSection = document.getElementById('ordersSection');
             if (!ordersSection) return;
 
@@ -673,10 +673,10 @@
                 ordersSection.innerHTML = '<div class="grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-6 max-md:grid-cols-1 max-md:gap-4"></div>';
                 ordersGrid = ordersSection.querySelector('.grid');
             }
-            
+
             // Jika ordersGrid masih null setelah update, hentikan operasi
             if (!ordersGrid) return;
-            
+
             // Normalize and deduplicate incoming orders by id (prevent duplicates)
             const seenIds = new Set();
             newOrders.forEach(rawOrder => {
@@ -686,18 +686,24 @@
                 if (seenIds.has(order.id)) return; // duplicate within payload
                 seenIds.add(order.id);
 
+                // If DOM anywhere already contains this order, track and skip insertion
+                const existingDomGlobal = document.querySelector(`[data-order-id="${order.id}"]`);
+                if (existingDomGlobal) {
+                    currentOrderIds.add(order.id);
+                    return;
+                }
+
                 // Skip if already tracked in memory
                 if (currentOrderIds.has(order.id)) return;
 
-                // Also skip if DOM already contains this order (extra safety)
-                const existingDom = ordersGrid.querySelector(`[data-order-id="${order.id}"]`);
-                if (existingDom) {
-                    // ensure we track it to avoid future duplicates
+                // During the first load we avoid inserting cards coming from SSE/push
+                // to prevent duplicates when server-rendered HTML already contains them.
+                if (isFirstLoad) {
                     currentOrderIds.add(order.id);
-                    continue;
+                    return;
                 }
 
-                // New order detected
+                // New order detected (normal runtime)
                 currentOrderIds.add(order.id);
 
                 // Insert new order at the beginning
@@ -705,11 +711,11 @@
                 ordersGrid.insertAdjacentHTML('afterbegin', newOrderCard);
 
                 // Show notification once per new order (avoid duplicates)
-                if (!isFirstLoad && !activeNotifications.has(order.id)) {
+                if (!activeNotifications.has(order.id)) {
                     showNotification(order);
                 }
             });
-            
+
             updateStopwatches();
         }
 
