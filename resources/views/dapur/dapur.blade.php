@@ -664,7 +664,7 @@
 
         // Function untuk handle new orders dari SSE
         function handleNewOrders(newOrders) {
-            if (!newOrders || newOrders.length === 0) return;
+                if (!newOrders || newOrders.length === 0) return;
             const ordersSection = document.getElementById('ordersSection');
             if (!ordersSection) return;
 
@@ -677,12 +677,25 @@
             // Jika ordersGrid masih null setelah update, hentikan operasi
             if (!ordersGrid) return;
             
-            newOrders.forEach(order => {
+            // Normalize and deduplicate incoming orders by id (prevent duplicates)
+            const seenIds = new Set();
+            newOrders.forEach(rawOrder => {
+                const order = Object.assign({}, rawOrder);
+                order.id = Number(order.id);
+
+                if (seenIds.has(order.id)) return; // duplicate within payload
+                seenIds.add(order.id);
+
                 // Skip if already tracked in memory
                 if (currentOrderIds.has(order.id)) return;
 
                 // Also skip if DOM already contains this order (extra safety)
-                if (ordersGrid.querySelector(`[data-order-id="${order.id}"]`)) return;
+                const existingDom = ordersGrid.querySelector(`[data-order-id="${order.id}"]`);
+                if (existingDom) {
+                    // ensure we track it to avoid future duplicates
+                    currentOrderIds.add(order.id);
+                    continue;
+                }
 
                 // New order detected
                 currentOrderIds.add(order.id);
@@ -691,17 +704,9 @@
                 const newOrderCard = renderOrderCard(order);
                 ordersGrid.insertAdjacentHTML('afterbegin', newOrderCard);
 
-                // Play notification sound for incoming order (unless this is the very first load)
-                if (!isFirstLoad) {
-                    const source = notificationSound ? notificationSound.querySelector('#notificationSoundSource') : null;
-                    if (notificationSound && source && source.src && source.src !== '' && source.src !== window.location.href) {
-                        if (isSoundUnlocked) {
-                            notificationSound.currentTime = 0;
-                            notificationSound.play().catch(() => {});
-                        } else {
-                            pendingNotificationPlay = true;
-                        }
-                    }
+                // Show notification once per new order (avoid duplicates)
+                if (!isFirstLoad && !activeNotifications.has(order.id)) {
+                    showNotification(order);
                 }
             });
             
@@ -714,8 +719,9 @@
                 const response = await fetch('/orders/active');
                 const data = await response.json();
                 
-                if (response.ok && data.orders) {
-                    const orderIds = new Set(data.orders.map(o => o.id));
+                    if (response.ok && data.orders) {
+                    // Normalize IDs to numbers to avoid string/number mismatch
+                    const orderIds = new Set(data.orders.map(o => Number(o.id)));
                     currentOrderIds = orderIds;
                     updateOrdersDisplay(data.orders);
                     isFirstLoad = false;
@@ -749,7 +755,8 @@
             }
 
             try {
-                eventSource = new EventSource('/orders/stream');
+                // Connect to the dapur-specific SSE endpoint
+                eventSource = new EventSource('/dapur/orders/stream');
                 
                 eventSource.onmessage = function(event) {
                     try {
@@ -806,16 +813,22 @@
                     const data = await response.json();
                     
                     if (response.ok && data.orders) {
-                        const newOrderIds = new Set(data.orders.map(o => o.id));
+                        // Normalize IDs
+                        const newOrderIds = new Set(data.orders.map(o => Number(o.id)));
                         let hasNewOrder = false;
-                        
-                        data.orders.forEach(order => {
+
+                        data.orders.forEach(rawOrder => {
+                            const order = Object.assign({}, rawOrder);
+                            order.id = Number(order.id);
                             if (!currentOrderIds.has(order.id)) {
                                 hasNewOrder = true;
-                                showNotification(order);
+                                // Avoid duplicate notifications
+                                if (!activeNotifications.has(order.id)) {
+                                    showNotification(order);
+                                }
                             }
                         });
-                        
+
                         currentOrderIds = newOrderIds;
                         updateOrdersDisplay(data.orders);
                 }
@@ -881,7 +894,7 @@
         (function() {
             const initialOrders = @json($orders);
             initialOrders.forEach(order => {
-                currentOrderIds.add(order.id);
+                currentOrderIds.add(Number(order.id));
             });
             
             // Initial fetch dan setup SSE
