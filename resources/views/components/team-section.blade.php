@@ -1,29 +1,26 @@
 {{-- Team Section Component --}}
 @php
-    /**
-     * TANPA CACHE: Agar data langsung update saat diubah di Admin.
-     * Kita panggil Model secara langsung di sini.
-     */
-    $teamMembers = \App\Models\TimKami::where('is_active', 1)
-                    ->orderBy('order', 'asc')
-                    ->get();
+    // LOGIKA PEMANGGILAN DATA (Pakai code kamu yang sudah pasti jalan)
+    $teamMembers = $teamMembers ?? cache()->remember('component_team', 1800, function () {
+        return \App\Models\TimKami::select('id', 'title', 'subtitle', 'name', 'position', 'bio', 'photo', 'image', 'facebook_url', 'instagram_url', 'linkedin_url', 'order', 'is_active')
+            ->where('is_active', true)
+            ->orderBy('order')
+            ->get();
+    });
 
-    $proTeams = \App\Models\ProTeam::where('is_active', 1)
-                    ->orderBy('order', 'asc')
-                    ->get();
+    // Pemanggilan Pro Team (Direct agar admin cepat sinkron)
+    $proTeams = \App\Models\ProTeam::where('is_active', true)->orderBy('order', 'asc')->get();
 @endphp
 
 @if($teamMembers->count() > 0 || $proTeams->count() > 0)
 <section id="team" class="py-32 bg-[#050505] relative overflow-hidden">
     
-    <!-- LUXURY FLOWING BACKGROUND (Tanpa Lingkaran Kaku) -->
+    <!-- LUXURY FLOW BACKGROUND ELEMENTS -->
     <div class="absolute inset-0 z-0 pointer-events-none">
         <svg class="absolute top-0 left-0 w-full h-full opacity-20" viewBox="0 0 1440 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M-100 200C200 400 600 -100 900 300C1200 700 1300 900 1600 800" stroke="url(#gold_line_grad)" stroke-width="1.5" stroke-dasharray="15 10" />
             <path d="M-50 250C250 450 650 -50 950 350C1250 750 1350 950 1650 850" stroke="url(#gold_line_grad)" stroke-width="0.5" opacity="0.4" />
-            
             <path d="M0 1000C300 950 600 1100 900 950C1200 800 1440 850 1440 850V1200H0V1000Z" fill="url(#gold_bottom_glow)" opacity="0.15" />
-
             <defs>
                 <linearGradient id="gold_line_grad" x1="0" y1="0" x2="1440" y2="1000" gradientUnits="userSpaceOnUse">
                     <stop stop-color="#fbbf24" stop-opacity="0" />
@@ -45,7 +42,7 @@
         @if($teamMembers->count() > 0)
         <div class="text-center mb-24" data-aos="fade-up" data-aos-duration="1000">
             <span class="text-gold-400 font-bold tracking-[0.5em] text-xs uppercase mb-4 block">The Masters</span>
-            <h2 class="text-5xl md:text-7xl text-white font-serif tracking-tight uppercase italic">
+            <h2 class="text-5xl md:text-7xl text-white font-rumonds tracking-tight uppercase">
                 OUR <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 via-white to-gold-400">ELITE TEAM</span>
             </h2>
         </div>
@@ -53,17 +50,19 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-40">
             @foreach($teamMembers as $index => $member)
             <div class="group relative h-[650px] overflow-hidden rounded-sm cursor-pointer {{ $index == 1 ? 'md:-mt-12' : '' }}"
-                data-aos="fade-up" data-aos-delay="{{ ($index + 1) * 200 }}">
+                data-aos="fade-up" data-aos-delay="{{ ($index + 1) * 100 }}">
                 
+                <!-- Silhouette Background Name -->
                 <div class="absolute inset-0 flex items-center justify-center z-0 opacity-[0.07] group-hover:opacity-15 transition-opacity duration-700">
-                    <span class="text-[140px] font-black text-white transform -rotate-90 whitespace-nowrap select-none uppercase font-serif tracking-tighter">
+                    <span class="text-[140px] font-black text-white transform -rotate-90 whitespace-nowrap select-none uppercase font-rumonds tracking-tighter">
                         {{ strtoupper(explode(' ', $member->name)[0]) }}
                     </span>
                 </div>
 
-                @php $photo = $member->photo ?? $member->image; @endphp
-                @if($photo)
-                <img src="{{ asset('storage/' . $photo) }}" alt="{{ $member->name }}"
+                <!-- Profile Image (Logika path dari code kamu) -->
+                @php $photoPath = $member->image ? $member->image : $member->photo; @endphp
+                @if($photoPath)
+                <img src="{{ asset('storage/' . $photoPath) }}" alt="{{ $member->name }}"
                     class="absolute inset-0 w-full h-full object-cover filter grayscale contrast-[1.1] transition-all duration-1000 group-hover:grayscale-0 group-hover:scale-110 z-10">
                 @else
                 <div class="absolute inset-0 w-full h-full bg-neutral-900 flex items-center justify-center z-10">
@@ -71,8 +70,10 @@
                 </div>
                 @endif
 
+                <!-- Luxury Gradient Overlay -->
                 <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent z-20 transition-opacity duration-700 group-hover:opacity-90"></div>
 
+                <!-- Info Box -->
                 <div class="absolute bottom-0 left-0 w-full p-10 z-30 transform translate-y-6 group-hover:translate-y-0 transition-transform duration-700">
                     <div class="border-l-[3px] border-gold-400 pl-6">
                         <h3 class="{{ $index == 1 ? 'text-4xl' : 'text-3xl' }} text-white font-serif italic mb-2 tracking-wide leading-tight">{{ $member->name }}</h3>
@@ -84,13 +85,25 @@
                         </p>
                         @endif
                         
+                        <!-- Socials (Logika trim dari code kamu) -->
+                        @php
+                            $fb = $member->facebook_url && trim($member->facebook_url) !== '' ? trim($member->facebook_url) : '';
+                            $ig = $member->instagram_url && trim($member->instagram_url) !== '' ? trim($member->instagram_url) : '';
+                            $li = $member->linkedin_url && trim($member->linkedin_url) !== '' ? trim($member->linkedin_url) : '';
+                        @endphp
+                        @if($fb || $ig || $li)
                         <div class="flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-700 delay-200">
-                            @if($member->facebook_url)<a href="{{ $member->facebook_url }}" target="_blank" class="social-btn"><i class="fab fa-facebook-f text-xs"></i></a>@endif
-                            @if($member->instagram_url)<a href="{{ $member->instagram_url }}" target="_blank" class="social-btn"><i class="fab fa-instagram text-xs"></i></a>@endif
-                            @if($member->linkedin_url)<a href="{{ $member->linkedin_url }}" target="_blank" class="social-btn"><i class="fab fa-linkedin-in text-xs"></i></a>@endif
+                            @if($fb)<a href="{{ $fb }}" target="_blank" rel="noopener" class="social-btn"><i class="fab fa-facebook-f text-xs"></i></a>@endif
+                            @if($ig)<a href="{{ $ig }}" target="_blank" rel="noopener" class="social-btn"><i class="fab fa-instagram text-xs"></i></a>@endif
+                            @if($li)<a href="{{ $li }}" target="_blank" rel="noopener" class="social-btn"><i class="fab fa-linkedin-in text-xs"></i></a>@endif
                         </div>
+                        @endif
                     </div>
                 </div>
+
+                @if($index == 1) 
+                    <div class="absolute inset-0 border border-gold-400/0 group-hover:border-gold-400/30 transition-all duration-700 z-30 pointer-events-none"></div> 
+                @endif
             </div>
             @endforeach
         </div>
@@ -109,7 +122,7 @@
         <div class="relative">
             <div class="text-center mb-20" data-aos="fade-up">
                 <span class="text-gold-400 font-bold tracking-[0.5em] text-xs uppercase mb-4 block">Rising Stars</span>
-                <h3 class="text-4xl md:text-6xl text-white font-serif tracking-wide uppercase italic">PRO <span
+                <h3 class="text-4xl md:text-6xl text-white font-rumonds tracking-wide uppercase">PRO <span
                         class="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 to-white">TEAM</span>
                 </h3>
             </div>
@@ -139,7 +152,7 @@
                         </div>
                         <div class="pt-2">
                             <span class="text-[9px] text-neutral-500 uppercase tracking-widest block mb-1">Address</span>
-                            <p class="text-neutral-400 text-xs font-light leading-relaxed line-clamp-2">
+                            <p class="text-neutral-400 text-xs font-light leading-relaxed line-clamp-2 italic">
                                 {{ $team->address }}
                             </p>
                         </div>
@@ -149,6 +162,7 @@
             </div>
         </div>
         @endif
+
     </div>
 </section>
 
@@ -156,6 +170,5 @@
     .social-btn {
         @apply w-9 h-9 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-gold-400 hover:border-gold-400 hover:text-black hover:shadow-[0_0_20px_rgba(251,191,36,0.4)] transition-all duration-500;
     }
-    img { will-change: transform, filter; }
 </style>
 @endif
