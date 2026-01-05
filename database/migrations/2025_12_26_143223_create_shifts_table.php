@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('shifts', function (Blueprint $table) {
             $table->id();
             $table->string('name'); // Shift 1, Shift 2
-            $table->time('start_time'); // 10:00:00
-            $table->time('end_time'); // 17:00:00 atau 00:00:00
+            $table->time('start_time'); // 06:00:00
+            $table->time('end_time'); // 18:00:00 atau 00:00:00
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

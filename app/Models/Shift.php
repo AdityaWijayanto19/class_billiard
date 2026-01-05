@@ -116,8 +116,8 @@ class Shift extends Model
         $currentMinute = $now->minute;
         $currentTimeInMinutes = ($currentHour * 60) + $currentMinute;
 
-        // Shift 1: 10:00 - 18:00
-        // Shift 2: 18:00 - 00:00 (next day)
+    // Shift 1: 06:00 - 18:00
+    // Shift 2: 18:00 - 00:00 (next day)
 
         $shift1 = self::where('name', 'Shift 1')->where('is_active', true)->first();
         $shift2 = self::where('name', 'Shift 2')->where('is_active', true)->first();
