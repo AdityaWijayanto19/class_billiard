@@ -94,17 +94,158 @@
 
     <div class="max-w-7xl mx-auto">
         <div id="ordersSection">
-            <!-- Client will render orders into this grid. Server will not pre-render order cards to avoid duplication -->
-            <div class="grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-6 max-md:grid-cols-1 max-md:gap-4"></div>
+        @if($orders->count() > 0)
+            <div class="grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-6 max-md:grid-cols-1 max-md:gap-4">
+                    @foreach($orders as $order)
+                        <div class="order-card-modern group relative bg-gradient-to-br from-[var(--primary-color)] to-[var(--primary-hover)] rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-[rgba(var(--primary-color-rgb),0.2)]" data-order-id="{{ $order->id }}">
+                            {{-- Decorative Pattern --}}
+                            <div class="absolute inset-0 opacity-10">
+                                <div class="absolute top-0 right-0 w-32 h-32 bg-white rounded-full -mr-16 -mt-16"></div>
+                                <div class="absolute bottom-0 left-0 w-24 h-24 bg-white rounded-full -ml-12 -mb-12"></div>
+                            </div>
+                            
+                            {{-- Card Header --}}
+                            <div class="relative px-6 pt-6 pb-4 border-b border-white/20">
+                                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                                        <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/30">
+                            <i class="ri-restaurant-line text-white text-xl"></i>
+                        </div>
+                                        <div>
+                                            <p class="text-white font-bold text-sm">Order #{{ $order->id }}</p>
+                                            <p class="text-white/80 text-xs">{{ \Carbon\Carbon::parse($order->created_at)->utc()->setTimezone('Asia/Jakarta')->format('d M Y, H:i') }} WIB</p>
+                    </div>
+                </div>
+                                    <div class="flex items-center gap-2">
+                                        @php
+                                            $minutesElapsed = \Carbon\Carbon::parse($order->created_at)->utc()->setTimezone('Asia/Jakarta')->diffInMinutes(\Carbon\Carbon::now('Asia/Jakarta'));
+                                            $isWarning = $minutesElapsed >= 15;
+                                        @endphp
+                                        @if($order->status === 'pending')
+                                            <div class="px-3 py-1.5 bg-yellow-500/30 backdrop-blur-sm rounded-lg border border-yellow-500/50">
+                                                <span class="text-yellow-200 text-xs font-bold uppercase tracking-wider">⏳ Belum Selesai</span>
+                                            </div>
+                                        @elseif($order->status === 'processing')
+                                            <div class="px-3 py-1.5 bg-blue-500/30 backdrop-blur-sm rounded-lg border border-blue-500/50">
+                                                <span class="text-blue-200 text-xs font-bold uppercase tracking-wider">🟡 Sedang Diproses</span>
+                                            </div>
+                                        @endif
+                                        <div class="px-3 py-1.5 bg-white/20 backdrop-blur-sm rounded-lg border border-white/30">
+                                            <span class="text-white text-xs font-bold uppercase tracking-wider">{{ $order->room }}</span>
+                                        </div>
+                </div>
+            </div>
+
+                                {{-- Time Indicator --}}
+                                @php
+                                    $minutesElapsed = \Carbon\Carbon::parse($order->created_at)->utc()->setTimezone('Asia/Jakarta')->diffInMinutes(\Carbon\Carbon::now('Asia/Jakarta'));
+                                    $secondsElapsed = \Carbon\Carbon::parse($order->created_at)->utc()->setTimezone('Asia/Jakarta')->diffInSeconds(\Carbon\Carbon::now('Asia/Jakarta'));
+                                    $isWarning = $minutesElapsed >= 15;
+                                    $stopwatchMinutes = floor($secondsElapsed / 60);
+                                    $stopwatchSeconds = $secondsElapsed % 60;
+                                @endphp
+                                <div class="flex items-center gap-2 mb-3">
+                                    <div class="flex-1 h-1.5 rounded-full {{ $isWarning ? 'bg-red-500/50' : 'bg-white/20' }}">
+                                        <div class="h-full rounded-full {{ $isWarning ? 'bg-red-500' : 'bg-white/40' }}" style="width: {{ min(100, ($minutesElapsed / 30) * 100) }}%"></div>
+            </div>
+                                    <span class="text-white/70 text-xs font-medium {{ $isWarning ? 'text-red-300 font-bold' : '' }} stopwatch-timer" data-order-id="{{ $order->id }}" data-start-time="{{ \Carbon\Carbon::parse($order->created_at)->utc()->setTimezone('Asia/Jakarta')->timestamp }}">
+                                        ⏱ <span class="stopwatch-display">{{ str_pad($stopwatchMinutes, 2, '0', STR_PAD_LEFT) }}:{{ str_pad($stopwatchSeconds, 2, '0', STR_PAD_LEFT) }}</span>
+                                    </span>
+                                </div>
+
+                                {{-- Menu Items Preview --}}
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach($order->orderItems->take(4) as $item)
+                                        <div class="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-lg px-2 py-1 border border-white/30">
+                                    <img src="{{ $item->image ? asset($item->image) : asset('assets/img/default.png') }}" 
+                                         alt="{{ $item->menu_name }}" 
+                                                 class="w-6 h-6 rounded-full object-cover border border-white/50"
+                                         onerror="this.src='{{ asset('assets/img/default.png') }}'">
+                                            <span class="text-white text-xs font-semibold">{{ $item->quantity }}x</span>
+                                        </div>
+                                @endforeach
+                                    @if($order->orderItems->count() > 4)
+                                        <div class="flex items-center bg-white/20 backdrop-blur-sm rounded-lg px-2 py-1 border border-white/30">
+                                            <span class="text-white text-xs font-semibold">+{{ $order->orderItems->count() - 4 }}</span>
+                            </div>
+                                    @endif
+                            </div>
+            </div>
+
+                            {{-- Card Body --}}
+                            <div class="relative px-6 py-5 bg-white/5 backdrop-blur-sm">
+                                <div class="space-y-3">
+                                    <div class="flex items-start gap-3">
+                                        <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center shrink-0 border border-white/30">
+                                            <i class="ri-user-line text-white text-sm"></i>
+                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-white/70 text-xs font-medium mb-0.5">Nama Pemesan</p>
+                                            <p class="text-white font-bold text-sm">{{ $order->customer_name }}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start gap-3">
+                                        <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center shrink-0 border border-white/30">
+                                            <i class="ri-table-line text-white text-sm"></i>
+                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-white/70 text-xs font-medium mb-0.5">Meja</p>
+                                            <p class="text-white font-bold text-sm">Meja {{ $order->table_number }}</p>
+                    </div>
+                </div>
+
+                                    <div class="flex items-start gap-3">
+                                        <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center shrink-0 border border-white/30">
+                                            <i class="ri-shopping-bag-line text-white text-sm"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-white/70 text-xs font-medium mb-1">Pesanan</p>
+                                            <div class="flex flex-wrap gap-1.5">
+                                @foreach($order->orderItems as $item)
+                                                    <span class="inline-block bg-white/20 backdrop-blur-sm px-2 py-1 rounded-md border border-white/30 text-white text-xs font-medium">
+                                                        {{ $item->quantity }}x {{ $item->menu_name }}
+                                                    </span>
+                                @endforeach
+                            </div>
+                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {{-- Card Footer --}}
+                            <div class="relative px-6 py-4 bg-white/10 backdrop-blur-sm border-t border-white/20 flex items-center justify-between">
+                                <div>
+                                    <p class="text-white/70 text-xs font-medium mb-0.5">Total Harga</p>
+                                    <p class="text-white font-bold text-lg">Rp{{ number_format($order->total_price, 0, ',', '.') }}</p>
+                                </div>
+                                @if($order->status === 'pending')
+                                    <button class="start-cooking-btn bg-blue-500 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 flex items-center gap-2 group/btn" data-order-id="{{ $order->id }}">
+                                        <i class="ri-play-circle-line text-base group-hover/btn:scale-110 transition-transform"></i>
+                                        <span>Mulai Masak</span>
+                                    </button>
+                                @elseif($order->status === 'processing')
+                                    <button class="complete-order-btn bg-white text-[var(--primary-color)] px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 flex items-center gap-2 group/btn" data-order-id="{{ $order->id }}">
+                                        <i class="ri-checkbox-circle-line text-base group-hover/btn:rotate-12 transition-transform"></i>
+                                        <span>Selesai</span>
+                                    </button>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="text-center py-16 px-8 text-gray-600 dark:text-gray-500 text-lg">
+                    <p>Belum ada pesanan</p>
+                </div>
+            @endif
         </div>
     </div>
 
     @push('scripts')
+    <script src="{{ asset('js/dapur.js') }}"></script>
     <script>
-    // Mark inline dapur script as active to prevent duplicate external execution
-    try { window.__DapurInlineInitialized = true; } catch (e) {}
-
-    // Sidebar Toggle
+        // Sidebar Toggle
 
 
         // Notification and Sound Functions
@@ -152,7 +293,21 @@
                         source.src = '';
                         if (notificationSound) {
                             notificationSound.pause();
-            // Initialization is handled earlier (render initialOrders client-side, reconcile, then connect SSE)
+                            notificationSound.currentTime = 0;
+                        }
+                        // Clear invalid localStorage
+                        localStorage.removeItem('kitchenNotificationAudio');
+                        localStorage.removeItem('kitchenNotificationAudioType');
+                    }
+                } else if (audioType === 'file') {
+                    // File was selected directly, but file object is not persistent
+                    // User needs to reselect on page reload
+                    source.src = '';
+                    if (notificationSound) {
+                        notificationSound.pause();
+                        notificationSound.currentTime = 0;
+                    }
+                    // Clear invalid localStorage
                     localStorage.removeItem('kitchenNotificationAudio');
                     localStorage.removeItem('kitchenNotificationAudioType');
                 }
@@ -492,13 +647,6 @@
             if (orders.length === 0) {
                 ordersSection.innerHTML = '<div class="text-center py-16 px-8 text-gray-600 dark:text-gray-500 text-lg"><p>Belum ada pesanan</p></div>';
             } else {
-                // Ensure there's only one grid container to prevent duplicate sets of cards
-                const existingGrids = Array.from(ordersSection.querySelectorAll('.grid'));
-                if (existingGrids.length > 1) {
-                    // keep the first grid, remove the rest
-                    existingGrids.slice(1).forEach(g => g.remove());
-                }
-
                 const ordersGrid = ordersSection.querySelector('.grid');
                 if (ordersGrid) {
                     ordersGrid.innerHTML = orders.map(order => renderOrderCard(order)).join('');
@@ -517,7 +665,6 @@
         // Function untuk handle new orders dari SSE
         function handleNewOrders(newOrders) {
             if (!newOrders || newOrders.length === 0) return;
-            try { console.debug('handleNewOrders received IDs:', newOrders.map(o => Number(o.id))); } catch(e) {}
             const ordersSection = document.getElementById('ordersSection');
             if (!ordersSection) return;
 
@@ -526,73 +673,39 @@
                 ordersSection.innerHTML = '<div class="grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-6 max-md:grid-cols-1 max-md:gap-4"></div>';
                 ordersGrid = ordersSection.querySelector('.grid');
             }
-
+            
             // Jika ordersGrid masih null setelah update, hentikan operasi
             if (!ordersGrid) return;
-
-            // Normalize and deduplicate incoming orders by id (prevent duplicates)
-            const seenIds = new Set();
-            newOrders.forEach(rawOrder => {
-                const order = Object.assign({}, rawOrder);
-                order.id = Number(order.id);
-
-                if (seenIds.has(order.id)) return; // duplicate within payload
-                seenIds.add(order.id);
-
-                // If DOM anywhere already contains this order, track and skip insertion
-                const existingDomGlobal = document.querySelector(`[data-order-id="${order.id}"]`);
-                if (existingDomGlobal) {
-                    try { console.debug(`handleNewOrders: skipping id ${order.id} because DOM already present`); } catch(e) {}
-                    currentOrderIds.add(order.id);
-                    return;
-                }
-
+            
+            newOrders.forEach(order => {
                 // Skip if already tracked in memory
                 if (currentOrderIds.has(order.id)) return;
 
-                // During the first load we avoid inserting cards coming from SSE/push
-                // to prevent duplicates when server-rendered HTML already contains them.
-                if (isFirstLoad) {
-                    try { console.debug(`handleNewOrders: first load, tracking id ${order.id} but not inserting`); } catch(e) {}
-                    currentOrderIds.add(order.id);
-                    return;
-                }
+                // Also skip if DOM already contains this order (extra safety)
+                if (ordersGrid.querySelector(`[data-order-id="${order.id}"]`)) return;
 
-                // New order detected (normal runtime)
+                // New order detected
                 currentOrderIds.add(order.id);
 
                 // Insert new order at the beginning
-                try { console.info(`handleNewOrders: inserting id ${order.id}`); } catch(e) {}
                 const newOrderCard = renderOrderCard(order);
                 ordersGrid.insertAdjacentHTML('afterbegin', newOrderCard);
 
-                // Show notification once per new order (avoid duplicates)
-                if (!activeNotifications.has(order.id)) {
-                    showNotification(order);
+                // Play notification sound for incoming order (unless this is the very first load)
+                if (!isFirstLoad) {
+                    const source = notificationSound ? notificationSound.querySelector('#notificationSoundSource') : null;
+                    if (notificationSound && source && source.src && source.src !== '' && source.src !== window.location.href) {
+                        if (isSoundUnlocked) {
+                            notificationSound.currentTime = 0;
+                            notificationSound.play().catch(() => {});
+                        } else {
+                            pendingNotificationPlay = true;
+                        }
+                    }
                 }
             });
-
+            
             updateStopwatches();
-        }
-
-        // Remove duplicate DOM nodes that share the same data-order-id
-        function dedupeDOMOrders() {
-            try {
-                const seen = new Set();
-                const nodes = Array.from(document.querySelectorAll('[data-order-id]'));
-                nodes.forEach(node => {
-                    const id = String(node.getAttribute('data-order-id'));
-                    if (! id) return;
-                    if (seen.has(id)) {
-                        try { console.debug(`dedupeDOMOrders: removing duplicate node for id ${id}`); } catch(e) {}
-                        node.remove();
-                    } else {
-                        seen.add(id);
-                    }
-                });
-            } catch (e) {
-                // ignore
-            }
         }
 
         // Function untuk fetch initial orders
@@ -601,37 +714,11 @@
                 const response = await fetch('/orders/active');
                 const data = await response.json();
                 
-                    if (response.ok && data.orders) {
-                    // Normalize IDs to numbers to avoid string/number mismatch
-                    const orderIds = new Set(data.orders.map(o => Number(o.id)));
-
-                    try { console.debug('fetchInitialOrders fetched IDs:', Array.from(orderIds)); } catch(e) {}
-
-                    // If the server already rendered the same set of orders (server-side blade),
-                    // skip re-rendering to avoid duplicate cards on refresh. We compare the
-                    // currently tracked IDs (populated from server-rendered `initialOrders`)
-                    // with the freshly fetched IDs. If they're identical, do nothing.
-                    const areSetsEqual = (a, b) => {
-                        if (a.size !== b.size) return false;
-                        for (const v of a) if (!b.has(v)) return false;
-                        return true;
-                    };
-
-                    if (areSetsEqual(currentOrderIds, orderIds)) {
-                        // No change in orders; just ensure internal tracking and mark first load done
-                        try { console.debug('fetchInitialOrders: sets equal, skipping re-render'); } catch(e) {}
-                        currentOrderIds = orderIds;
-                        isFirstLoad = false;
-                        // Clean any accidental duplicate DOM nodes after skipping re-render
-                        dedupeDOMOrders();
-                    } else {
-                        try { console.debug('fetchInitialOrders: sets differ, re-rendering orders'); } catch(e) {}
-                        currentOrderIds = orderIds;
-                        updateOrdersDisplay(data.orders);
-                        // Ensure no duplicates after rendering
-                        dedupeDOMOrders();
-                        isFirstLoad = false;
-                    }
+                if (response.ok && data.orders) {
+                    const orderIds = new Set(data.orders.map(o => o.id));
+                    currentOrderIds = orderIds;
+                    updateOrdersDisplay(data.orders);
+                    isFirstLoad = false;
                 }
             } catch (error) {
                 console.error('Error fetching initial orders:', error);
@@ -662,35 +749,28 @@
             }
 
             try {
-                // Connect to the dapur-specific SSE endpoint
-                eventSource = new EventSource('/dapur/orders/stream');
+                eventSource = new EventSource('/orders/stream');
                 
                 eventSource.onmessage = function(event) {
                     try {
-                        // Log raw SSE payload for debugging
-                        try { console.debug('SSE message raw:', event.data); } catch(e) {}
                         const data = JSON.parse(event.data);
-
+                        
                         if (data.type === 'new_orders' && data.orders) {
                             handleNewOrders(data.orders);
-                        } else {
-                            try { console.debug('SSE message ignored, type:', data.type); } catch(e) {}
                         }
                     } catch (error) {
-                        console.error('Error parsing SSE data:', error, event.data);
+                        console.error('Error parsing SSE data:', error);
                     }
                 };
                 
                 eventSource.onerror = function(error) {
                     console.error('SSE connection error:', error);
-                    try { console.debug('EventSource readyState:', eventSource && eventSource.readyState); } catch(e) {}
                     eventSource.close();
                     
                     // Reconnect dengan exponential backoff
                     reconnectAttempts++;
                     if (reconnectAttempts < maxReconnectAttempts) {
                         const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000); // Max 30 seconds
-                        try { console.debug(`Reconnecting SSE in ${delay}ms (attempt ${reconnectAttempts})`); } catch(e) {}
                         reconnectTimeout = setTimeout(() => {
                             console.log('Reconnecting to SSE...');
                             connectSSE();
@@ -703,7 +783,7 @@
                 };
                 
                 eventSource.onopen = function() {
-                    console.info('SSE connection established');
+                    console.log('SSE connection established');
                     reconnectAttempts = 0; // Reset reconnect attempts on successful connection
                 };
                 
@@ -726,22 +806,16 @@
                     const data = await response.json();
                     
                     if (response.ok && data.orders) {
-                        // Normalize IDs
-                        const newOrderIds = new Set(data.orders.map(o => Number(o.id)));
+                        const newOrderIds = new Set(data.orders.map(o => o.id));
                         let hasNewOrder = false;
-
-                        data.orders.forEach(rawOrder => {
-                            const order = Object.assign({}, rawOrder);
-                            order.id = Number(order.id);
+                        
+                        data.orders.forEach(order => {
                             if (!currentOrderIds.has(order.id)) {
                                 hasNewOrder = true;
-                                // Avoid duplicate notifications
-                                if (!activeNotifications.has(order.id)) {
-                                    showNotification(order);
-                                }
+                                showNotification(order);
                             }
                         });
-
+                        
                         currentOrderIds = newOrderIds;
                         updateOrdersDisplay(data.orders);
                 }
@@ -806,24 +880,13 @@
         // Initialize order IDs on page load
         (function() {
             const initialOrders = @json($orders);
-
-            // Render initial orders client-side to ensure single source-of-truth
-            if (initialOrders && initialOrders.length > 0) {
-                const ids = new Set(initialOrders.map(o => Number(o.id)));
-                currentOrderIds = ids;
-                updateOrdersDisplay(initialOrders);
-            } else {
-                // Ensure 'no orders' placeholder is shown
-                updateOrdersDisplay([]);
-            }
-
-            // Still fetch server state to reconcile any differences, then connect SSE
-            // Keep `isFirstLoad` true until the reconciliation completes — this
-            // prevents races where SSE messages and the reconciliation both
-            // insert the same cards.
+            initialOrders.forEach(order => {
+                currentOrderIds.add(order.id);
+            });
+            
+            // Initial fetch dan setup SSE
             fetchInitialOrders().then(() => {
-                // Mark first load complete only after we've reconciled server state
-                isFirstLoad = false;
+                // Connect to SSE after initial load
                 connectSSE();
             });
         })();
@@ -948,4 +1011,3 @@
 
     @endpush
 @endsection
-
