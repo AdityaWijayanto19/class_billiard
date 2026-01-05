@@ -7,6 +7,9 @@
             ->orderBy('order')
             ->get();
     });
+
+    // Ensure $proTeams is always defined as a collection
+    $proTeams = $proTeams ?? collect();
 @endphp
 
 @if($teamMembers->count() > 0 || $proTeams->count() > 0)
