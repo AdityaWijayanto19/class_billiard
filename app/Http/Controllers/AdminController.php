@@ -82,7 +82,6 @@ class AdminController extends Controller
         $proTeam->delete();
         return redirect()->route('admin.cms.pro-tim')->with('success', 'Pro Tim berhasil dihapus!');
     }
-{
     /**
      * Image validation rules for production
      */
