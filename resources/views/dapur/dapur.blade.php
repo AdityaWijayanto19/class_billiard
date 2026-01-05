@@ -252,7 +252,11 @@
         const notificationSound = document.getElementById('notificationSound');
         const notificationContainer = document.getElementById('notificationContainer');
         const notificationOverlay = document.getElementById('notificationOverlay');
-        let currentOrderIds = new Set();
+        let currentOrderIds = new Set([
+            @foreach($orders as $order)
+                {{ $order->id }},
+            @endforeach
+        ]);
         let isFirstLoad = true;
         let activeNotifications = new Set();
 

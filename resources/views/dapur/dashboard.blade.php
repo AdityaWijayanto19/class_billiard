@@ -196,8 +196,9 @@
     let sseReconnectDelay = 3000; // Start with 3 seconds, exponential backoff
     let sseReconnectAttempts = 0;
     
-    // Initialize timers for existing orders
+    // Initialize timers and tracking for existing orders
     @foreach($orders as $order)
+        renderedOrderIds.add({{ $order->id }});
         startTimer({{ $order->id }}, '{{ $order->created_at->toIso8601String() }}');
     @endforeach
     
