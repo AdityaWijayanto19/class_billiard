@@ -1,18 +1,8 @@
 {{-- Team Section Component --}}
 @php
-    /**
-     * FORCE FETCH: Ambil semua data tanpa filter is_active dulu 
-     * untuk memastikan koneksi ke tabel TimKami berhasil.
-     */
-    try {
-        $teamMembers = \App\Models\TimKami::orderBy('order', 'asc')->get();
-        $proTeams = \App\Models\ProTeam::where('is_active', 1)->orderBy('order', 'asc')->get();
-    } catch (\Exception $e) {
-        $teamMembers = collect();
-        $proTeams = collect();
-        // Log error jika ingin melihat di storage/logs/laravel.log
-        \Log::error("Gagal ambil TimKami: " . $e->getMessage());
-    }
+    // Selalu ambil data fresh langsung dari DB, tidak pernah pakai cache/controller
+    $teamMembers = \App\Models\TimKami::where('is_active', true)->orderBy('order', 'asc')->get();
+    $proTeams = \App\Models\ProTeam::where('is_active', 1)->orderBy('order', 'asc')->get();
 @endphp
 
 <section id="team" class="py-32 bg-[#050505] relative overflow-hidden">
