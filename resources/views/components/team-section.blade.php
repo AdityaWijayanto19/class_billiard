@@ -1,24 +1,26 @@
 {{-- Team Section Component --}}
 @php
-    $teamMembers = $teamMembers ?? cache()->remember('component_team', 1800, function () {
-        return \App\Models\TimKami::where('is_active', true)->orderBy('order')->get();
-    });
-    $proTeams = \App\Models\ProTeam::where('is_active', true)->orderBy('order')->get();
+    // DEBUG & FIX: Hapus cache sementara agar data terbaru langsung ditarik dari Database
+    // Pastikan kolom 'is_active' di DB bernilai 1 (true)
+    $teamMembers = \App\Models\TimKami::where('is_active', true)
+        ->orderBy('order', 'asc')
+        ->get();
+
+    $proTeams = \App\Models\ProTeam::where('is_active', true)
+        ->orderBy('order', 'asc')
+        ->get();
 @endphp
 
+{{-- Gatekeeper: Section hanya muncul jika salah satu data ada --}}
 @if($teamMembers->count() > 0 || $proTeams->count() > 0)
 <section id="team" class="py-32 bg-[#050505] relative overflow-hidden">
     
     <!-- LUXURY FLOW BACKGROUND ELEMENTS -->
     <div class="absolute inset-0 z-0 pointer-events-none">
-        <!-- Main Elegant Curve Top to Middle -->
         <svg class="absolute top-0 left-0 w-full h-full opacity-30" viewBox="0 0 1440 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M-100 100C200 300 500 0 800 200C1100 400 1300 800 1600 700" stroke="url(#gold_gradient_1)" stroke-width="2" stroke-dasharray="10 5" />
             <path d="M-50 150C250 350 550 50 850 250C1150 450 1350 850 1650 750" stroke="url(#gold_gradient_1)" stroke-width="1" opacity="0.5" />
-            
-            <!-- Flowing Silhouette Shape -->
             <path d="M1440 400C1200 350 1000 600 800 700C600 800 400 750 0 900V1200H1440V400Z" fill="url(#gold_soft_glow)" opacity="0.1" />
-            
             <defs>
                 <linearGradient id="gold_gradient_1" x1="0" y1="0" x2="1440" y2="1200" gradientUnits="userSpaceOnUse">
                     <stop stop-color="#fbbf24" stop-opacity="0" />
@@ -32,7 +34,6 @@
             </defs>
         </svg>
 
-        <!-- Dynamic Glow Spots -->
         <div class="absolute top-[20%] -left-20 w-[500px] h-[500px] bg-gold-400/10 rounded-full blur-[120px]"></div>
         <div class="absolute top-[50%] -right-20 w-[600px] h-[600px] bg-gold-400/5 rounded-full blur-[150px]"></div>
         <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-[300px] bg-gradient-to-t from-gold-400/10 to-transparent"></div>
@@ -40,7 +41,7 @@
 
     <div class="container mx-auto px-6 relative z-10">
         
-        {{-- PART 1: THE MASTERS (ELITE TEAM) --}}
+        {{-- PART 1: THE MASTERS --}}
         @if($teamMembers->count() > 0)
         <div class="text-center mb-24" data-aos="fade-up">
             <span class="text-gold-400 font-bold tracking-[0.4em] text-xs uppercase mb-4 block">The Masters</span>
@@ -54,15 +55,13 @@
             <div class="group relative h-[650px] overflow-hidden rounded-sm cursor-pointer {{ $index == 1 ? 'md:-mt-12' : '' }}"
                 data-aos="fade-up" data-aos-delay="{{ ($index + 1) * 100 }}">
                 
-                <!-- Background Name (Vertical Silhouette) -->
                 <div class="absolute top-0 left-0 h-full w-full flex items-center justify-center z-0 opacity-10 group-hover:opacity-25 transition-all duration-700">
                     <span class="text-[140px] font-bold text-white transform -rotate-90 whitespace-nowrap font-rumonds select-none uppercase tracking-tighter">
                         {{ strtoupper(explode(' ', $member->name)[0]) }}
                     </span>
                 </div>
 
-                <!-- Image Card Design (Tetap Sesuai Permintaan) -->
-                @php $photo = $member->image ?? $member->photo; @endphp
+                @php $photo = $member->photo ?? $member->image; @endphp
                 @if($photo)
                 <img src="{{ asset('storage/' . $photo) }}" alt="{{ $member->name }}"
                     class="absolute inset-0 w-full h-full object-cover filter grayscale contrast-125 transition-all duration-1000 group-hover:grayscale-0 group-hover:scale-110 z-10">
@@ -72,22 +71,19 @@
                 </div>
                 @endif
 
-                <!-- Overlays -->
-                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-20 transition-opacity duration-500 group-hover:opacity-80"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-20 group-hover:opacity-80 transition-opacity"></div>
 
-                <!-- Info Box -->
                 <div class="absolute bottom-0 left-0 w-full p-10 z-30 transform translate-y-6 group-hover:translate-y-0 transition-transform duration-700">
                     <div class="border-l-[3px] border-gold-400 pl-6">
-                        <h3 class="{{ $index == 1 ? 'text-4xl' : 'text-3xl' }} text-white font-serif italic mb-2 tracking-wide">{{ $member->name }}</h3>
+                        <h3 class="{{ $index == 1 ? 'text-4xl' : 'text-3xl' }} text-white font-serif italic mb-2">{{ $member->name }}</h3>
                         <p class="text-gold-400 text-[10px] font-black uppercase tracking-[0.3em] mb-5">{{ $member->position }}</p>
                         
                         @if($member->bio)
-                        <p class="text-gray-300 text-sm font-light opacity-0 group-hover:opacity-100 transition-all duration-500 delay-100 line-clamp-3 mb-6 leading-relaxed">
+                        <p class="text-gray-300 text-sm font-light opacity-0 group-hover:opacity-100 transition-all duration-500 delay-100 line-clamp-3 mb-6">
                             {{ $member->bio }}
                         </p>
                         @endif
                         
-                        <!-- Social Icons -->
                         <div class="flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-700 delay-200">
                             @if($member->facebook_url)<a href="{{ $member->facebook_url }}" class="social-btn"><i class="fab fa-facebook-f text-xs"></i></a>@endif
                             @if($member->instagram_url)<a href="{{ $member->instagram_url }}" class="social-btn"><i class="fab fa-instagram text-xs"></i></a>@endif
@@ -95,14 +91,11 @@
                         </div>
                     </div>
                 </div>
-                @if($index == 1) 
-                    <div class="absolute inset-0 border border-gold-400/0 group-hover:border-gold-400/40 transition-all duration-700 z-30 pointer-events-none"></div> 
-                @endif
+                @if($index == 1) <div class="absolute inset-0 border border-gold-400/0 group-hover:border-gold-400/40 transition-all duration-700 z-30 pointer-events-none"></div> @endif
             </div>
             @endforeach
         </div>
         @endif
-
 
         {{-- ELEGANT FLOW CONNECTOR --}}
         <div class="relative flex flex-col items-center mb-32" data-aos="fade-up">
@@ -110,8 +103,7 @@
             <div class="absolute -bottom-4 w-2 h-2 rounded-full bg-gold-400 shadow-[0_0_15px_#fbbf24]"></div>
         </div>
 
-
-        {{-- PART 2: PRO TEAM (RISING STARS) --}}
+        {{-- PART 2: PRO TEAM --}}
         @if($proTeams->count() > 0)
         <div class="relative" data-aos="fade-up">
             <div class="text-center mb-20">
@@ -154,29 +146,14 @@
             </div>
         </div>
         @endif
-
     </div>
 </section>
 
 <style>
-    /* Custom Social Button Style */
     .social-btn {
         @apply w-9 h-9 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-gold-400 hover:border-gold-400 hover:text-black hover:shadow-[0_0_15px_rgba(251,191,36,0.5)] transition-all duration-500;
     }
-
-    /* Additional Typography Enhancements */
-    #team {
-        --gold-primary: #fbbf24;
-    }
-
-    .font-rumonds {
-        /* Ganti dengan font serif/display mewah Anda jika tersedia */
-        letter-spacing: 0.05em;
-    }
-
-    /* Smooth Image Grayscale Transition */
-    img {
-        will-change: transform, filter;
-    }
+    .font-rumonds { letter-spacing: 0.05em; }
+    img { will-change: transform, filter; }
 </style>
 @endif
