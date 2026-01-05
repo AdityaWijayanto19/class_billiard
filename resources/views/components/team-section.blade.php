@@ -91,22 +91,37 @@
                         </p>
                         @endif
                         
-                        <!-- Social Media Icons (Muncul Saat Hover) -->
+                          <!-- Social Media Icons -->
                         @php
-                            $fb = trim($member->facebook_url ?? '#');
-                            $ig = trim($member->instagram_url ?? '#');
-                            $li = trim($member->linkedin_url ?? '#');
+                            $facebookUrl = $member->facebook_url && trim($member->facebook_url) !== '' ? trim($member->facebook_url) : '';
+                            $instagramUrl = $member->instagram_url && trim($member->instagram_url) !== '' ? trim($member->instagram_url) : '';
+                            $linkedinUrl = $member->linkedin_url && trim($member->linkedin_url) !== '' ? trim($member->linkedin_url) : '';
                         @endphp
-                        @if($fb || $ig || $li)
+                        @if($facebookUrl || $instagramUrl || $linkedinUrl)
                         <div class="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-200">
-                            @if($fb)<a href="{{ $fb }}" target="_blank" class="social-btn"><i class="fab fa-facebook-f text-xs"></i></a>@endif
-                            @if($ig)<a href="{{ $ig }}" target="_blank" class="social-btn"><i class="fab fa-instagram text-xs"></i></a>@endif
-                            @if($li)<a href="{{ $li }}" target="_blank" class="social-btn"><i class="fab fa-linkedin-in text-xs"></i></a>@endif
+                            @if($facebookUrl)
+                            <a href="{{ $facebookUrl }}" target="_blank" rel="noopener noreferrer"
+                                class="w-8 h-8 border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-gold-400 hover:border-gold-400 hover:text-black transition-all duration-300">
+                                <i class="fab fa-facebook-f text-xs"></i>
+                            </a>
+                            @endif
+                            @if($instagramUrl)
+                            <a href="{{ $instagramUrl }}" target="_blank" rel="noopener noreferrer"
+                                class="w-8 h-8 border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-gold-400 hover:border-gold-400 hover:text-black transition-all duration-300">
+                                <i class="fab fa-instagram text-xs"></i>
+                            </a>
+                            @endif
+                            @if($linkedinUrl)
+                            <a href="{{ $linkedinUrl }}" target="_blank" rel="noopener noreferrer"
+                                class="w-8 h-8 border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-gold-400 hover:border-gold-400 hover:text-black transition-all duration-300">
+                                <i class="fab fa-linkedin-in text-xs"></i>
+                            </a>
+                            @endif
                         </div>
                         @endif
                     </div>
                 </div>
-
+                
                 @if($index == 1)
                 <!-- Gold Frame Effect for Center -->
                 <div class="absolute inset-0 border border-gold-400/0 group-hover:border-gold-400/50 transition-colors duration-500 z-30 pointer-events-none"></div>
