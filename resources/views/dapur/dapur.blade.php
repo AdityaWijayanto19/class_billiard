@@ -100,9 +100,11 @@
     </div>
 
     @push('scripts')
-    <script src="{{ asset('js/dapur.js') }}"></script>
     <script>
-        // Sidebar Toggle
+    // Mark inline dapur script as active to prevent duplicate external execution
+    try { window.__DapurInlineInitialized = true; } catch (e) {}
+
+    // Sidebar Toggle
 
 
         // Notification and Sound Functions
