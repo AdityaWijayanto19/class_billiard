@@ -192,6 +192,7 @@
                             ['r' => 'admin.cms.keunggulan-fasilitas', 'l' => 'Keunggulan'],
                             ['r' => 'admin.cms.portfolio-achievement', 'l' => 'Portfolio'],
                             ['r' => 'admin.cms.tim-kami', 'l' => 'Tim Kami'],
+                            ['r' => 'admin.cms.pro-tim', 'l' => 'Pro Tim'],
                             ['r' => 'admin.cms.testimoni-pelanggan', 'l' => 'Testimoni'],
                             ['r' => 'admin.cms.event', 'l' => 'Event'],
                             ['r' => 'admin.cms.footer', 'l' => 'Footer'],
@@ -292,16 +293,6 @@
                         <i class="ri-stack-fill text-lg"></i>
                         <span x-show="!sidebarCollapsed || sidebarHover" x-transition.opacity
                             class="font-bold text-xs tracking-tight whitespace-nowrap">Food Stock</span>
-                    </a>
-                    @endif
-
-                    {{-- Pro Tim Management --}}
-                    @if(auth()->user()->hasAnyRole(['super_admin', 'admin']))
-                    <a href="{{ route('admin.pro-tim.index') }}"
-                        class="flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all group {{ request()->routeIs('admin.pro-tim.*') ? 'active-link' : 'hover:bg-slate-200/50 dark:hover:bg-white/5 text-slate-600 dark:text-slate-400' }}">
-                        <i class="ri-team-line text-lg"></i>
-                        <span x-show="!sidebarCollapsed || sidebarHover" x-transition.opacity
-                            class="font-bold text-xs tracking-tight whitespace-nowrap">Kelola Pro Tim</span>
                     </a>
                     @endif
                 </div>

@@ -25,6 +25,62 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
+    // ===================== PRO TIM (CRUD dalam satu file, manage-content) =====================
+    public function proTimIndex()
+    {
+        $this->authorizeAdminOnly();
+        $proTeams = \App\Models\ProTeam::orderBy('order')->get();
+        return view('admin.manage-content.pro-tim', compact('proTeams'));
+    }
+
+    public function proTimStore(Request $request)
+    {
+        $this->authorizeAdminOnly();
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'age' => 'nullable|integer|min:0|max:100',
+            'origin' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'order' => 'nullable|integer|min:0|max:999',
+            'is_active' => 'boolean',
+        ]);
+        $validated['is_active'] = $request->boolean('is_active');
+        $validated['order'] = $validated['order'] ?? (\App\Models\ProTeam::max('order') + 1);
+        \App\Models\ProTeam::create($validated);
+        return redirect()->route('admin.cms.pro-tim')->with('success', 'Pro Tim berhasil ditambahkan!');
+    }
+
+    public function proTimEdit($id)
+    {
+        $this->authorizeAdminOnly();
+        $proTeams = \App\Models\ProTeam::orderBy('order')->get();
+        $editData = \App\Models\ProTeam::findOrFail($id);
+        return view('admin.manage-content.pro-tim', compact('proTeams', 'editData'));
+    }
+
+    public function proTimUpdate(Request $request, $id)
+    {
+        $this->authorizeAdminOnly();
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'age' => 'nullable|integer|min:0|max:100',
+            'origin' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'order' => 'nullable|integer|min:0|max:999',
+            'is_active' => 'boolean',
+        ]);
+        $proTeam = \App\Models\ProTeam::findOrFail($id);
+        $proTeam->update($validated);
+        return redirect()->route('admin.cms.pro-tim')->with('success', 'Pro Tim berhasil diperbarui!');
+    }
+
+    public function proTimDestroy($id)
+    {
+        $this->authorizeAdminOnly();
+        $proTeam = \App\Models\ProTeam::findOrFail($id);
+        $proTeam->delete();
+        return redirect()->route('admin.cms.pro-tim')->with('success', 'Pro Tim berhasil dihapus!');
+    }
 {
     /**
      * Image validation rules for production

@@ -113,6 +113,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth.custom', 'role:super_a
             Route::post('/tim-kami/{id}', [App\Http\Controllers\AdminController::class, 'timKamiUpdate'])->name('tim-kami.update');
             Route::delete('/tim-kami/{id}', [App\Http\Controllers\AdminController::class, 'timKamiDestroy'])->name('tim-kami.destroy');
 
+            // Pro Tim Management (masuk ke manage-content)
+            Route::get('/pro-tim', [App\Http\Controllers\AdminController::class, 'proTimIndex'])->name('pro-tim');
+            Route::post('/pro-tim', [App\Http\Controllers\AdminController::class, 'proTimStore'])->name('pro-tim.store');
+            Route::get('/pro-tim/{id}/edit', [App\Http\Controllers\AdminController::class, 'proTimEdit'])->name('pro-tim.edit');
+            Route::put('/pro-tim/{id}', [App\Http\Controllers\AdminController::class, 'proTimUpdate'])->name('pro-tim.update');
+            Route::delete('/pro-tim/{id}', [App\Http\Controllers\AdminController::class, 'proTimDestroy'])->name('pro-tim.destroy');
+
             Route::get('/testimoni-pelanggan', [App\Http\Controllers\AdminController::class, 'testimoniPelangganIndex'])->name('testimoni-pelanggan');
             Route::post('/testimoni-pelanggan', [App\Http\Controllers\AdminController::class, 'testimoniPelangganStore'])->name('testimoni-pelanggan.store');
             Route::post('/testimoni-pelanggan/{id}', [App\Http\Controllers\AdminController::class, 'testimoniPelangganUpdate'])->name('testimoni-pelanggan.update');
@@ -188,13 +195,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth.custom', 'role:super_a
             Route::get('/{id}/barcode', [App\Http\Controllers\TableController::class, 'showBarcode'])->name('barcode');
             Route::delete('/{id}', [App\Http\Controllers\TableController::class, 'destroy'])->name('destroy');
         });
-
-            // Pro Tim Management (CRUD dalam satu file)
-            Route::get('pro-tim', [App\Http\Controllers\ProTimController::class, 'index'])->name('pro-tim.index');
-            Route::post('pro-tim', [App\Http\Controllers\ProTimController::class, 'store'])->name('pro-tim.store');
-            Route::get('pro-tim/{id}/edit', [App\Http\Controllers\ProTimController::class, 'edit'])->name('pro-tim.edit');
-            Route::put('pro-tim/{id}', [App\Http\Controllers\ProTimController::class, 'update'])->name('pro-tim.update');
-            Route::delete('pro-tim/{id}', [App\Http\Controllers\ProTimController::class, 'destroy'])->name('pro-tim.destroy');
 
         // Redirect old barcode route to tables
         Route::get('/barcode', function () {
