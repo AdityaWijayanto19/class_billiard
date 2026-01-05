@@ -1,8 +1,16 @@
 {{-- Team Section Component --}}
 @php
-    // Selalu ambil data fresh langsung dari DB, tidak pernah pakai cache/controller
-    $teamMembers = \App\Models\TimKami::where('is_active', true)->orderBy('order', 'asc')->get();
-    $proTeams = \App\Models\ProTeam::where('is_active', 1)->orderBy('order', 'asc')->get();
+    // Debug: coba tangkap error dan log jika gagal
+    try {
+        $teamMembers = \App\Models\TimKami::where('is_active', true)->orderBy('order', 'asc')->get();
+        $proTeams = \App\Models\ProTeam::where('is_active', 1)->orderBy('order', 'asc')->get();
+        $teamMembersError = null;
+    } catch (\Exception $e) {
+        $teamMembers = collect();
+        $proTeams = collect();
+        $teamMembersError = $e->getMessage();
+        \Log::error('[TeamSection] Gagal ambil TimKami: ' . $e->getMessage());
+    }
 @endphp
 
 <section id="team" class="py-32 bg-[#050505] relative overflow-hidden">
@@ -29,6 +37,16 @@
 
     <div class="container mx-auto px-6 relative z-10">
         
+        {{-- DEBUG INFO --}}
+        <div class="mb-4 p-2 bg-black/60 text-xs text-yellow-400 rounded">
+            <b>Debug TeamSection:</b>
+            teamMembers count: {{ $teamMembers->count() }} |
+            proTeams count: {{ $proTeams->count() }}
+            @if(isset($teamMembersError) && $teamMembersError)
+                <br><span class="text-red-400">Error: {{ $teamMembersError }}</span>
+            @endif
+        </div>
+
         {{-- SECTION 1: THE MASTERS --}}
         @if($teamMembers->count() > 0)
         <div class="text-center mb-24" data-aos="fade-up">
