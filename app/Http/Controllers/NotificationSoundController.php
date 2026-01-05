@@ -133,6 +133,20 @@ class NotificationSoundController extends Controller
             $file = $request->file('audio');
             $extension = strtolower($file->getClientOriginalExtension() ?: 'mp3');
             $filename = time().'_'.Str::uuid()->toString().'.'.$extension;
+
+            // Ensure the target directory exists on the configured public disk
+            try {
+                if (! Storage::disk('public')->exists('sounds')) {
+                    // create directory with reasonable permissions (recursive)
+                    Storage::disk('public')->makeDirectory('sounds', 0755, true);
+                }
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal membuat direktori penyimpanan audio: '.$e->getMessage().". Pastikan folder storage dapat ditulis dan jalankan php artisan storage:link jika diperlukan.",
+                ], 500);
+            }
+
             $path = $file->storeAs('sounds', $filename, 'public');
 
             $sound = DB::transaction(function () use ($request, $path, $filename) {
@@ -190,7 +204,18 @@ class NotificationSoundController extends Controller
         }
 
         $fullPath = Storage::disk('public')->path($sound->file_path);
-        $mime = Storage::disk('public')->mimeType($sound->file_path) ?: 'application/octet-stream';
+
+        // Fallback to PHP's mime detection for better compatibility on some hosts
+        $mime = null;
+        try {
+            if (function_exists('mime_content_type')) {
+                $mime = @mime_content_type($fullPath);
+            }
+        } catch (\Throwable $e) {
+            $mime = null;
+        }
+
+        $mime = $mime ?: 'application/octet-stream';
 
         return response()->file($fullPath, [
             'Content-Type' => $mime,

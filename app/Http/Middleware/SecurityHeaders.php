@@ -11,28 +11,33 @@ class SecurityHeaders
     /**
      * Add security headers to prevent common attacks
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next)
     {
         $response = $next($request);
 
+        // Use HeaderBag->set() which works for both Illuminate responses and
+        // Symfony StreamedResponse (returned by response()->file()).
+        // This avoids calling the convenience ->header() method which doesn't
+        // exist on StreamedResponse and caused fatal errors on some hosts.
+
         // Prevent clickjacking attacks (frame embedding)
-        $response->header('X-Frame-Options', 'SAMEORIGIN');
+        $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
 
         // Prevent MIME type sniffing
-        $response->header('X-Content-Type-Options', 'nosniff');
+        $response->headers->set('X-Content-Type-Options', 'nosniff');
 
         // Enable XSS protection in older browsers
-        $response->header('X-XSS-Protection', '1; mode=block');
+        $response->headers->set('X-XSS-Protection', '1; mode=block');
 
         // Referrer Policy - prevent referrer leakage
-        $response->header('Referrer-Policy', 'strict-origin-when-cross-origin');
+        $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
         // Permissions Policy - restrict browser features
-        $response->header('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+        $response->headers->set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
 
         // HSTS - Force HTTPS (only in production)
         if (config('app.env') === 'production') {
-            $response->header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+            $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
         }
 
         // CSP disabled for now - too strict for development
