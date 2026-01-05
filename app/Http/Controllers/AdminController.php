@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
+{
     // ===================== PRO TIM (CRUD dalam satu file, manage-content) =====================
     public function proTimIndex()
     {
