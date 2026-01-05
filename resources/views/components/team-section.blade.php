@@ -93,10 +93,11 @@
                         
                           <!-- Social Media Icons -->
                         @php
-                            $facebookUrl = $member->facebook_url && trim($member->facebook_url) !== '' ? trim($member->facebook_url) : '';
-                            $instagramUrl = $member->instagram_url && trim($member->instagram_url) !== '' ? trim($member->instagram_url) : '';
-                            $linkedinUrl = $member->linkedin_url && trim($member->linkedin_url) !== '' ? trim($member->linkedin_url) : '';
+                            $facebookUrl = trim($member->facebook_url ?? '#');
+                            $instagramUrl = trim($member->instagram_url ?? '#');
+                            $linkedinUrl = trim($member->linkedin_url ?? '#');
                         @endphp
+
                         @if($facebookUrl || $instagramUrl || $linkedinUrl)
                         <div class="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-200">
                             @if($facebookUrl)
