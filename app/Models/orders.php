@@ -27,7 +27,10 @@ class orders extends Model
 
     public function orderItems()
     {
-        return $this->hasMany(order_items::class, 'order_id')->cascadeOnDelete();
+        // Return a standard hasMany relation. Do NOT call cascadeOnDelete() here
+        // because that's a schema/foreign-key convenience (not a relation method)
+        // and calling it on the relation object can cause unexpected errors.
+        return $this->hasMany(order_items::class, 'order_id');
     }
 
     public function shift()
