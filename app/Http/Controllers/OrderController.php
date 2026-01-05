@@ -995,16 +995,18 @@ class OrderController extends Controller
             try {
                 $lastOrderId = 0;
                 $isLocal = app()->environment('local');
+                // Polling interval between checks (seconds)
                 $checkInterval = $isLocal ? 2.0 : 1.5;
                 $startedAt = microtime(true);
-                $maxConnectionSeconds = $isLocal ? 5 : 30;
+                // Keep SSE connections open longer in production to avoid frequent reconnects
+                $maxConnectionSeconds = $isLocal ? 300 : 86400; // 5 minutes local, 24 hours prod
 
                 while (true) {
                     // Check if client is still connected
                     if (connection_aborted()) {
                         break;
                     }
-                    if ((microtime(true) - $startedAt) >= $maxConnectionSeconds) {
+                    if ($maxConnectionSeconds > 0 && (microtime(true) - $startedAt) >= $maxConnectionSeconds) {
                         echo ": close\n\n";
                         if (ob_get_level() > 0) {
                             ob_flush();
