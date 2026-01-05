@@ -1,8 +1,8 @@
 {{-- Team Section Component --}}
 @php
     /** 
-     * KODE ANTI-GHAIB PRODUCTION
-     * Ambil data tanpa filter awal untuk memastikan data ketarik.
+     * KODE ANTI-GHAIB PRODUCTION + LUXURY DESIGN
+     * Teknik ini memastikan data ditarik langsung dari DB tanpa hambatan Cache.
      */
     try {
         $teamMembers = \App\Models\TimKami::orderBy('order', 'asc')->get();
@@ -13,129 +13,183 @@
     }
 @endphp
 
-
-
-
-<section id="team" class="py-24 bg-[#050505] relative overflow-hidden" style="min-height: 500px;">
-    <!-- BACKGROUND: Gradient + SVG Wave for smooth transition -->
+@if($teamMembers->count() > 0 || $proTeams->count() > 0)
+<section id="team" class="py-32 bg-[#050505] relative overflow-hidden">
+    
+    <!-- LUXURY FLOW BACKGROUND (Elegant Curves & Soft Glow) -->
     <div class="absolute inset-0 z-0 pointer-events-none">
-        <div class="absolute inset-0 bg-gradient-to-b from-[#050505] via-[#18120a] to-[#181818] opacity-90"></div>
-        <svg class="w-full h-32 md:h-48 absolute top-0 left-0" viewBox="0 0 1440 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path fill="#fbbf24" fill-opacity="0.08" d="M0,160L60,154.7C120,149,240,139,360,154.7C480,171,600,213,720,197.3C840,181,960,107,1080,101.3C1200,96,1320,160,1380,192L1440,224L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z"></path>
+        <svg class="absolute top-0 left-0 w-full h-full opacity-25" viewBox="0 0 1440 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Main Golden Silk Path -->
+            <path d="M-100 200C200 400 600 -100 900 300C1200 700 1300 900 1600 800" stroke="url(#gold_line_grad)" stroke-width="1.5" stroke-dasharray="15 10" />
+            <path d="M-50 250C250 450 650 -50 950 350C1250 750 1350 950 1650 850" stroke="url(#gold_line_grad)" stroke-width="0.5" opacity="0.4" />
+            
+            <!-- Bottom Glow Flow -->
+            <path d="M0 1000C300 950 600 1100 900 950C1200 800 1440 850 1440 850V1200H0V1000Z" fill="url(#gold_bottom_glow)" opacity="0.15" />
+
+            <defs>
+                <linearGradient id="gold_line_grad" x1="0" y1="0" x2="1440" y2="1000" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#fbbf24" stop-opacity="0" />
+                    <stop offset="0.5" stop-color="#fbbf24" />
+                    <stop offset="1" stop-color="#fbbf24" stop-opacity="0" />
+                </linearGradient>
+                <radialGradient id="gold_bottom_glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(720 1200) rotate(-90) scale(400 1000)">
+                    <stop stop-color="#fbbf24" />
+                    <stop offset="1" stop-color="#050505" stop-opacity="0" />
+                </radialGradient>
+            </defs>
         </svg>
+        <div class="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-gold-400/5 to-transparent"></div>
     </div>
 
-
-    <div class="container mx-auto px-2 sm:px-4 md:px-6 relative z-10">
-        {{-- SECTION 1: THE MASTERS --}}
-        <div class="text-center mb-20" data-aos="fade-down" data-aos-duration="900">
-            <span class="text-gold-400 font-bold tracking-[0.4em] text-xs uppercase mb-4 block">The Masters</span>
-            <h2 class="text-4xl md:text-6xl text-white font-serif uppercase italic">
-                OUR <span class="text-gold-400">ELITE TEAM</span>
+    <div class="container mx-auto px-6 relative z-10">
+        
+        {{-- SECTION 1: THE MASTERS (ELITE TEAM) --}}
+        @if($teamMembers->count() > 0)
+        <div class="text-center mb-24" data-aos="fade-up" data-aos-duration="1000">
+            <span class="text-gold-400 font-bold tracking-[0.5em] text-xs uppercase mb-4 block">The Masters</span>
+            <h2 class="text-5xl md:text-7xl text-white font-serif tracking-tight uppercase italic">
+                OUR <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 via-white to-gold-400">ELITE TEAM</span>
             </h2>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-10 mb-32">
-            @forelse($teamMembers as $index => $member)
-                <div class="relative min-h-[420px] max-h-[650px] w-full bg-neutral-900 border-2 border-gold-400/20 rounded-lg overflow-hidden flex flex-col justify-end p-6 md:p-8 shadow-xl hover:scale-[1.03] transition-transform duration-300 group {{ $index == 1 ? 'md:-mt-8' : '' }}"
-                    data-aos="fade-up" data-aos-delay="{{ 100 + $index*100 }}" data-aos-duration="900">
-                    <!-- Nama Belakang (Silhouette) -->
-                    <div class="absolute inset-0 flex items-center justify-center z-0 opacity-10 pointer-events-none">
-                        <span class="text-8xl md:text-9xl font-black text-white transform -rotate-90 uppercase select-none">
-                            {{ substr($member->name, 0, 1) }}
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-40">
+            @foreach($teamMembers as $index => $member)
+                @if($member->is_active)
+                <div class="group relative h-[650px] overflow-hidden rounded-sm cursor-pointer bg-neutral-900 border border-white/5 {{ $index == 1 ? 'md:-mt-12' : '' }}"
+                    data-aos="fade-up" data-aos-delay="{{ ($index + 1) * 200 }}" data-aos-duration="1000">
+                    
+                    <!-- Vertical Silhouette Name -->
+                    <div class="absolute inset-0 flex items-center justify-center z-0 opacity-[0.07] group-hover:opacity-15 transition-opacity duration-700">
+                        <span class="text-[140px] font-black text-white transform -rotate-90 whitespace-nowrap select-none uppercase font-serif tracking-tighter">
+                            {{ strtoupper(substr($member->name, 0, 1)) }}
                         </span>
                     </div>
 
-                    <!-- Image Handling -->
+                    <!-- Profile Image -->
                     @php $photo = $member->photo ?? $member->image; @endphp
                     @if($photo)
-                        <img src="{{ asset('storage/' . $photo) }}" 
-                             alt="{{ $member->name }}"
-                             class="absolute inset-0 w-full h-full object-cover z-10 grayscale group-hover:grayscale-0 transition duration-500">
+                    <img src="{{ asset('storage/' . $photo) }}" alt="{{ $member->name }}"
+                        class="absolute inset-0 w-full h-full object-cover filter grayscale contrast-[1.1] transition-all duration-1000 group-hover:grayscale-0 group-hover:scale-110 z-10">
+                    @else
+                    <div class="absolute inset-0 w-full h-full bg-neutral-800 flex items-center justify-center z-10">
+                        <i class="fas fa-user-circle text-6xl text-white/5"></i>
+                    </div>
                     @endif
 
-                    <!-- Gradient Overlay -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-20"></div>
+                    <!-- Luxury Gradient Overlay -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent z-20 transition-opacity duration-700 group-hover:opacity-90"></div>
 
-                    <!-- Info (Z-30 agar di atas gambar) -->
-                    <div class="relative z-30 max-h-[320px] overflow-y-auto scrollbar-thin scrollbar-thumb-gold-400/30 scrollbar-track-transparent pr-2">
-                        <div class="border-l-4 border-gold-400 pl-4">
-                            <h3 class="text-2xl md:text-3xl text-white font-serif italic mb-1">{{ $member->name }}</h3>
-                            <p class="text-gold-400 text-[10px] font-black uppercase tracking-[0.3em] mb-2">{{ $member->position }}</p>
+                    <!-- Information Box -->
+                    <div class="absolute bottom-0 left-0 w-full p-10 z-30 transform translate-y-6 group-hover:translate-y-0 transition-transform duration-700">
+                        <div class="border-l-[3px] border-gold-400 pl-6">
+                            <h3 class="{{ $index == 1 ? 'text-4xl' : 'text-3xl' }} text-white font-serif italic mb-2 tracking-wide leading-tight">{{ $member->name }}</h3>
+                            <p class="text-gold-400 text-[10px] font-black uppercase tracking-[0.3em] mb-5">{{ $member->position }}</p>
+                            
                             @if($member->bio)
-                                <p class="text-neutral-300 text-xs mb-2 line-clamp-3 md:line-clamp-4">{{ $member->bio }}</p>
+                            <p class="text-gray-300 text-sm font-light opacity-0 group-hover:opacity-100 transition-all duration-500 delay-100 line-clamp-3 mb-6 leading-relaxed">
+                                {{ $member->bio }}
+                            </p>
                             @endif
-                            @if($member->achievement)
-                                <div class="text-gold-400 text-xs mb-2"><span class="font-bold">Prestasi:</span> {{ $member->achievement }}</div>
-                            @endif
-                            @if($member->experience)
-                                <div class="text-neutral-400 text-xs mb-2"><span class="font-bold">Pengalaman:</span> {{ $member->experience }}</div>
-                            @endif
-                            <!-- Sosmed Sederhana -->
-                            <div class="flex gap-4 mt-2">
-                                @if($member->instagram_url)<a href="{{ $member->instagram_url }}" class="text-white hover:text-gold-400" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>@endif
-                                @if($member->facebook_url)<a href="{{ $member->facebook_url }}" class="text-white hover:text-gold-400" target="_blank" rel="noopener"><i class="fab fa-facebook-f"></i></a>@endif
+                            
+                            <!-- Social Icons -->
+                            <div class="flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-700 delay-200">
+                                @if($member->facebook_url)<a href="{{ $member->facebook_url }}" target="_blank" class="social-btn"><i class="fab fa-facebook-f text-xs"></i></a>@endif
+                                @if($member->instagram_url)<a href="{{ $member->instagram_url }}" target="_blank" class="social-btn"><i class="fab fa-instagram text-xs"></i></a>@endif
+                                @if($member->linkedin_url)<a href="{{ $member->linkedin_url }}" target="_blank" class="social-btn"><i class="fab fa-linkedin-in text-xs"></i></a>@endif
                             </div>
                         </div>
                     </div>
-                </div>
-            @empty
-                <div class="col-span-3 text-center text-white opacity-50">Data Elite Team tidak terbaca di database.</div>
-            @endforelse
-        </div>
 
-
-        {{-- SECTION 2: PRO TEAM --}}
-        <div class="text-center mb-16" data-aos="fade-down" data-aos-delay="200" data-aos-duration="900">
-            <span class="text-gold-400 font-bold tracking-[0.5em] text-xs uppercase mb-4 block">Rising Stars</span>
-            <h3 class="text-3xl md:text-5xl text-white font-serif uppercase italic tracking-widest">PRO TEAM</h3>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-            @forelse($proTeams as $idx => $team)
-                <div class="bg-neutral-900/70 p-6 md:p-8 border border-gold-400/20 rounded-lg group shadow-lg hover:scale-[1.03] transition-transform duration-300 flex flex-col justify-between min-h-[320px] max-h-[480px] overflow-hidden"
-                    data-aos="fade-up" data-aos-delay="{{ 100 + $idx*80 }}" data-aos-duration="900">
-                    <div>
-                        <h4 class="text-lg md:text-xl text-white font-serif font-bold group-hover:text-gold-400 transition-colors mb-2 md:mb-4">{{ $team->name }}</h4>
-                        <div class="space-y-1 text-xs text-neutral-400 uppercase tracking-widest">
-                            <div class="flex justify-between border-b border-white/5 pb-1">
-                                <span>Age</span> <span class="text-white font-mono">{{ $team->age }}</span>
-                            </div>
-                            <div class="flex justify-between border-b border-white/5 pb-1">
-                                <span>Origin</span> <span class="text-white">{{ $team->origin }}</span>
-                            </div>
-                            @if($team->achievement)
-                                <div class="flex justify-between border-b border-white/5 pb-1">
-                                    <span>Prestasi</span> <span class="text-gold-400">{{ $team->achievement }}</span>
-                                </div>
-                            @endif
-                            @if($team->experience)
-                                <div class="flex justify-between border-b border-white/5 pb-1">
-                                    <span>Pengalaman</span> <span class="text-white">{{ $team->experience }}</span>
-                                </div>
-                            @endif
-                        </div>
-                        <div class="pt-2 normal-case tracking-normal text-neutral-500 italic text-xs line-clamp-2 md:line-clamp-3">
-                            {{ $team->address }}
-                        </div>
-                    </div>
-                    @if($team->instagram_url || $team->facebook_url)
-                        <div class="flex gap-4 mt-4">
-                            @if($team->instagram_url)<a href="{{ $team->instagram_url }}" class="text-white hover:text-gold-400" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>@endif
-                            @if($team->facebook_url)<a href="{{ $team->facebook_url }}" class="text-white hover:text-gold-400" target="_blank" rel="noopener"><i class="fab fa-facebook-f"></i></a>@endif
-                        </div>
+                    @if($index == 1) 
+                        <div class="absolute inset-0 border border-gold-400/0 group-hover:border-gold-400/30 transition-all duration-700 z-30 pointer-events-none"></div> 
                     @endif
                 </div>
-            @empty
-                <div class="col-span-4 text-center text-white opacity-50">Data Pro Team tidak terbaca.</div>
-            @endforelse
+                @endif
+            @endforeach
         </div>
+        @endif
+
+
+        {{-- ELEGANT CONNECTOR (Visual Flow between sections) --}}
+        <div class="relative flex flex-col items-center mb-32" data-aos="zoom-in" data-aos-duration="1500">
+            <div class="w-px h-32 bg-gradient-to-b from-gold-400 via-gold-400/20 to-transparent"></div>
+            <div class="absolute -bottom-4 w-1.5 h-1.5 rounded-full bg-gold-400 shadow-[0_0_15px_#fbbf24]"></div>
+        </div>
+
+
+        {{-- SECTION 2: PRO TEAM (RISING STARS) --}}
+        @if($proTeams->count() > 0)
+        <div class="relative">
+            <div class="text-center mb-20" data-aos="fade-up">
+                <span class="text-gold-400 font-bold tracking-[0.5em] text-xs uppercase mb-4 block">Rising Stars</span>
+                <h3 class="text-4xl md:text-6xl text-white font-serif tracking-wide uppercase italic">PRO <span
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 to-white">TEAM</span>
+                </h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                @foreach($proTeams as $team)
+                    @if($team->is_active)
+                    <div class="bg-white/[0.03] backdrop-blur-md p-10 rounded-sm border border-white/5 hover:border-gold-400/30 transition-all duration-700 group hover:-translate-y-3"
+                        data-aos="fade-up" data-aos-delay="{{ $loop->index * 150 }}">
+                        
+                        <div class="flex items-start justify-between mb-8">
+                            <h4 class="text-2xl text-white font-serif font-bold group-hover:text-gold-400 transition-colors leading-tight">
+                                {!! nl2br(e($team->name)) !!}
+                            </h4>
+                            <div class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-neutral-600 group-hover:border-gold-400 group-hover:text-gold-400 transition-all duration-500">
+                                <i class="fas fa-user-tie text-base"></i>
+                            </div>
+                        </div>
+
+                        <div class="space-y-5">
+                            <div class="flex items-center justify-between border-b border-white/5 pb-3">
+                                <span class="text-[9px] text-neutral-500 uppercase tracking-widest">Age</span>
+                                <span class="text-white text-sm font-mono tracking-tighter">{{ $team->age }} Yrs</span>
+                            </div>
+                            <div class="flex items-center justify-between border-b border-white/5 pb-3">
+                                <span class="text-[9px] text-neutral-500 uppercase tracking-widest">Origin</span>
+                                <span class="text-white text-sm">{{ $team->origin }}</span>
+                            </div>
+                            <div class="pt-2">
+                                <span class="text-[9px] text-neutral-500 uppercase tracking-widest block mb-1">Address</span>
+                                <p class="text-neutral-400 text-xs font-light leading-relaxed line-clamp-2">
+                                    {{ $team->address ?? 'Location not set' }}
+                                </p>
+                            </div>
+                        </div>
+                        @if($team->instagram_url || $team->facebook_url)
+                        <div class="flex gap-4 mt-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                            @if($team->instagram_url)<a href="{{ $team->instagram_url }}" class="text-white hover:text-gold-400"><i class="fab fa-instagram"></i></a>@endif
+                            @if($team->facebook_url)<a href="{{ $team->facebook_url }}" class="text-white hover:text-gold-400"><i class="fab fa-facebook-f"></i></a>@endif
+                        </div>
+                        @endif
+                    </div>
+                    @endif
+                @endforeach
+            </div>
+        </div>
+        @endif
 
     </div>
 </section>
 
-<!-- AOS INIT (jika belum ada di layout, tambahkan di layout utama) -->
-@push('scripts')
-    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-    <script>AOS.init({ once: true, duration: 900 });</script>
-@endpush
+<style>
+    /* Luxury Social Button Style */
+    .social-btn {
+        @apply w-9 h-9 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-gold-400 hover:border-gold-400 hover:text-black hover:shadow-[0_0_20px_rgba(251,191,36,0.4)] transition-all duration-500;
+    }
+
+    /* AOS Fail-Safe: Agar elemen tidak hilang jika JS gagal load */
+    [data-aos] {
+        opacity: 1 !important;
+        transform: translate(0) scale(1) !important;
+    }
+    .aos-init[data-aos] {
+        opacity: 0;
+    }
+    .aos-animate[data-aos] {
+        opacity: 1;
+    }
+</style>
+@endif
