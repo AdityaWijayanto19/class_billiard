@@ -112,3 +112,55 @@
 </section>
 @endif
 
+
+<!-- Pro Team Section (Text Only) -->
+@php
+    $proTeams = \App\Models\ProTeam::where('is_active', true)->orderBy('order')->get();
+@endphp
+<div class="mt-24 mb-16" data-aos="fade-up">
+    <div class="text-center mb-16">
+        <span class="text-gold-400 font-bold tracking-[0.3em] text-sm uppercase mb-4 block">Rising
+            Stars</span>
+        <h3 class="text-3xl md:text-5xl text-white font-rumonds tracking-wide uppercase">PRO <span
+                class="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 to-white">TEAM</span>
+        </h3>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        @forelse($proTeams as $team)
+        <div
+            class="bg-[#111] p-8 rounded-xl border border-white/5 hover:border-gold-400/50 transition-all duration-300 group hover:-translate-y-2 hover:shadow-[0_10px_30px_-10px_rgba(255,215,0,0.1)]">
+            <div class="flex items-center justify-between mb-6">
+                <h4
+                    class="text-2xl text-white font-serif font-bold group-hover:text-gold-400 transition-colors">
+                    {!! nl2br(e($team->name)) !!}</h4>
+                <div
+                    class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-gray-500 group-hover:border-gold-400 group-hover:text-gold-400 transition-all">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div class="flex items-center justify-between border-b border-white/5 pb-3">
+                    <span class="text-[10px] text-gray-500 uppercase tracking-widest">Age</span>
+                    <span class="text-white font-mono">{{ $team->age }}</span>
+                </div>
+                <div class="flex items-center justify-between border-b border-white/5 pb-3">
+                    <span class="text-[10px] text-gray-500 uppercase tracking-widest">Origin</span>
+                    <span class="text-white">{{ $team->origin }}</span>
+                </div>
+                <div>
+                    <span
+                        class="text-[10px] text-gray-500 uppercase tracking-widest block mb-1">Address</span>
+                    <p class="text-gray-400 text-sm font-light leading-relaxed">
+                        {{ $team->address }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        @empty
+        <div class="col-span-4 text-center text-gray-400">Belum ada data Pro Team.</div>
+        @endforelse
+    </div>
+</div>
+

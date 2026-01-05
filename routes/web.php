@@ -189,6 +189,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth.custom', 'role:super_a
             Route::delete('/{id}', [App\Http\Controllers\TableController::class, 'destroy'])->name('destroy');
         });
 
+            // Pro Tim Management (CRUD dalam satu file)
+            Route::get('pro-tim', [App\Http\Controllers\ProTimController::class, 'index'])->name('pro-tim.index');
+            Route::post('pro-tim', [App\Http\Controllers\ProTimController::class, 'store'])->name('pro-tim.store');
+            Route::get('pro-tim/{id}/edit', [App\Http\Controllers\ProTimController::class, 'edit'])->name('pro-tim.edit');
+            Route::put('pro-tim/{id}', [App\Http\Controllers\ProTimController::class, 'update'])->name('pro-tim.update');
+            Route::delete('pro-tim/{id}', [App\Http\Controllers\ProTimController::class, 'destroy'])->name('pro-tim.destroy');
+
         // Redirect old barcode route to tables
         Route::get('/barcode', function () {
             return redirect()->route('admin.tables.index');
