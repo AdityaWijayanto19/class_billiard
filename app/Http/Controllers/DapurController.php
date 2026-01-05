@@ -144,6 +144,9 @@ class DapurController extends Controller
             // Keep SSE connections open for a long time in production to avoid frequent reconnects
             $maxConnectionSeconds = $isLocal ? 300 : 86400; // 5 minutes local, 24 hours prod
 
+            // Track IDs we've already sent to this client connection to avoid duplicates
+            $sentOrderIds = [];
+
             while (true) {
                 if (connection_aborted()) {
                     break;
@@ -172,6 +175,23 @@ class DapurController extends Controller
                 $orders = $query->get();
 
                 if ($orders->count() > 0) {
+                    // Filter out any orders we've already sent to this connection
+                    $newOrders = $orders->filter(function ($o) use (&$sentOrderIds) {
+                        return ! in_array($o->id, $sentOrderIds, true);
+                    })->values();
+
+                    if ($newOrders->count() === 0) {
+                        // Nothing new for this client, send heartbeat
+                        echo ": heartbeat\n\n";
+                        if (ob_get_level() > 0) {
+                            ob_flush();
+                        }
+                        flush();
+                        usleep((int) ($checkInterval * 1000000));
+                        continue;
+                    }
+
+                    $orders = $newOrders;
                     $ordersData = $orders->map(function ($order) {
                         return [
                             'id' => $order->id,
@@ -211,6 +231,9 @@ class DapurController extends Controller
                         'type' => 'new_orders',
                         'orders' => $ordersData,
                     ])."\n\n";
+
+                    // Remember what we've sent so this connection won't get duplicates
+                    $sentOrderIds = array_values(array_unique(array_merge($sentOrderIds, $orders->pluck('id')->toArray())));
 
                     if (ob_get_level() > 0) {
                         ob_flush();

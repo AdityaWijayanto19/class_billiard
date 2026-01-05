@@ -150,21 +150,7 @@
                         source.src = '';
                         if (notificationSound) {
                             notificationSound.pause();
-                            notificationSound.currentTime = 0;
-                        }
-                        // Clear invalid localStorage
-                        localStorage.removeItem('kitchenNotificationAudio');
-                        localStorage.removeItem('kitchenNotificationAudioType');
-                    }
-                } else if (audioType === 'file') {
-                    // File was selected directly, but file object is not persistent
-                    // User needs to reselect on page reload
-                    source.src = '';
-                    if (notificationSound) {
-                        notificationSound.pause();
-                        notificationSound.currentTime = 0;
-                    }
-                    // Clear invalid localStorage
+            // Initialization is handled earlier (render initialOrders client-side, reconcile, then connect SSE)
                     localStorage.removeItem('kitchenNotificationAudio');
                     localStorage.removeItem('kitchenNotificationAudioType');
                 }
@@ -504,6 +490,13 @@
             if (orders.length === 0) {
                 ordersSection.innerHTML = '<div class="text-center py-16 px-8 text-gray-600 dark:text-gray-500 text-lg"><p>Belum ada pesanan</p></div>';
             } else {
+                // Ensure there's only one grid container to prevent duplicate sets of cards
+                const existingGrids = Array.from(ordersSection.querySelectorAll('.grid'));
+                if (existingGrids.length > 1) {
+                    // keep the first grid, remove the rest
+                    existingGrids.slice(1).forEach(g => g.remove());
+                }
+
                 const ordersGrid = ordersSection.querySelector('.grid');
                 if (ordersGrid) {
                     ordersGrid.innerHTML = orders.map(order => renderOrderCard(order)).join('');
@@ -822,11 +815,13 @@
                 updateOrdersDisplay([]);
             }
 
-            // Mark first load complete so SSE notifications will be shown for new incoming orders
-            isFirstLoad = false;
-
             // Still fetch server state to reconcile any differences, then connect SSE
+            // Keep `isFirstLoad` true until the reconciliation completes — this
+            // prevents races where SSE messages and the reconciliation both
+            // insert the same cards.
             fetchInitialOrders().then(() => {
+                // Mark first load complete only after we've reconciled server state
+                isFirstLoad = false;
                 connectSSE();
             });
         })();
