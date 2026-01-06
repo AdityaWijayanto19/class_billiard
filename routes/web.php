@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoryAdminController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\MenuAdminController;
+use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -227,3 +228,5 @@ Route::prefix('admin')->name('admin.')->middleware(['auth.custom', 'role:super_a
         });
     }); // Close check.shift.time middleware group
 });
+
+Route::get('/sitemap.xml', [SitemapController::class, 'index']);
