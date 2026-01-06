@@ -68,14 +68,12 @@
                                     $role = $user->getRoleNames()->first() ?? 'no-role';
                                     $roleColors = [
                                         'super_admin' => 'text-red-500 bg-red-500/5 border-red-500/10',
-                                        'admin' => 'text-black bg-opacity-100 border-opacity-100',
+                                        'admin' => 'text-emerald-500 bg-emerald-500/5 border-emerald-500/10',
                                         'kitchen' => 'text-blue-500 bg-blue-500/5 border-blue-500/10',
                                         'no-role' => 'text-gray-500 bg-gray-500/5 border-gray-500/10',
                                     ];
                                 @endphp
                                 <span
-                                    :class="'admin' === '{{ $role }}' ? 'inline-block px-2 py-0.5 border rounded text-[9px] font-black uppercase tracking-widest' : ''"
-                                    :style="'admin' === '{{ $role }}' ? { color: 'black', backgroundColor: 'var(--primary-color)', borderColor: 'var(--primary-color)' } : {}"
                                     class="inline-block px-2 py-0.5 border rounded text-[9px] font-black uppercase tracking-widest {{ $roleColors[$role] ?? $roleColors['no-role'] }}">
                                     {{ str_replace('_', ' ', $role) }}
                                 </span>
