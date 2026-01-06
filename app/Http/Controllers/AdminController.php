@@ -8,7 +8,6 @@ use App\Models\Contact;
 use App\Models\Event;
 use App\Models\Footer;
 use App\Models\HeroSection;
-use App\Models\KeunggulanFasilitas;
 use App\Models\KitchenReport;
 use App\Models\Menu;
 use App\Models\order_items;
@@ -98,8 +97,7 @@ class AdminController extends Controller
         $defaultKeys = [
             'component_hero',
             'component_about',
-            'component_founder', 
-            'component_keunggulan',
+            'component_founder',
             'component_achievements',  // Portfolio/Achievement section
             'component_team',
             'component_testimonials',
@@ -110,18 +108,18 @@ class AdminController extends Controller
             'navbar_contact',
             'navbar_hero',
         ];
-        
+
         $keysToForget = empty($keys) ? $defaultKeys : $keys;
-        
+
         foreach ($keysToForget as $key) {
             Cache::forget($key);
         }
-        
+
         // Also clear application cache, views, and OPcache for immediate effect
         try {
             \Illuminate\Support\Facades\Artisan::call('cache:clear');
             \Illuminate\Support\Facades\Artisan::call('view:clear');
-            
+
             // Clear OPcache if available
             if (function_exists('opcache_reset')) {
                 @opcache_reset();
@@ -143,7 +141,7 @@ class AdminController extends Controller
         if (str_contains(base_path(), 'public_html')) {
             return base_path('storage/' . $relativePath);
         }
-        
+
         return public_path('storage/' . $relativePath);
     }
 
@@ -153,14 +151,14 @@ class AdminController extends Controller
     private function safeDeleteFile(?string $path): void
     {
         if (!$path) return;
-        
+
         // Try multiple possible locations
         $possiblePaths = [
             base_path('storage/' . $path),              // Hostinger: public_html/storage/
             public_path('storage/' . $path),            // Standard Laravel: public/storage/
             storage_path('app/public/' . $path),        // Laravel storage disk
         ];
-        
+
         foreach ($possiblePaths as $fullPath) {
             if (file_exists($fullPath)) {
                 try {
@@ -172,7 +170,7 @@ class AdminController extends Controller
                 }
             }
         }
-        
+
         // Last resort: try Laravel Storage facade
         if (Storage::disk('public')->exists($path)) {
             try {
@@ -192,7 +190,7 @@ class AdminController extends Controller
             // Generate unique filename
             $filename = \Illuminate\Support\Str::random(40) . '.' . $file->getClientOriginalExtension();
             $relativePath = $folder . '/' . $filename;
-            
+
             // Determine correct storage directory
             // Hostinger: base_path('storage/') = public_html/storage/
             // Local: public_path('storage/') = public/storage/
@@ -201,17 +199,17 @@ class AdminController extends Controller
             } else {
                 $directoryPath = public_path('storage/' . $folder);
             }
-            
+
             // Ensure directory exists
             if (!is_dir($directoryPath)) {
                 @mkdir($directoryPath, 0755, true);
             }
-            
+
             // Move file to storage
             $file->move($directoryPath, $filename);
-            
+
             Log::info('Stored file: ' . $directoryPath . '/' . $filename);
-            
+
             return $relativePath;
         } catch (\Exception $e) {
             Log::error('Failed to store file', ['folder' => $folder, 'error' => $e->getMessage()]);
@@ -382,8 +380,8 @@ class AdminController extends Controller
 
         // Format data untuk chart (DYNAMIS)
         $chartLabels = array_keys($categoryStats);
-        $chartQuantities = array_values(array_map(fn ($stat) => (int) $stat['quantity'], $categoryStats));
-        $chartRevenues = array_values(array_map(fn ($stat) => (float) $stat['revenue'], $categoryStats));
+        $chartQuantities = array_values(array_map(fn($stat) => (int) $stat['quantity'], $categoryStats));
+        $chartRevenues = array_values(array_map(fn($stat) => (float) $stat['revenue'], $categoryStats));
 
         $chartData = [
             'labels' => $chartLabels, // Dynamis dari database
@@ -411,20 +409,30 @@ class AdminController extends Controller
     {
         $this->authorizeAdminOnly();
 
-        $validated = $request->validate([
-            'logo_image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
-            'background_image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
-            'title' => 'required|string|max:100',
-            'subtitle' => 'required|string|max:100',
-            'tagline' => 'nullable|string|max:255',
-            'cta_text_1' => 'nullable|string|max:50',
-            'cta_link_1' => 'nullable|string|max:255',
-            'cta_text_2' => 'nullable|string|max:50',
-        ]);
+        $validated = $request->validate(
+            [
+                'logo_image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
+                'background_image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
+                'title' => 'required|string|max:100',
+                'subtitle' => 'required|string|max:100',
+                'tagline' => 'nullable|string|max:255',
+                'cta_text_1' => 'nullable|string|max:50',
+                'cta_link_1' => 'nullable|string|max:255',
+                'cta_text_2' => 'nullable|string|max:50',
+            ],
+            [
+                'logo_image.image' => 'File logo harus berupa gambar yang valid.',
+                'logo_image.mimes' => 'Format file logo harus jpeg, jpg, png, atau webp.',
+                'logo_image.max' => 'Ukuran file logo maksimal 5MB.',
+                'background_image.image' => 'File background harus berupa gambar yang valid.',
+                'background_image.mimes' => 'Format file background harus jpeg, jpg, png, atau webp.',
+                'background_image.max' => 'Ukuran file background maksimal 5MB.',
+            ]
+        );
 
         try {
             DB::beginTransaction();
-            
+
             $hero = HeroSection::firstOrNew();
 
             // Handle logo_image upload
@@ -445,21 +453,20 @@ class AdminController extends Controller
             $hero->tagline = $validated['tagline'] ?? '';
             $hero->cta_text_1 = $validated['cta_text_1'] ?? 'BOOK A TABLE';
             $hero->cta_text_2 = $validated['cta_text_2'] ?? 'EXPLORE';
-            
+
             // Normalize CTA link 1 if provided
             $hero->cta_link_1 = $this->normalizeWhatsAppLink($validated['cta_link_1'] ?? null);
-            
+
             $hero->is_active = $request->boolean('is_active');
             $hero->save();
 
             DB::commit();
-            
+
             // Clear hero cache so homepage reflects changes immediately
             // Also clear navbar_hero since navbar uses hero logo
             $this->clearCmsCache(['component_hero', 'navbar_hero']);
-            
+
             return redirect()->route('admin.cms.hero')->with('success', 'Hero section berhasil diperbarui!');
-            
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Hero update failed', ['error' => $e->getMessage()]);
@@ -475,21 +482,21 @@ class AdminController extends Controller
         if (!$input || trim($input) === '') {
             return null;
         }
-        
+
         $link = trim($input);
-        
+
         // If already a URL, normalize scheme
         if (preg_match('#^https?://#i', $link)) {
             return preg_replace('#^http://#i', 'https://', $link);
         }
-        
+
         // Extract digits and convert to wa.me URL
         $digits = preg_replace('/\D+/', '', $link);
         if (preg_match('/^0/', $digits)) {
             $digits = preg_replace('/^0+/', '', $digits);
             $digits = '62' . $digits;
         }
-        
+
         return $digits !== '' ? 'https://wa.me/' . $digits : null;
     }
 
@@ -505,21 +512,28 @@ class AdminController extends Controller
     public function tentangKamiUpdate(Request $request)
     {
         $this->authorizeAdminOnly();
-        
-        $validated = $request->validate([
-            'title' => 'nullable|string|max:255',
-            'subtitle' => 'nullable|string|max:1000',
-            'image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
-            'visi' => 'nullable|string|max:2000',
-            'misi' => 'nullable|string|max:2000',
-            'arah_gerak' => 'nullable|string|max:2000',
-            'video_url' => 'nullable|string|max:2048',
-            'video_description' => 'nullable|string|max:500',
-        ]);
+
+        $validated = $request->validate(
+            [
+                'title' => 'nullable|string|max:255',
+                'subtitle' => 'nullable|string|max:1000',
+                'image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
+                'visi' => 'nullable|string|max:2000',
+                'misi' => 'nullable|string|max:2000',
+                'arah_gerak' => 'nullable|string|max:2000',
+                'video_url' => 'nullable|string|max:2048',
+                'video_description' => 'nullable|string|max:500',
+            ],
+            [
+                'image.image' => 'File gambar harus berupa gambar yang valid.',
+                'image.mimes' => 'Format file gambar harus jpeg, jpg, png, atau webp.',
+                'image.max' => 'Ukuran file gambar maksimal 5MB.',
+            ]
+        );
 
         try {
             DB::beginTransaction();
-            
+
             $tentangKami = TentangKami::firstOrNew();
 
             if ($request->hasFile('image')) {
@@ -541,7 +555,6 @@ class AdminController extends Controller
             DB::commit();
             $this->clearCmsCache(['component_about']);
             return redirect()->route('admin.cms.tentang-kami')->with('success', 'Tentang Kami berhasil diperbarui!');
-            
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Tentang Kami update failed', ['error' => $e->getMessage()]);
@@ -623,24 +636,34 @@ class AdminController extends Controller
     public function aboutFounderUpdate(Request $request)
     {
         $this->authorizeAdminOnly();
-        
-        $validated = $request->validate([
-            'title' => 'nullable|string|max:255',
-            'subtitle' => 'nullable|string|max:255',
-            'name' => 'nullable|string|max:100',
-            'position' => 'nullable|string|max:100',
-            'quote' => 'nullable|string|max:500',
-            'signature' => 'nullable|string|max:100',
-            'photo' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
-            'image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
-            'facebook_url' => 'nullable|url|max:255',
-            'instagram_url' => 'nullable|url|max:255',
-            'linkedin_url' => 'nullable|url|max:255',
-        ]);
+
+        $validated = $request->validate(
+            [
+                'title' => 'nullable|string|max:255',
+                'subtitle' => 'nullable|string|max:255',
+                'name' => 'nullable|string|max:100',
+                'position' => 'nullable|string|max:100',
+                'quote' => 'nullable|string|max:500',
+                'signature' => 'nullable|string|max:100',
+                'photo' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
+                'image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
+                'facebook_url' => 'nullable|url|max:255',
+                'instagram_url' => 'nullable|url|max:255',
+                'linkedin_url' => 'nullable|url|max:255',
+            ],
+            [
+                'photo.image' => 'File foto harus berupa gambar yang valid.',
+                'photo.mimes' => 'Format file foto harus jpeg, jpg, png, atau webp.',
+                'photo.max' => 'Ukuran file foto maksimal 5MB.',
+                'image.image' => 'File gambar harus berupa gambar yang valid.',
+                'image.mimes' => 'Format file gambar harus jpeg, jpg, png, atau webp.',
+                'image.max' => 'Ukuran file gambar maksimal 5MB.',
+            ]
+        );
 
         try {
             DB::beginTransaction();
-            
+
             $aboutFounder = AboutFounder::firstOrNew();
 
             if ($request->hasFile('photo')) {
@@ -662,97 +685,10 @@ class AdminController extends Controller
             DB::commit();
             $this->clearCmsCache(['component_founder']);
             return redirect()->route('admin.cms.about-founder')->with('success', 'About Founder berhasil diperbarui!');
-            
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('About Founder update failed', ['error' => $e->getMessage()]);
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data.')->withInput();
-        }
-    }
-
-    // Keunggulan Fasilitas
-    public function keunggulanFasilitasIndex()
-    {
-        $this->authorizeAdminOnly();
-        $keunggulanFasilitas = KeunggulanFasilitas::orderBy('order')->get();
-
-        return view('admin.manage-content.keunggulan-fasilitas', compact('keunggulanFasilitas'));
-    }
-
-    public function keunggulanFasilitasStore(Request $request)
-    {
-        $this->authorizeAdminOnly();
-        
-        $validated = $request->validate([
-            'title' => ['nullable', 'string', 'max:255'],
-            'subtitle' => ['nullable', 'string', 'max:255'],
-            'icon' => ['nullable', 'string', 'max:50'],
-            'name' => ['required', 'string', 'max:100'],
-            'description' => ['nullable', 'string', 'max:500'],
-            'order' => ['nullable', 'integer', 'min:0', 'max:999'],
-        ]);
-
-        try {
-            $validated['is_active'] = $request->boolean('is_active');
-            $validated['order'] = $validated['order'] ?? KeunggulanFasilitas::max('order') + 1;
-            
-            KeunggulanFasilitas::create($validated);
-
-            $this->clearCmsCache(['component_keunggulan']);
-            return redirect()->route('admin.cms.keunggulan-fasilitas')->with('success', 'Fasilitas berhasil ditambahkan!');
-            
-        } catch (\Exception $e) {
-            Log::error('Keunggulan Fasilitas store failed', ['error' => $e->getMessage()]);
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data.')->withInput();
-        }
-    }
-
-    public function keunggulanFasilitasUpdate(Request $request, $id)
-    {
-        $this->authorizeAdminOnly();
-        
-        $validated = $request->validate([
-            'title' => ['nullable', 'string', 'max:255'],
-            'subtitle' => ['nullable', 'string', 'max:255'],
-            'icon' => ['nullable', 'string', 'max:50'],
-            'name' => ['required', 'string', 'max:100'],
-            'description' => ['nullable', 'string', 'max:500'],
-            'order' => ['nullable', 'integer', 'min:0', 'max:999'],
-        ]);
-
-        try {
-            $fasilitas = KeunggulanFasilitas::findOrFail($id);
-            $fasilitas->fill($validated);
-            $fasilitas->is_active = $request->boolean('is_active');
-            $fasilitas->save();
-
-            $this->clearCmsCache(['component_keunggulan']);
-            return redirect()->route('admin.cms.keunggulan-fasilitas')->with('success', 'Fasilitas berhasil diperbarui!');
-            
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return redirect()->route('admin.cms.keunggulan-fasilitas')->with('error', 'Data tidak ditemukan.');
-        } catch (\Exception $e) {
-            Log::error('Keunggulan Fasilitas update failed', ['id' => $id, 'error' => $e->getMessage()]);
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data.')->withInput();
-        }
-    }
-
-    public function keunggulanFasilitasDestroy($id)
-    {
-        $this->authorizeAdminOnly();
-        
-        try {
-            $fasilitas = KeunggulanFasilitas::findOrFail($id);
-            $fasilitas->delete();
-
-            $this->clearCmsCache(['component_keunggulan']);
-            return redirect()->route('admin.cms.keunggulan-fasilitas')->with('success', 'Fasilitas berhasil dihapus!');
-            
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return redirect()->route('admin.cms.keunggulan-fasilitas')->with('error', 'Data tidak ditemukan.');
-        } catch (\Exception $e) {
-            Log::error('Keunggulan Fasilitas delete failed', ['id' => $id, 'error' => $e->getMessage()]);
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus data.');
         }
     }
 
@@ -768,7 +704,7 @@ class AdminController extends Controller
     public function portfolioAchievementStore(Request $request)
     {
         $this->authorizeAdminOnly();
-        
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
@@ -789,7 +725,6 @@ class AdminController extends Controller
 
             $this->clearCmsCache(['component_achievements']);
             return redirect()->route('admin.cms.portfolio-achievement')->with('success', 'Achievement berhasil ditambahkan!');
-            
         } catch (\Exception $e) {
             Log::error('Portfolio store failed', ['error' => $e->getMessage()]);
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data.')->withInput();
@@ -799,7 +734,7 @@ class AdminController extends Controller
     public function portfolioAchievementUpdate(Request $request, $id)
     {
         $this->authorizeAdminOnly();
-        
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
@@ -824,7 +759,6 @@ class AdminController extends Controller
 
             $this->clearCmsCache(['component_achievements']);
             return redirect()->route('admin.cms.portfolio-achievement')->with('success', 'Achievement berhasil diperbarui!');
-            
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return redirect()->route('admin.cms.portfolio-achievement')->with('error', 'Data tidak ditemukan.');
         } catch (\Exception $e) {
@@ -836,7 +770,7 @@ class AdminController extends Controller
     public function portfolioAchievementDestroy($id)
     {
         $this->authorizeAdminOnly();
-        
+
         try {
             $item = PortfolioAchievement::findOrFail($id);
             $this->safeDeleteFile($item->image);
@@ -844,7 +778,6 @@ class AdminController extends Controller
 
             $this->clearCmsCache(['component_achievements']);
             return redirect()->route('admin.cms.portfolio-achievement')->with('success', 'Achievement berhasil dihapus!');
-            
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return redirect()->route('admin.cms.portfolio-achievement')->with('error', 'Data tidak ditemukan.');
         } catch (\Exception $e) {
@@ -865,7 +798,7 @@ class AdminController extends Controller
     public function timKamiStore(Request $request)
     {
         $this->authorizeAdminOnly();
-        
+
         $validated = $request->validate([
             'name' => 'required|string|max:100',
             'position' => 'required|string|max:100',
@@ -889,7 +822,6 @@ class AdminController extends Controller
 
             $this->clearCmsCache(['component_team']);
             return redirect()->route('admin.cms.tim-kami')->with('success', 'Anggota tim berhasil ditambahkan!');
-            
         } catch (\Exception $e) {
             Log::error('Tim Kami store failed', ['error' => $e->getMessage()]);
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data.')->withInput();
@@ -899,7 +831,7 @@ class AdminController extends Controller
     public function timKamiUpdate(Request $request, $id)
     {
         $this->authorizeAdminOnly();
-        
+
         $validated = $request->validate([
             'name' => 'required|string|max:100',
             'position' => 'required|string|max:100',
@@ -927,7 +859,6 @@ class AdminController extends Controller
 
             $this->clearCmsCache(['component_team']);
             return redirect()->route('admin.cms.tim-kami')->with('success', 'Anggota tim berhasil diperbarui!');
-            
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return redirect()->route('admin.cms.tim-kami')->with('error', 'Data tidak ditemukan.');
         } catch (\Exception $e) {
@@ -939,7 +870,7 @@ class AdminController extends Controller
     public function timKamiDestroy($id)
     {
         $this->authorizeAdminOnly();
-        
+
         try {
             $member = TimKami::findOrFail($id);
             $this->safeDeleteFile($member->photo);
@@ -947,7 +878,6 @@ class AdminController extends Controller
 
             $this->clearCmsCache(['component_team']);
             return redirect()->route('admin.cms.tim-kami')->with('success', 'Anggota tim berhasil dihapus!');
-            
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return redirect()->route('admin.cms.tim-kami')->with('error', 'Data tidak ditemukan.');
         } catch (\Exception $e) {
@@ -968,7 +898,7 @@ class AdminController extends Controller
     public function testimoniPelangganStore(Request $request)
     {
         $this->authorizeAdminOnly();
-        
+
         $validated = $request->validate([
             'customer_name' => 'nullable|string|max:100',
             'name' => 'nullable|string|max:100',
@@ -996,7 +926,7 @@ class AdminController extends Controller
             if (empty($validated['customer_name']) && !empty($validated['name'])) {
                 $validated['customer_name'] = $validated['name'];
             }
-            
+
             // Use role as fallback for customer_role
             if (empty($validated['customer_role']) && !empty($validated['role'])) {
                 $validated['customer_role'] = $validated['role'];
@@ -1006,7 +936,6 @@ class AdminController extends Controller
 
             $this->clearCmsCache(['component_testimonials']);
             return redirect()->route('admin.cms.testimoni-pelanggan')->with('success', 'Testimoni pelanggan berhasil ditambahkan!');
-            
         } catch (\Exception $e) {
             Log::error('Testimoni store failed', ['error' => $e->getMessage()]);
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data.')->withInput();
@@ -1016,7 +945,7 @@ class AdminController extends Controller
     public function testimoniPelangganUpdate(Request $request, $id)
     {
         $this->authorizeAdminOnly();
-        
+
         $validated = $request->validate([
             'customer_name' => 'nullable|string|max:100',
             'name' => 'nullable|string|max:100',
@@ -1045,7 +974,7 @@ class AdminController extends Controller
             if (empty($validated['customer_name']) && !empty($validated['name'])) {
                 $validated['customer_name'] = $validated['name'];
             }
-            
+
             // Use role as fallback for customer_role
             if (empty($validated['customer_role']) && !empty($validated['role'])) {
                 $validated['customer_role'] = $validated['role'];
@@ -1059,7 +988,6 @@ class AdminController extends Controller
 
             $this->clearCmsCache(['component_testimonials']);
             return redirect()->route('admin.cms.testimoni-pelanggan')->with('success', 'Testimoni pelanggan berhasil diperbarui!');
-            
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return redirect()->route('admin.cms.testimoni-pelanggan')->with('error', 'Data tidak ditemukan.');
         } catch (\Exception $e) {
@@ -1071,7 +999,7 @@ class AdminController extends Controller
     public function testimoniPelangganDestroy($id)
     {
         $this->authorizeAdminOnly();
-        
+
         try {
             $testimoni = TestimoniPelanggan::findOrFail($id);
             $this->safeDeleteFile($testimoni->photo);
@@ -1079,7 +1007,6 @@ class AdminController extends Controller
 
             $this->clearCmsCache(['component_testimonials']);
             return redirect()->route('admin.cms.testimoni-pelanggan')->with('success', 'Testimoni pelanggan berhasil dihapus!');
-            
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return redirect()->route('admin.cms.testimoni-pelanggan')->with('error', 'Data tidak ditemukan.');
         } catch (\Exception $e) {
@@ -1100,7 +1027,7 @@ class AdminController extends Controller
     public function eventStore(Request $request)
     {
         $this->authorizeAdminOnly();
-        
+
         $validated = $request->validate([
             'event_title' => 'required|string|max:150',
             'event_description' => 'nullable|string|max:2000',
@@ -1123,7 +1050,6 @@ class AdminController extends Controller
 
             $this->clearCmsCache(['component_events']);
             return redirect()->route('admin.cms.event')->with('success', 'Event berhasil ditambahkan!');
-            
         } catch (\Exception $e) {
             Log::error('Event store failed', ['error' => $e->getMessage()]);
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data.')->withInput();
@@ -1133,7 +1059,7 @@ class AdminController extends Controller
     public function eventUpdate(Request $request, $id)
     {
         $this->authorizeAdminOnly();
-        
+
         $validated = $request->validate([
             'event_title' => 'required|string|max:150',
             'event_description' => 'nullable|string|max:2000',
@@ -1160,7 +1086,6 @@ class AdminController extends Controller
 
             $this->clearCmsCache(['component_events']);
             return redirect()->route('admin.cms.event')->with('success', 'Event berhasil diperbarui!');
-            
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return redirect()->route('admin.cms.event')->with('error', 'Data tidak ditemukan.');
         } catch (\Exception $e) {
@@ -1172,7 +1097,7 @@ class AdminController extends Controller
     public function eventDestroy($id)
     {
         $this->authorizeAdminOnly();
-        
+
         try {
             $event = Event::findOrFail($id);
             $this->safeDeleteFile($event->image);
@@ -1180,7 +1105,6 @@ class AdminController extends Controller
 
             $this->clearCmsCache(['component_events']);
             return redirect()->route('admin.cms.event')->with('success', 'Event berhasil dihapus!');
-            
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return redirect()->route('admin.cms.event')->with('error', 'Data tidak ditemukan.');
         } catch (\Exception $e) {
@@ -1201,7 +1125,7 @@ class AdminController extends Controller
     public function footerUpdate(Request $request)
     {
         $this->authorizeAdminOnly();
-        
+
         $validated = $request->validate([
             'about_text' => ['nullable', 'string', 'max:1000'],
             'facebook_url' => ['nullable', 'url:http,https', 'max:500'],
@@ -1223,17 +1147,16 @@ class AdminController extends Controller
 
         try {
             $footer = Footer::firstOrNew();
-            
+
             // Normalize WhatsApp link
             $validated['whatsapp'] = $this->normalizeWhatsAppLink($request->input('whatsapp'));
-            
+
             $footer->fill($validated);
             $footer->is_active = $request->boolean('is_active');
             $footer->save();
 
             $this->clearCmsCache(['component_footer']);
             return redirect()->route('admin.cms.footer')->with('success', 'Footer berhasil diperbarui!');
-            
         } catch (\Exception $e) {
             Log::error('Footer update failed', ['error' => $e->getMessage()]);
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data.')->withInput();
@@ -1278,7 +1201,7 @@ class AdminController extends Controller
 
             // Normalize WhatsApp link
             $validated['whatsapp'] = $this->normalizeWhatsAppLink($request->input('whatsapp'));
-            
+
             // Normalize navbar_link (could be WhatsApp or URL)
             $navbarInput = $request->input('navbar_link');
             if ($navbarInput && trim($navbarInput) !== '') {
@@ -1298,7 +1221,6 @@ class AdminController extends Controller
             // Also clear navbar_contact since navbar uses contact info
             $this->clearCmsCache(['component_contact', 'navbar_contact']);
             return redirect()->route('admin.cms.contact')->with('success', 'Halaman kontak berhasil diperbarui!');
-            
         } catch (\Exception $e) {
             Log::error('Contact update failed', ['error' => $e->getMessage()]);
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data.')->withInput();
@@ -1319,7 +1241,7 @@ class AdminController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
         ]);
 
         $user->update($validated);

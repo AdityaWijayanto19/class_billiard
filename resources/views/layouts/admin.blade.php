@@ -165,7 +165,7 @@
             <!-- Group: Website CMS - Only if user has admin role (super_admin or admin) -->
             @if(auth()->user()->hasAnyRole(['super_admin', 'admin']))
             <div
-                x-data="{ open: {{ request()->routeIs('admin.cms.hero', 'admin.cms.tentang-kami', 'admin.cms.about-founder', 'admin.cms.keunggulan-fasilitas', 'admin.cms.portfolio-achievement', 'admin.cms.tim-kami', 'admin.cms.testimoni-pelanggan', 'admin.cms.event', 'admin.cms.footer', 'admin.cms.contact') ? 'true' : 'false' }} }">
+                x-data="{ open: {{ request()->routeIs('admin.cms.hero', 'admin.cms.tentang-kami', 'admin.cms.about-founder', 'admin.cms.portfolio-achievement', 'admin.cms.tim-kami', 'admin.cms.testimoni-pelanggan', 'admin.cms.event', 'admin.cms.footer', 'admin.cms.contact') ? 'true' : 'false' }} }">
                 <p x-show="!sidebarCollapsed || sidebarHover" x-transition.opacity
                     class="text-[10px] font-bold text-slate-400 dark:text-gray-600 uppercase tracking-widest px-4 mb-4">
                     Content</p>
@@ -189,7 +189,6 @@
                             ['r' => 'admin.cms.hero', 'l' => 'Hero Section'],
                             ['r' => 'admin.cms.tentang-kami', 'l' => 'Tentang Kami'],
                             ['r' => 'admin.cms.about-founder', 'l' => 'About Founder'],
-                            ['r' => 'admin.cms.keunggulan-fasilitas', 'l' => 'Keunggulan'],
                             ['r' => 'admin.cms.portfolio-achievement', 'l' => 'Portfolio'],
                             ['r' => 'admin.cms.tim-kami', 'l' => 'Tim Kami'],
                             ['r' => 'admin.cms.pro-tim', 'l' => 'Pro Tim'],
@@ -377,6 +376,21 @@
                         <button @click="show = false" class="text-red-500 hover:text-red-700 shrink-0">
                             <i class="ri-close-line"></i>
                         </button>
+                    </div>
+                @endif
+
+                @if($errors->any())
+                    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)" 
+                        class="mb-8 bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-md">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="ri-error-warning-fill text-red-500"></i>
+                            <span class="text-[11px] font-black uppercase tracking-widest text-red-500">Validation Error</span>
+                        </div>
+                        <ul class="list-disc list-inside text-xs text-red-500">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
                     </div>
                 @endif
 

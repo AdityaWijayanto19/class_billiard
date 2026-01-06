@@ -98,11 +98,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth.custom', 'role:super_a
             Route::get('/about-founder', [App\Http\Controllers\AdminController::class, 'aboutFounderIndex'])->name('about-founder');
             Route::post('/about-founder', [App\Http\Controllers\AdminController::class, 'aboutFounderUpdate'])->name('about-founder.update');
 
-            Route::get('/keunggulan-fasilitas', [App\Http\Controllers\AdminController::class, 'keunggulanFasilitasIndex'])->name('keunggulan-fasilitas');
-            Route::post('/keunggulan-fasilitas', [App\Http\Controllers\AdminController::class, 'keunggulanFasilitasStore'])->name('keunggulan-fasilitas.store');
-            Route::post('/keunggulan-fasilitas/{id}', [App\Http\Controllers\AdminController::class, 'keunggulanFasilitasUpdate'])->name('keunggulan-fasilitas.update');
-            Route::delete('/keunggulan-fasilitas/{id}', [App\Http\Controllers\AdminController::class, 'keunggulanFasilitasDestroy'])->name('keunggulan-fasilitas.destroy');
-
             Route::get('/portfolio-achievement', [App\Http\Controllers\AdminController::class, 'portfolioAchievementIndex'])->name('portfolio-achievement');
             Route::post('/portfolio-achievement', [App\Http\Controllers\AdminController::class, 'portfolioAchievementStore'])->name('portfolio-achievement.store');
             Route::post('/portfolio-achievement/{id}', [App\Http\Controllers\AdminController::class, 'portfolioAchievementUpdate'])->name('portfolio-achievement.update');

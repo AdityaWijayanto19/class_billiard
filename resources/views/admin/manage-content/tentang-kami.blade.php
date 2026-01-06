@@ -22,41 +22,6 @@
             </div>
         </div>
 
-        <!-- FEEDBACK MESSAGES (Alpine.js) -->
-        <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 5000)">
-            @if(session('success'))
-                <div x-show="show" x-transition
-                    class="mb-8 flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 px-4 py-3 rounded-md">
-                    <i class="ri-checkbox-circle-fill text-emerald-500"></i>
-                    <span
-                        class="text-[11px] font-black uppercase tracking-widest text-emerald-500">{{ session('success') }}</span>
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div x-show="show" x-transition
-                    class="mb-8 flex items-center gap-3 bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-md">
-                    <i class="ri-error-warning-fill text-red-500"></i>
-                    <span
-                        class="text-[11px] font-black uppercase tracking-widest text-red-500">{{ session('error') }}</span>
-                </div>
-            @endif
-
-            @if($errors->any())
-                <div x-show="show" x-transition class="mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-md">
-                    <div class="flex items-center gap-2 mb-3">
-                        <i class="ri-error-warning-fill text-red-500"></i>
-                        <span class="text-[10px] font-black uppercase tracking-widest text-red-500">Koreksi Diperlukan</span>
-                    </div>
-                    <ul class="space-y-1">
-                        @foreach($errors->all() as $error)
-                            <li class="text-[11px] text-red-400 font-medium tracking-tight">— {{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-        </div>
-
         <form action="{{ route('admin.cms.tentang-kami.update') }}" method="POST" enctype="multipart/form-data" class="space-y-12">
             @csrf
 
@@ -89,8 +54,15 @@
                             @blur=\"$el.style.borderColor = ''\">{{ $tentangKami->subtitle ?? '' }}</textarea>
                     </div>
                     <div class="space-y-2">
-                        <label
-                            class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500">About Image</label>
+                        <div class="flex items-center gap-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500">About Image</label>
+
+                             <x-tooltip>
+                                <p class="mb-2">Gunakan gambar rasio <strong>16:9</strong> dan ukuran maksimal
+                                    <strong>5MB</strong>.
+                                </p>
+                             </x-tooltip>
+                        </div>
                         <div class="relative group aspect-video rounded-lg border border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-white/[0.02] overflow-hidden flex items-center justify-center p-8 transition-all duration-500\"
                              @mouseenter=\"$el.style.borderColor = 'rgba(var(--primary-color-rgb), 0.3)'\"
                              @mouseleave=\"$el.style.borderColor = ''\">
@@ -127,9 +99,19 @@
                 <div
                     class="lg:col-span-8 bg-white dark:bg-[#0A0A0A] border border-slate-200 dark:border-white/5 rounded-lg p-8 space-y-8">
                     <div class="space-y-2">
-                        <label
-                            class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500">YouTube
-                            Source URL</label>
+                        <div class="flex items-center gap-2">
+                            <label
+                                class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500">YouTube
+                                Source URL</label>
+                            <x-tooltip>
+                                <p class="mb-2">
+                                    Pastikan URL video berasal dari YouTube dan dalam format yang benar.
+                                    <br>
+                                    <br>
+                                    Masukkan URL video YouTube yang ingin disematkan (embed) pada halaman
+                                    Tentang Kami.</p>
+                            </x-tooltip>
+                        </div>
                         <div class="relative">
                             <input type="url" name="video_url" value="{{ $tentangKami->video_url ?? '' }}"
                                 placeholder="e.g. https://youtu.be/..."

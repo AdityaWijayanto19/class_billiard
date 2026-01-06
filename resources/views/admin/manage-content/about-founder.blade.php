@@ -20,37 +20,6 @@
             </div>
         </div>
 
-        <!-- FLASH MESSAGE -->
-        @if(session('success'))
-            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)"
-                class="mb-8 flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 px-4 py-3 rounded-md animate-in fade-in slide-in-from-top-4 duration-300">
-                <i class="ri-checkbox-circle-fill text-emerald-500"></i>
-                <span class="text-[11px] font-black uppercase tracking-widest text-emerald-500">{{ session('success') }}</span>
-            </div>
-        @endif
-
-        @if(session('error'))
-            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
-                class="mb-8 flex items-center gap-3 bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-md animate-in fade-in slide-in-from-top-4 duration-300">
-                <i class="ri-error-warning-fill text-red-500"></i>
-                <span class="text-[11px] font-black uppercase tracking-widest text-red-500">{{ session('error') }}</span>
-            </div>
-        @endif
-
-        @if($errors->any())
-            <div class="mb-8 bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-md">
-                <div class="flex items-center gap-2 mb-2">
-                    <i class="ri-error-warning-fill text-red-500"></i>
-                    <span class="text-[11px] font-black uppercase tracking-widest text-red-500">Validation Error</span>
-                </div>
-                <ul class="list-disc list-inside text-xs text-red-500">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
         <form action="{{ route('admin.cms.about-founder.update') }}" method="POST" enctype="multipart/form-data"
             class="grid grid-cols-1 lg:grid-cols-12 gap-12">
             @csrf
@@ -58,9 +27,17 @@
             <!-- LEFT COLUMN: VISUAL IDENTITY -->
             <div class="lg:col-span-4 space-y-8">
                 <div class="space-y-2">
-                    <label
-                        class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500">Founder
-                        Photo</label>
+                    <div class="flex items-center gap-2">
+                        <label
+                            class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500">Founder
+                            Photo</label>
+
+                        <x-tooltip>
+                            <p class="mb-2">Gunakan potret dengan rasio <strong>16:9</strong> dan ukuran maksimal
+                                <strong>5MB</strong>.
+                            </p>
+                        </x-tooltip>
+                    </div>
                     <div
                         class="relative group aspect-[3/4] overflow-hidden rounded-lg border border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-white/[0.02]">
                         <input type="file" name="photo" id="photoInput"
@@ -161,15 +138,6 @@
                             <input type="text" name="signature" value="{{ $aboutFounder->signature ?? '' }}"
                                 class="w-full bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/10 rounded-md px-4 py-3 text-sm text-slate-900 dark:text-white outline-none transition-all font-serif italic" @focus="$el.style.borderColor = 'var(--primary-color)'" @blur="$el.style.borderColor = ''"
                                 placeholder="e.g. L.Ipsum">
-                        </div>
-
-                        <!-- YouTube Video URL -->
-                        <div class="space-y-2">
-                            <label
-                                class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500">YouTube Video URL</label>
-                            <input type="url" name="video_url" value="{{ $aboutFounder->video_url ?? '' }}"
-                                class="w-full bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/10 rounded-md px-4 py-3 text-sm text-slate-900 dark:text-white outline-none transition-all" @focus="$el.style.borderColor = 'var(--primary-color)'" @blur="$el.style.borderColor = ''"
-                                placeholder="e.g. https://www.youtube.com/watch?v=VIDEO_ID atau https://youtu.be/VIDEO_ID">
                         </div>
 
                         <!-- Quote -->
