@@ -17,88 +17,122 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <!-- Tailwind CSS 4.0 CDN -->
-    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.tailwind) {
-                tailwind.config = {
-                    theme: {
-                        extend: {
-                            colors: {
-                                gold: {
-                                    400: '#FFD700',
-                                    500: '#E6C200',
-                                    600: '#B39700',
-                                }
+    
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            gold: {
+                                400: '#FFD700',
+                                500: '#E6C200',
+                                600: '#B39700',
                             },
-                            fontFamily: {
-                                sans: ['Montserrat', 'sans-serif'],
-                            }
+
+                            /* WARNA CUSTOM PROJECT */
+                            'bg-dark': '#000000',
+                            'bg-sidebar': '#0b0b0b',
+                            'text-gray': '#9ca3af',
+                            'border-base': '#1f2937',
+                            primary: '#FFD700',
+                        },
+                        fontFamily: {
+                            sans: ['Montserrat', 'sans-serif'],
+                            rumonds: ['Rumonds', 'sans-serif'],
                         }
                     }
                 }
             }
-        });
-    </script>
-    <style type="text/tailwindcss">
-        @theme {
-            --color-bg-dark: #0a0a0a;
-            --color-bg-sidebar: #1a1a1a;
-            --color-primary: #FFD700;
-            --color-text-gray: #abbbc2;
-            --color-border-base: #393c49;
-            --font-barlow: "Montserrat", sans-serif;
-        }
+            </script>
 
-        body {
-            background-color: var(--color-bg-dark);
-            color: white;
-            font-family: var(--font-barlow);
-        }
+         <style>
+            * {
+                /* Optimal font smoothing */
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: #393c49; border-radius: 10px; }
-        /* Smooth Ease Transition */
-        .smooth-ease {
-            transition-timing-function: cubic-bezier(.22, .61, .36, 1);
-            will-change: transform, box-shadow, border-color;
-        }
+            html {
+                /* Smooth scroll behavior */
+                scroll-behavior: smooth;
+                scroll-padding-top: 96px;
+            }
 
-        /* Premium Subtle Glow Effect */
-        .sheen {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            border-radius: inherit;
-            opacity: 0;
-            transition: opacity 400ms ease;
-            box-shadow: inset 0 0 25px rgba(255, 255, 255, 0.04);
-        }
+            body {
+                /* iOS momentum scrolling */
+                -webkit-overflow-scrolling: touch;
+            }
 
-        .group:hover .sheen {
-            opacity: 1;
-        }
-             .navbar-bg-shape {
-            background: linear-gradient(to right, #1a1a1a 0%, #1a1a1a 80%, transparent 100%);
-            transform: skewX(-20deg);
-            transform-origin: top left;
-        }
+            body {
+                font-family: 'Montserrat', sans-serif;
+                overflow-x: hidden;
+                background-color: black;
+            }
 
-    </style>
+            /* Prevent unnecessary repaints */
+            body>* {
+                /* Only enable will-change during scroll */
+                contain: layout style;
+            }
+
+            /* Custom scrollbar styling */
+            ::-webkit-scrollbar {
+                width: 10px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.5);
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: rgba(255, 215, 0, 0.6);
+                border-radius: 5px;
+                transition: background 0.3s ease;
+            }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: rgba(255, 215, 0, 0.9);
+            }
+
+            /* Firefox scrollbar */
+            * {
+                scrollbar-color: rgba(255, 215, 0, 0.6) rgba(0, 0, 0, 0.5);
+                scrollbar-width: thin;
+            }
+
+            /* Disable GPU acceleration yang terlalu aggressive */
+            /* Lebih smooth dengan CPU rendering yang optimal */
+            img,
+            video {
+                backface-visibility: visible;
+            }
+
+            @font-face {
+                font-family: 'Rumonds';
+                src: url('/fonts/rumonds.otf') format('opentype');
+                font-weight: normal;
+                font-style: normal;
+                font-display: swap;
+            }
+
+            .font-rumonds {
+                font-family: 'Rumonds', serif !important;
+            }
+        </style>
+
 </head>
 
-<body class="antialiased">
+<body class="antialiased bg-black text-white">
 
 
     <!-- NAVBAR (pakai komponen utama agar logic, warna, dan toggle sama persis home) -->
-    <x-navbar />
+    @include('components.navbar')
 
     <div class="flex h-screen w-full">
 
         <!-- MAIN CONTENT -->
-        <main class="flex-1 overflow-y-auto overflow-x-auto transition-all duration-300"
+        <main class="flex-1 overflow-y-auto bg-bg-dark overflow-x-auto transition-all duration-300"
             style="width: calc(100% - 0px); padding-top: 6rem;" id="mainContent">
             <!-- Header -->
             <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-0 px-4 md:px-8 bg-bg-dark py-4"
@@ -186,7 +220,7 @@
                             <div class="sheen rounded-xl"></div>
                             <img src="{{ $menu->image_url ?: 'https://via.placeholder.com/400' }}"
                                 alt="{{ $menu->name }}"
-                                class="w-20 h-20 md:w-48 md:h-48 rounded-full mx-auto -mt-14 md:-mt-36 object-cover group-hover:scale-110 transition-transform duration-500 border-2 border-white/10">
+                                class="w-20 h-20 md:w-48 md:h-48 rounded-full mx-auto -mt-14 md:-mt-36 object-cover group-hover:scale-110 transition-transform duration-500">
                             <h3 class="text-[11px] md:text-[15px] font-medium mb-1 md:mb-2 px-1 md:px-4 mt-1 md:-mt-6 leading-snug line-clamp-2">{{ $menu->name }}</h3>
                             @if($menu->short_description)
                                 <p class="text-[9px] md:text-xs text-text-gray mb-1 md:mb-2 px-1 md:px-2 line-clamp-2 hidden md:block">{{ $menu->short_description }}</p>
@@ -224,21 +258,6 @@
     </div>
 
     <script>
-
-         // Navbar Scroll Effect
-        window.addEventListener('scroll', function () {
-            const nav = document.querySelector('nav');
-            if (window.scrollY > 50) {
-                nav.classList.add('bg-black/90', 'backdrop-blur-md', 'shadow-lg');
-                nav.classList.remove('h-24');
-                nav.classList.add('h-20');
-            } else {
-                nav.classList.remove('bg-black/90', 'backdrop-blur-md', 'shadow-lg');
-                nav.classList.remove('h-20');
-                nav.classList.add('h-24');
-            }
-        });
-
         // Category filtering with better styling
         document.querySelectorAll('.category-tab').forEach(btn => {
             btn.addEventListener('click', function () {

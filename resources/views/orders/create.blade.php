@@ -143,7 +143,7 @@
                             data-label="{{ $labelDisplay }}">
                             <img src="{{ $menu->image_url ?: 'https://via.placeholder.com/400' }}"
                                 alt="{{ $menu->name }}"
-                                class="w-20 h-20 md:w-48 md:h-48 rounded-full mx-auto -mt-14 md:-mt-36 object-cover group-hover:scale-105 transition-transform duration-300 border-2 border-white/5">
+                                class="w-20 h-20 md:w-48 md:h-48 rounded-full mx-auto -mt-14 md:-mt-36 object-cover group-hover:scale-105 transition-transform duration-300">
                             <h3 class="text-[11px] md:text-[15px] font-bold mb-1 md:mb-2 px-1 md:px-4 mt-1 md:-mt-6 leading-snug line-clamp-2 tracking-tight">{{ $menu->name }}</h3>
                             @if($menu->short_description)
                                 <p class="text-[9px] md:text-xs text-text-gray mb-1 md:mb-2 px-1 md:px-2 line-clamp-2 hidden md:block">{{ $menu->short_description }}</p>
