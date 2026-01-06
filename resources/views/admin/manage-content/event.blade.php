@@ -28,37 +28,6 @@
             </button>
         </div>
 
-        <!-- FLASH MESSAGE -->
-        @if(session('success'))
-            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)"
-                class="mb-8 flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 px-4 py-3 rounded-md animate-in fade-in slide-in-from-top-4 duration-300">
-                <i class="ri-checkbox-circle-fill text-emerald-500"></i>
-                <span class="text-[11px] font-black uppercase tracking-widest text-emerald-500">{{ session('success') }}</span>
-            </div>
-        @endif
-
-        @if(session('error'))
-            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
-                class="mb-8 flex items-center gap-3 bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-md animate-in fade-in slide-in-from-top-4 duration-300">
-                <i class="ri-error-warning-fill text-red-500"></i>
-                <span class="text-[11px] font-black uppercase tracking-widest text-red-500">{{ session('error') }}</span>
-            </div>
-        @endif
-
-        @if($errors->any())
-            <div class="mb-8 bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-md">
-                <div class="flex items-center gap-2 mb-2">
-                    <i class="ri-error-warning-fill text-red-500"></i>
-                    <span class="text-[11px] font-black uppercase tracking-widest text-red-500">Validation Error</span>
-                </div>
-                <ul class="list-disc list-inside text-xs text-red-500">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
         <!-- CREATION MODULE (Alpine.js Toggle) -->
         <div x-show="showCreate" x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0 transform -translate-y-4"
@@ -109,11 +78,18 @@
                                 @blur=\"$el.style.borderColor = '\"\n></textarea>
                         </div>
                         <div class="space-y-2">
-                            <label
-                                class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500">Poster
-                                / Image</label>
+                            <div class="flex items-center gap-2">
+                                <label
+                                    class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500">Poster
+                                    / Image</label>
+
+                                <x-tooltip>
+                                    <p class="text-[10px]">Maksimal ukuran file 5MB. Format yang didukung: jpeg, jpg, png,
+                                        webp.</p>
+                                </x-tooltip>
+                            </div>
                             <input type="file" name="image" accept="image/*"
-                                class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-widest file:text-black"
+                                class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-[10px] file:bg-[color:var(--primary-color)] file:font-black file:uppercase file:tracking-widest file:text-black"
                                 style="--file-bg: var(--primary-color);"
                                 @change="$el.style.setProperty('--file-bg-current', window.getComputedStyle($el).getPropertyValue('--primary-color'))">
                         </div>
@@ -278,6 +254,24 @@
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        border-radius: 4px;
+        padding: 2px;
+        /* Filter ini menghasilkan warna oranye/kuning yang mendekati --primary-color */
+        filter: invert(72%) sepia(50%) saturate(3000%) hue-rotate(5deg) brightness(102%) contrast(105%);
+        transition: all 0.3s ease;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator:hover {
+        background-color: rgba(250, 154, 8, 0.1);
+    }
+
+    /* Di Dark Mode, buat icon menjadi putih bersih agar kontras */
+    .dark input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+    }
 
         input:focus,
         textarea:focus {

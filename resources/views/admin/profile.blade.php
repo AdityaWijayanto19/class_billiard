@@ -9,14 +9,6 @@
             <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white uppercase">Account Settings</h1>
             <p class="text-xs text-slate-500 dark:text-gray-500 font-medium">Manage your administrative credentials and security preferences.</p>
         </div>
-        
-        @if(session('success'))
-            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)" 
-                 class="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 rounded-md">
-                <i class="ri-checkbox-circle-fill text-emerald-500"></i>
-                <span class="text-[11px] font-bold text-emerald-500 uppercase tracking-wider">{{ session('success') }}</span>
-            </div>
-        @endif
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">

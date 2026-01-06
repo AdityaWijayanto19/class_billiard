@@ -708,8 +708,14 @@ class AdminController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
-            'image' => 'required|image|mimes:jpeg,jpg,png,webp|max:15360',
+            'image' => 'required|image|mimes:jpeg,jpg,png,webp|max:5120',
             'order' => 'nullable|integer|min:0|max:999',
+        ],
+        [
+            'image.required' => 'Gambar achievement wajib diunggah.',
+            'image.image' => 'File gambar harus berupa gambar yang valid.',
+            'image.mimes' => 'Format file gambar harus jpeg, jpg, png, atau webp.',
+            'image.max' => 'Ukuran file gambar maksimal 5MB.',
         ]);
 
         try {
@@ -803,11 +809,17 @@ class AdminController extends Controller
             'name' => 'required|string|max:100',
             'position' => 'required|string|max:100',
             'bio' => 'nullable|string|max:500',
-            'photo' => 'required|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'photo' => 'required|image|mimes:jpeg,jpg,png,webp|max:5120',
             'facebook_url' => 'nullable|url|max:255',
             'instagram_url' => 'nullable|url|max:255',
             'linkedin_url' => 'nullable|url|max:255',
             'order' => 'nullable|integer|min:0|max:999',
+        ],
+        [
+            'photo.required' => 'Foto anggota tim wajib diunggah.',
+            'photo.image' => 'File foto harus berupa gambar yang valid.',
+            'photo.mimes' => 'Format file foto harus jpeg, jpg, png, atau webp.',
+            'photo.max' => 'Ukuran file foto maksimal 5MB.',
         ]);
 
         try {
@@ -836,11 +848,16 @@ class AdminController extends Controller
             'name' => 'required|string|max:100',
             'position' => 'required|string|max:100',
             'bio' => 'nullable|string|max:500',
-            'photo' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'photo' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
             'facebook_url' => 'nullable|url|max:255',
             'instagram_url' => 'nullable|url|max:255',
             'linkedin_url' => 'nullable|url|max:255',
             'order' => 'nullable|integer|min:0|max:999',
+        ],
+        [
+            'photo.image' => 'File foto harus berupa gambar yang valid.',
+            'photo.mimes' => 'Format file foto harus jpeg, jpg, png, atau webp.',
+            'photo.max' => 'Ukuran file foto maksimal 5MB.',
         ]);
 
         try {
@@ -1034,8 +1051,14 @@ class AdminController extends Controller
             'category' => 'nullable|string|max:50',
             'event_date' => 'nullable|date',
             'link_url' => 'nullable|url|max:255',
-            'image' => 'required|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'image' => 'required|image|mimes:jpeg,jpg,png,webp|max:5120',
             'order' => 'nullable|integer|min:0|max:999',
+        ],
+        [
+            'image.required' => 'Gambar event wajib diunggah.',
+            'image.image' => 'File gambar harus berupa gambar yang valid.',
+            'image.mimes' => 'Format file gambar harus jpeg, jpg, png, atau webp.',
+            'image.max' => 'Ukuran file gambar maksimal 5MB.',
         ]);
 
         try {
@@ -1066,8 +1089,13 @@ class AdminController extends Controller
             'category' => 'nullable|string|max:50',
             'event_date' => 'nullable|date',
             'link_url' => 'nullable|url|max:255',
-            'image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
             'order' => 'nullable|integer|min:0|max:999',
+        ],
+        [
+            'image.image' => 'File gambar harus berupa gambar yang valid.',
+            'image.mimes' => 'Format file gambar harus jpeg, jpg, png, atau webp.',
+            'image.max' => 'Ukuran file gambar maksimal 5MB.',
         ]);
 
         try {

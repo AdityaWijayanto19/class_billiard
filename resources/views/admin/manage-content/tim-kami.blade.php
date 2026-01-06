@@ -27,37 +27,6 @@
             </button>
         </div>
 
-        <!-- FLASH MESSAGE -->
-        @if(session('success'))
-            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)"
-                class="mb-8 flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 px-4 py-3 rounded-md animate-in fade-in slide-in-from-top-4 duration-300">
-                <i class="ri-checkbox-circle-fill text-emerald-500"></i>
-                <span class="text-[11px] font-black uppercase tracking-widest text-emerald-500">{{ session('success') }}</span>
-            </div>
-        @endif
-
-        @if(session('error'))
-            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
-                class="mb-8 flex items-center gap-3 bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-md animate-in fade-in slide-in-from-top-4 duration-300">
-                <i class="ri-error-warning-fill text-red-500"></i>
-                <span class="text-[11px] font-black uppercase tracking-widest text-red-500">{{ session('error') }}</span>
-            </div>
-        @endif
-
-        @if($errors->any())
-            <div class="mb-8 bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-md">
-                <div class="flex items-center gap-2 mb-2">
-                    <i class="ri-error-warning-fill text-red-500"></i>
-                    <span class="text-[11px] font-black uppercase tracking-widest text-red-500">Validation Error</span>
-                </div>
-                <ul class="list-disc list-inside text-xs text-red-500">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
         <!-- CREATION MODULE (Alpine.js Toggle) -->
         <div x-show="showCreate" x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0 transform -translate-y-4"

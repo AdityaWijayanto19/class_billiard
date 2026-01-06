@@ -26,37 +26,6 @@
             </button>
         </div>
 
-        <!-- FLASH MESSAGE -->
-        @if(session('success'))
-            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)"
-                class="mb-8 flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 px-4 py-3 rounded-md animate-in fade-in slide-in-from-top-4 duration-300">
-                <i class="ri-checkbox-circle-fill text-emerald-500"></i>
-                <span class="text-[11px] font-black uppercase tracking-widest text-emerald-500">{{ session('success') }}</span>
-            </div>
-        @endif
-
-        @if(session('error'))
-            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
-                class="mb-8 flex items-center gap-3 bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-md animate-in fade-in slide-in-from-top-4 duration-300">
-                <i class="ri-error-warning-fill text-red-500"></i>
-                <span class="text-[11px] font-black uppercase tracking-widest text-red-500">{{ session('error') }}</span>
-            </div>
-        @endif
-
-        @if($errors->any())
-            <div class="mb-8 bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-md">
-                <div class="flex items-center gap-2 mb-2">
-                    <i class="ri-error-warning-fill text-red-500"></i>
-                    <span class="text-[11px] font-black uppercase tracking-widest text-red-500">Validation Error</span>
-                </div>
-                <ul class="list-disc list-inside text-xs text-red-500">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
         <!-- CREATION MODULE -->
         <div x-show="showCreate" x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0 transform -translate-y-4"
@@ -69,8 +38,14 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <!-- Image Upload -->
                         <div class="space-y-2">
-                            <label
-                                class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500">Achievement Image <span class="text-red-500">*</span></label>
+                            <div class="flex items-center gap-2">
+                                <label
+                                    class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500">Achievement Image <span class="text-red-500">*</span></label>
+
+                                <x-tooltip>
+                                    <p class="text-xs">Ukuran maksimal 5MB. Format: jpeg, jpg, png, webp.</p>
+                                </x-tooltip>
+                            </div>
                             <input type="file" name="image" accept="image/*" required
                                 class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-widest file:text-black file:cursor-pointer file:transition-all">
                             <p class="text-[9px] text-slate-400 dark:text-gray-600 italic">Image akan ditampilkan di dashboard achievements section</p>
@@ -101,8 +76,13 @@
 
                         <!-- Order -->
                         <div class="space-y-2">
-                            <label
-                                class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500">Sort Order</label>
+                            <div class="flex items-center gap-2">
+                                <label
+                                    class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500">Sort Order</label>
+                                <x-tooltip>
+                                    <p class="text-xs">Menentukan urutan tampilan achievement di halaman depan.</p>
+                                </x-tooltip>     
+                            </div>
                             <input type="number" name="order" value="0"
                                 class="w-full bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/10 rounded-md px-4 py-3 text-sm text-slate-900 dark:text-white outline-none transition-all" 
                                 @focus="$el.style.borderColor = 'var(--primary-color)'" 
