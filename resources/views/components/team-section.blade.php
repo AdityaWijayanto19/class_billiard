@@ -103,7 +103,7 @@
                             @if($facebookUrl)
                             <a href="{{ $facebookUrl }}" target="_blank" rel="noopener noreferrer"
                                 class="w-8 h-8 border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-gold-400 hover:border-gold-400 hover:text-black transition-all duration-300">
-                                <i class="fab fa-facebook-f text-xs"></i>
+                                <i class="fab fa-tiktok text-xs"></i>
                             </a>
                             @endif
                             @if($instagramUrl)

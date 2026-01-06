@@ -108,7 +108,7 @@
                             class="lg:col-span-4 grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-slate-100 dark:border-white/5">
                             <div class="space-y-2">
                                 <label class="text-[9px] font-black uppercase tracking-widest text-slate-400"><i
-                                        class="ri-facebook-fill mr-1" style="color: var(--primary-color);"></i> Facebook URL</label>
+                                        class="ri-tiktok-fill mr-1" style="color: var(--primary-color);"></i> Tiktok URL</label>
                                 <input type="url" name="facebook_url"
                                     class="w-full bg-white dark:bg-white/[0.02] border border-slate-200 dark:border-white/10 rounded-md px-4 py-2 text-xs text-slate-900 dark:text-white outline-none" @focus="$el.style.borderColor = 'var(--primary-color)'" @blur="$el.style.borderColor = ''">
                             </div>
@@ -221,7 +221,7 @@
                                         class="lg:col-span-4 flex flex-wrap gap-4 pt-4 border-t border-slate-100 dark:border-white/5">
                                         <div
                                             class="flex items-center gap-2 px-3 py-1.5 bg-slate-50 dark:bg-white/[0.01] border border-slate-200 dark:border-white/10 rounded-md">
-                                            <i class="ri-facebook-fill text-slate-400"></i>
+                                            <i class="ri-tiktok-fill text-slate-400"></i>
                                             <input type="url" name="facebook_url" value="{{ $member->facebook_url }}"
                                                 placeholder="Facebook URL"
                                                 class="bg-transparent border-none p-0 text-[10px] text-slate-500 w-32 focus:ring-0">

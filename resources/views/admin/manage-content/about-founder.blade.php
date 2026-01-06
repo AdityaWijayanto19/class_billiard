@@ -189,7 +189,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div class="space-y-2">
                                 <label class="text-[9px] font-black uppercase tracking-widest text-slate-400"><i
-                                        class="ri-facebook-fill mr-1"></i> Facebook</label>
+                                        class="ri-tiktok-fill mr-1"></i> Tiktok</label>
                                 <input type="url" name="facebook_url" value="{{ $aboutFounder->facebook_url ?? '' }}"
                                     class="w-full bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/10 rounded-md px-4 py-2.5 text-[11px] text-slate-900 dark:text-white outline-none transition-all" @focus="$el.style.borderColor = 'var(--primary-color)'" @blur="$el.style.borderColor = ''"
                                     placeholder="https://facebook.com/...">

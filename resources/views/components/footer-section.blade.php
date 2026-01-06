@@ -228,7 +228,7 @@
                             @if($facebook)
                             <a href="{{ $facebook }}"
                                 class="w-10 h-10 border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-gold-400 hover:border-gold-400 hover:text-black transition-all duration-300">
-                                <i class="fab fa-facebook-f"></i>
+                                <i class="fab fa-tiktok"></i>
                             </a>
                             @endif
                             @if($whatsapp)

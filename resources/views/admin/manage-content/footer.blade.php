@@ -79,7 +79,7 @@
             <div class="lg:col-span-8 bg-white dark:bg-[#0A0A0A] border border-slate-200 dark:border-white/5 rounded-lg p-8">
                 <div class="grid md:grid-cols-2 gap-6">
                     <div class="space-y-2">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500"><i class="ri-facebook-box-fill mr-1"></i> Facebook URL</label>
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500"><i class="ri-tiktok-fill mr-1"></i> Tiktok URL</label>
                         <input type="url" name="facebook_url" value="{{ $footer->facebook_url ?? '' }}" 
                                class="w-full bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/10 rounded-md px-4 py-2.5 text-xs text-slate-900 dark:text-white outline-none transition-all" @focus="$el.style.borderColor = 'var(--primary-color)'" @blur="$el.style.borderColor = ''">
                     </div>
