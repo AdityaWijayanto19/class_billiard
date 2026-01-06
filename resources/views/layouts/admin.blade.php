@@ -28,10 +28,18 @@
 
         /* Dynamic Primary Color System */
         :root {
-            --primary-color: {{ auth()->user()->primary_color ?? '#fa9a08' }};
-            --primary-color-rgb: {{ auth()->user()->primary_color === '#fbbf24' ? '251, 191, 36' : (auth()->user()->primary_color === '#2f7d7a' ? '47, 125, 122' : '250, 154, 8') }};
-            --primary-hover: {{ auth()->user()->primary_color === '#fbbf24' ? '#d9a61c' : (auth()->user()->primary_color === '#2f7d7a' ? '#1f5350' : '#d97706') }};
-            --primary-light: {{ auth()->user()->primary_color === '#fbbf24' ? '#fde8a1' : (auth()->user()->primary_color === '#2f7d7a' ? '#9ec4c1' : '#fed7aa') }};
+            --primary-color:
+                {{ auth()->user()->primary_color ?? '#fa9a08' }}
+            ;
+            --primary-color-rgb:
+                {{ auth()->user()->primary_color === '#fbbf24' ? '251, 191, 36' : (auth()->user()->primary_color === '#2f7d7a' ? '47, 125, 122' : '250, 154, 8') }}
+            ;
+            --primary-hover:
+                {{ auth()->user()->primary_color === '#fbbf24' ? '#d9a61c' : (auth()->user()->primary_color === '#2f7d7a' ? '#1f5350' : '#d97706') }}
+            ;
+            --primary-light:
+                {{ auth()->user()->primary_color === '#fbbf24' ? '#fde8a1' : (auth()->user()->primary_color === '#2f7d7a' ? '#9ec4c1' : '#fed7aa') }}
+            ;
         }
 
         .theme-transition {
@@ -124,7 +132,14 @@
 
 <body
     class="font-['Plus_Jakarta_Sans'] antialiased theme-transition bg-white dark:bg-[#050505] text-slate-900 dark:text-slate-200"
-    x-data="{ sidebarCollapsed: false, sidebarHover: false }">
+    x-data="{ 
+        sidebarCollapsed: localStorage.getItem('sidebarStatus') === 'collapsed', 
+        sidebarHover: false,
+        toggleSidebar() {
+            this.sidebarCollapsed = !this.sidebarCollapsed;
+            localStorage.setItem('sidebarStatus', this.sidebarCollapsed ? 'collapsed' : 'expanded');
+        }
+    }">
 
     <!-- SIDEBAR -->
     <aside @mouseenter="if(sidebarCollapsed) sidebarHover = true" @mouseleave="sidebarHover = false"
@@ -133,7 +148,8 @@
         <!-- Logo Area -->
         <div class="h-20 flex items-center px-6 shrink-0 border-b border-slate-200 dark:border-white/5 overflow-hidden">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style="background-color: var(--primary-color);">
+                <div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                    style="background-color: var(--primary-color);">
                     <i class="ri-shield-star-fill text-black text-lg"></i>
                 </div>
                 <div x-show="!sidebarCollapsed || sidebarHover" x-transition.opacity.duration.300ms
@@ -153,60 +169,61 @@
                     class="text-[10px] font-bold text-slate-400 dark:text-gray-600 uppercase tracking-widest px-4 mb-4">
                     Main</p>
                 <div class="space-y-1">
-            <a href="{{ route('admin.dashboard') }}"
+                    <a href="{{ route('admin.dashboard') }}"
                         class="flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all group {{ request()->routeIs('admin.dashboard') ? 'active-link' : 'hover:bg-slate-200/50 dark:hover:bg-white/5 text-slate-600 dark:text-slate-400' }}">
                         <i class="ri-dashboard-2-line text-lg"></i>
                         <span x-show="!sidebarCollapsed || sidebarHover" x-transition.opacity
                             class="font-bold text-xs tracking-tight whitespace-nowrap">Dashboard Overview</span>
-            </a>
+                    </a>
                 </div>
             </div>
 
             <!-- Group: Website CMS - Only if user has admin role (super_admin or admin) -->
             @if(auth()->user()->hasAnyRole(['super_admin', 'admin']))
-            <div
-                x-data="{ open: {{ request()->routeIs('admin.cms.hero', 'admin.cms.tentang-kami', 'admin.cms.about-founder', 'admin.cms.portfolio-achievement', 'admin.cms.tim-kami', 'admin.cms.testimoni-pelanggan', 'admin.cms.event', 'admin.cms.footer', 'admin.cms.contact') ? 'true' : 'false' }} }">
-                <p x-show="!sidebarCollapsed || sidebarHover" x-transition.opacity
-                    class="text-[10px] font-bold text-slate-400 dark:text-gray-600 uppercase tracking-widest px-4 mb-4">
-                    Content</p>
+                <div
+                    x-data="{ open: {{ request()->routeIs('admin.cms.hero', 'admin.cms.tentang-kami', 'admin.cms.about-founder', 'admin.cms.portfolio-achievement', 'admin.cms.tim-kami', 'admin.cms.testimoni-pelanggan', 'admin.cms.event', 'admin.cms.footer', 'admin.cms.contact') ? 'true' : 'false' }} }">
+                    <p x-show="!sidebarCollapsed || sidebarHover" x-transition.opacity
+                        class="text-[10px] font-bold text-slate-400 dark:text-gray-600 uppercase tracking-widest px-4 mb-4">
+                        Content</p>
 
-                <button @click="open = !open"
-                    class="w-full flex items-center justify-between px-4 py-2.5 rounded-lg hover:bg-slate-200/50 dark:hover:bg-white/5 transition-all text-slate-600 dark:text-slate-400 group">
-                    <div class="flex items-center gap-4">
-                        <i class="ri-stack-line text-lg" @mouseenter="$el.style.color = 'var(--primary-color)'" @mouseleave="$el.style.color = ''"></i>
-                        <span x-show="!sidebarCollapsed || sidebarHover" x-transition.opacity
-                            class="font-bold text-xs tracking-tight whitespace-nowrap">Website CMS</span>
+                    <button @click="open = !open"
+                        class="w-full flex items-center justify-between px-4 py-2.5 rounded-lg hover:bg-slate-200/50 dark:hover:bg-white/5 transition-all text-slate-600 dark:text-slate-400 group">
+                        <div class="flex items-center gap-4">
+                            <i class="ri-stack-line text-lg" @mouseenter="$el.style.color = 'var(--primary-color)'"
+                                @mouseleave="$el.style.color = ''"></i>
+                            <span x-show="!sidebarCollapsed || sidebarHover" x-transition.opacity
+                                class="font-bold text-xs tracking-tight whitespace-nowrap">Website CMS</span>
+                        </div>
+                        <i x-show="!sidebarCollapsed || sidebarHover"
+                            class="ri-arrow-down-s-line text-xs transition-transform duration-300"
+                            :class="open ? 'rotate-180' : ''"></i>
+                    </button>
+
+                    <div x-show="open && (!sidebarCollapsed || sidebarHover)" x-collapse
+                        class="pl-12 space-y-1 mt-2 border-l border-slate-200 dark:border-white/5 ml-6">
+                        @php
+                            $cmsLinks = [
+                                ['r' => 'admin.cms.hero', 'l' => 'Hero Section'],
+                                ['r' => 'admin.cms.tentang-kami', 'l' => 'Tentang Kami'],
+                                ['r' => 'admin.cms.about-founder', 'l' => 'About Founder'],
+                                ['r' => 'admin.cms.portfolio-achievement', 'l' => 'Portfolio'],
+                                ['r' => 'admin.cms.tim-kami', 'l' => 'Tim Kami'],
+                                ['r' => 'admin.cms.pro-tim', 'l' => 'Pro Tim'],
+                                ['r' => 'admin.cms.testimoni-pelanggan', 'l' => 'Testimoni'],
+                                ['r' => 'admin.cms.event', 'l' => 'Event'],
+                                ['r' => 'admin.cms.footer', 'l' => 'Footer'],
+                                ['r' => 'admin.cms.contact', 'l' => 'Contact'],
+                            ];
+                        @endphp
+                        @foreach($cmsLinks as $m)
+                            <a href="{{ route($m['r']) }}"
+                                class="block py-1.5 text-[11px] font-bold transition-all {{ request()->routeIs($m['r']) ? 'submenu-active' : 'text-slate-500 dark:text-gray-500' }}"
+                                @mouseenter="$el.style.color = 'var(--primary-color)'" @mouseleave="$el.style.color = ''">
+                                {{ $m['l'] }}
+                            </a>
+                        @endforeach
                     </div>
-                    <i x-show="!sidebarCollapsed || sidebarHover"
-                        class="ri-arrow-down-s-line text-xs transition-transform duration-300"
-                        :class="open ? 'rotate-180' : ''"></i>
-                </button>
-
-                <div x-show="open && (!sidebarCollapsed || sidebarHover)" x-collapse
-                    class="pl-12 space-y-1 mt-2 border-l border-slate-200 dark:border-white/5 ml-6">
-                    @php
-                        $cmsLinks = [
-                            ['r' => 'admin.cms.hero', 'l' => 'Hero Section'],
-                            ['r' => 'admin.cms.tentang-kami', 'l' => 'Tentang Kami'],
-                            ['r' => 'admin.cms.about-founder', 'l' => 'About Founder'],
-                            ['r' => 'admin.cms.portfolio-achievement', 'l' => 'Portfolio'],
-                            ['r' => 'admin.cms.tim-kami', 'l' => 'Tim Kami'],
-                            ['r' => 'admin.cms.pro-tim', 'l' => 'Pro Tim'],
-                            ['r' => 'admin.cms.testimoni-pelanggan', 'l' => 'Testimoni'],
-                            ['r' => 'admin.cms.event', 'l' => 'Event'],
-                            ['r' => 'admin.cms.footer', 'l' => 'Footer'],
-                            ['r' => 'admin.cms.contact', 'l' => 'Contact'],
-                        ];
-                    @endphp
-                    @foreach($cmsLinks as $m)
-                        <a href="{{ route($m['r']) }}"
-                            class="block py-1.5 text-[11px] font-bold transition-all {{ request()->routeIs($m['r']) ? 'submenu-active' : 'text-slate-500 dark:text-gray-500' }}"
-                            @mouseenter="$el.style.color = 'var(--primary-color)'" @mouseleave="$el.style.color = ''">
-                            {{ $m['l'] }}
-                        </a>
-                    @endforeach
                 </div>
-            </div>
             @endif
 
             <!-- Group: Management -->
@@ -217,82 +234,82 @@
                 <div class="space-y-1">
                     {{-- User Management: Check permission user.view --}}
                     @if(auth()->user()->hasPermissionTo('user.view'))
-                    <a href="{{ route('admin.manage-users.index') }}"
-                        class="flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all group {{ request()->routeIs('admin.manage-users.*') ? 'active-link' : 'hover:bg-slate-200/50 dark:hover:bg-white/5 text-slate-600 dark:text-slate-400' }}">
-                        <i class="ri-user-settings-line text-lg"></i>
-                        <span x-show="!sidebarCollapsed || sidebarHover" x-transition.opacity
-                            class="font-bold text-xs tracking-tight whitespace-nowrap">Manage Users</span>
-                    </a>
+                        <a href="{{ route('admin.manage-users.index') }}"
+                            class="flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all group {{ request()->routeIs('admin.manage-users.*') ? 'active-link' : 'hover:bg-slate-200/50 dark:hover:bg-white/5 text-slate-600 dark:text-slate-400' }}">
+                            <i class="ri-user-settings-line text-lg"></i>
+                            <span x-show="!sidebarCollapsed || sidebarHover" x-transition.opacity
+                                class="font-bold text-xs tracking-tight whitespace-nowrap">Manage Users</span>
+                        </a>
                     @endif
 
                     {{-- Permissions Management: Check permission role.view --}}
                     @if(auth()->user()->hasPermissionTo('role.view'))
-                    <a href="{{ route('admin.permissions.select-user') }}"
-                        class="flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all group {{ request()->routeIs('admin.permissions.*') ? 'active-link' : 'hover:bg-slate-200/50 dark:hover:bg-white/5 text-slate-600 dark:text-slate-400' }}">
-                        <i class="ri-shield-check-line text-lg"></i>
-                        <span x-show="!sidebarCollapsed || sidebarHover" x-transition.opacity
-                            class="font-bold text-xs tracking-tight whitespace-nowrap">Role Permissions</span>
-                    </a>
+                        <a href="{{ route('admin.permissions.select-user') }}"
+                            class="flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all group {{ request()->routeIs('admin.permissions.*') ? 'active-link' : 'hover:bg-slate-200/50 dark:hover:bg-white/5 text-slate-600 dark:text-slate-400' }}">
+                            <i class="ri-shield-check-line text-lg"></i>
+                            <span x-show="!sidebarCollapsed || sidebarHover" x-transition.opacity
+                                class="font-bold text-xs tracking-tight whitespace-nowrap">Role Permissions</span>
+                        </a>
                     @endif
 
                     {{-- Orders: Check permission order.view --}}
                     @if(auth()->user()->hasPermissionTo('order.view'))
-                    <a href="{{ route('admin.orders.index') }}"
-                        class="flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all group {{ request()->routeIs('admin.orders.*') ? 'active-link' : 'hover:bg-slate-200/50 dark:hover:bg-white/5 text-slate-600 dark:text-slate-400' }}">
-                        <i class="ri-shopping-cart-line text-lg"></i>
-                        <span x-show="!sidebarCollapsed || sidebarHover" x-transition.opacity
-                            class="font-bold text-xs tracking-tight whitespace-nowrap">Orders</span>
-                    </a>
+                        <a href="{{ route('admin.orders.index') }}"
+                            class="flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all group {{ request()->routeIs('admin.orders.*') ? 'active-link' : 'hover:bg-slate-200/50 dark:hover:bg-white/5 text-slate-600 dark:text-slate-400' }}">
+                            <i class="ri-shopping-cart-line text-lg"></i>
+                            <span x-show="!sidebarCollapsed || sidebarHover" x-transition.opacity
+                                class="font-bold text-xs tracking-tight whitespace-nowrap">Orders</span>
+                        </a>
                     @endif
 
                     {{-- Categories: Check permission category.view --}}
                     @if(auth()->user()->hasPermissionTo('category.view'))
-                    <a href="{{ route('admin.categories.index') }}"
-                        class="flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all group {{ request()->routeIs('admin.categories.*') ? 'active-link' : 'hover:bg-slate-200/50 dark:hover:bg-white/5 text-slate-600 dark:text-slate-400' }}">
-                        <i class="ri-price-tag-3-line text-lg"></i>
-                        <span x-show="!sidebarCollapsed || sidebarHover" x-transition.opacity
-                            class="font-bold text-xs tracking-tight whitespace-nowrap">Categories Menu</span>
-                    </a>
+                        <a href="{{ route('admin.categories.index') }}"
+                            class="flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all group {{ request()->routeIs('admin.categories.*') ? 'active-link' : 'hover:bg-slate-200/50 dark:hover:bg-white/5 text-slate-600 dark:text-slate-400' }}">
+                            <i class="ri-price-tag-3-line text-lg"></i>
+                            <span x-show="!sidebarCollapsed || sidebarHover" x-transition.opacity
+                                class="font-bold text-xs tracking-tight whitespace-nowrap">Categories Menu</span>
+                        </a>
                     @endif
 
                     {{-- Menus: Check permission menu.view --}}
                     @if(auth()->user()->hasPermissionTo('menu.view'))
-                    <a href="{{ route('admin.menus.index') }}"
-                        class="flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all group {{ request()->routeIs('admin.menus.*') ? 'active-link' : 'hover:bg-slate-200/50 dark:hover:bg-white/5 text-slate-600 dark:text-slate-400' }}">
-                        <i class="ri-restaurant-line text-lg"></i>
-                        <span x-show="!sidebarCollapsed || sidebarHover" x-transition.opacity
-                            class="font-bold text-xs tracking-tight whitespace-nowrap">Manage Menu</span>
-                    </a>
+                        <a href="{{ route('admin.menus.index') }}"
+                            class="flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all group {{ request()->routeIs('admin.menus.*') ? 'active-link' : 'hover:bg-slate-200/50 dark:hover:bg-white/5 text-slate-600 dark:text-slate-400' }}">
+                            <i class="ri-restaurant-line text-lg"></i>
+                            <span x-show="!sidebarCollapsed || sidebarHover" x-transition.opacity
+                                class="font-bold text-xs tracking-tight whitespace-nowrap">Manage Menu</span>
+                        </a>
                     @endif
 
                     {{-- Tables/Barcode: Check permission table.view --}}
                     @if(auth()->user()->hasPermissionTo('table.view'))
-                    <a href="{{ route('admin.tables.index') }}"
-                        class="flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all group {{ request()->routeIs('admin.tables.*') || request()->routeIs('admin.barcode.*') ? 'active-link' : 'hover:bg-slate-200/50 dark:hover:bg-white/5 text-slate-600 dark:text-slate-400' }}">
-                        <i class="ri-qr-code-line text-lg"></i>
-                        <span x-show="!sidebarCollapsed || sidebarHover" x-transition.opacity
-                            class="font-bold text-xs tracking-tight whitespace-nowrap">Manage Table & Barcode</span>
-                    </a>
+                        <a href="{{ route('admin.tables.index') }}"
+                            class="flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all group {{ request()->routeIs('admin.tables.*') || request()->routeIs('admin.barcode.*') ? 'active-link' : 'hover:bg-slate-200/50 dark:hover:bg-white/5 text-slate-600 dark:text-slate-400' }}">
+                            <i class="ri-qr-code-line text-lg"></i>
+                            <span x-show="!sidebarCollapsed || sidebarHover" x-transition.opacity
+                                class="font-bold text-xs tracking-tight whitespace-nowrap">Manage Table & Barcode</span>
+                        </a>
                     @endif
 
                     {{-- Sales Analytics: Check permission report.view --}}
                     @if(auth()->user()->hasPermissionTo('report.view'))
-                    <a href="{{ route('admin.sales-analytics') }}"
-                        class="flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all group {{ request()->routeIs('admin.sales-analytics') ? 'active-link' : 'hover:bg-slate-200/50 dark:hover:bg-white/5 text-slate-600 dark:text-slate-400' }}">
-                        <i class="ri-bar-chart-line text-lg"></i>
-                        <span x-show="!sidebarCollapsed || sidebarHover" x-transition.opacity
-                            class="font-bold text-xs tracking-tight whitespace-nowrap">Sales Analytics</span>
-                    </a>
+                        <a href="{{ route('admin.sales-analytics') }}"
+                            class="flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all group {{ request()->routeIs('admin.sales-analytics') ? 'active-link' : 'hover:bg-slate-200/50 dark:hover:bg-white/5 text-slate-600 dark:text-slate-400' }}">
+                            <i class="ri-bar-chart-line text-lg"></i>
+                            <span x-show="!sidebarCollapsed || sidebarHover" x-transition.opacity
+                                class="font-bold text-xs tracking-tight whitespace-nowrap">Sales Analytics</span>
+                        </a>
                     @endif
 
                     {{-- Food Inventory: Check permission inventory.view --}}
                     @if(auth()->user()->hasPermissionTo('inventory.view'))
-                    <a href="{{ route('admin.inventory.index') }}"
-                        class="flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all group {{ request()->routeIs('admin.inventory.*') ? 'active-link' : 'hover:bg-slate-200/50 dark:hover:bg-white/5 text-slate-600 dark:text-slate-400' }}">
-                        <i class="ri-stack-fill text-lg"></i>
-                        <span x-show="!sidebarCollapsed || sidebarHover" x-transition.opacity
-                            class="font-bold text-xs tracking-tight whitespace-nowrap">Food Stock</span>
-                    </a>
+                        <a href="{{ route('admin.inventory.index') }}"
+                            class="flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all group {{ request()->routeIs('admin.inventory.*') ? 'active-link' : 'hover:bg-slate-200/50 dark:hover:bg-white/5 text-slate-600 dark:text-slate-400' }}">
+                            <i class="ri-stack-fill text-lg"></i>
+                            <span x-show="!sidebarCollapsed || sidebarHover" x-transition.opacity
+                                class="font-bold text-xs tracking-tight whitespace-nowrap">Food Stock</span>
+                        </a>
                     @endif
                 </div>
             </div>
@@ -300,8 +317,11 @@
 
         <!-- Sidebar Toggle Bottom -->
         <div class="p-4 border-t border-slate-200 dark:border-white/5">
-            <button @click="sidebarCollapsed = !sidebarCollapsed; sidebarHover = false"
-                class="w-full h-9 flex items-center justify-center rounded-md bg-slate-200 dark:bg-white/5 transition-all group" style="color: inherit;" @mouseenter="$el.style.backgroundColor = 'var(--primary-color)'; $el.style.color = '#000';" @mouseleave="$el.style.backgroundColor = ''; $el.style.color = '';">
+            <button @click="toggleSidebar()"
+                class="w-full h-9 flex items-center justify-center rounded-md bg-slate-200 dark:bg-white/5 transition-all group"
+                style="color: inherit;"
+                @mouseenter="$el.style.backgroundColor = 'var(--primary-color)'; $el.style.color = '#000';"
+                @mouseleave="$el.style.backgroundColor = ''; $el.style.color = '';">
                 <i :class="sidebarCollapsed ? 'ri-arrow-right-s-line' : 'ri-arrow-left-s-line'" class="text-sm"></i>
             </button>
         </div>
@@ -320,31 +340,34 @@
             <div class="flex items-center gap-4">
                 <!-- Theme Switcher -->
                 <button @click="toggleTheme"
-                    class="w-8 h-8 rounded-md border border-slate-200 dark:border-white/10 flex items-center justify-center transition-all" @mouseenter="$el.style.borderColor = 'var(--primary-color)'" @mouseleave="$el.style.borderColor = ''">
+                    class="w-8 h-8 rounded-md border border-slate-200 dark:border-white/10 flex items-center justify-center transition-all"
+                    @mouseenter="$el.style.borderColor = 'var(--primary-color)'"
+                    @mouseleave="$el.style.borderColor = ''">
                     <i x-show="!darkMode" class="ri-moon-line text-sm"></i>
                     <i x-show="darkMode" class="ri-sun-line text-sm" x-cloak style="color: var(--primary-color);"></i>
                 </button>
 
                 <!-- Profile Dropdown -->
-            <div class="relative" x-data="{ open: false }">
+                <div class="relative" x-data="{ open: false }">
                     <button @click="open = !open" class="flex items-center gap-2.5 group">
                         <img class="w-8 h-8 rounded-md object-cover border border-slate-200 dark:border-white/10"
                             src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()?->name) }}&background={{ str_replace('#', '', auth()->user()->primary_color ?? '#fa9a08') }}&color=000&bold=true"
                             alt="">
                         <div class="text-left hidden md:block">
-                            <p
-                                class="text-[11px] font-bold dark:text-white leading-none transition-colors"
-                                @mouseenter="$el.style.color = 'var(--primary-color)'" @mouseleave="$el.style.color = ''">
-                                {{ Auth::user()?->name }}</p>
+                            <p class="text-[11px] font-bold dark:text-white leading-none transition-colors"
+                                @mouseenter="$el.style.color = 'var(--primary-color)'"
+                                @mouseleave="$el.style.color = ''">
+                                {{ Auth::user()?->name }}
+                            </p>
                         </div>
-                </button>
+                    </button>
 
                     <div x-show="open" @click.away="open = false" x-cloak
                         class="absolute right-0 mt-3 w-52 bg-white dark:bg-[#0A0A0A] border border-slate-200 dark:border-white/10 rounded-lg shadow-xl p-1 z-50">
-                    <a href="{{ route('admin.profile.edit') }}"
+                        <a href="{{ route('admin.profile.edit') }}"
                             class="flex items-center gap-3 px-3 py-2 rounded-md text-xs font-bold hover:bg-slate-100 dark:hover:bg-white/5 transition-all">
                             <i class="ri-user-line text-sm" style="color: var(--primary-color);"></i> Edit Profile
-                    </a>
+                        </a>
                         <button @click="handleLogout"
                             class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-xs font-bold text-red-500 hover:bg-red-500/5 transition-all text-left">
                             <i class="ri-logout-box-r-line text-sm"></i> Sign Out
@@ -367,7 +390,8 @@
                             <div class="flex gap-2">
                                 <form action="{{ route('logout') }}" method="POST" class="inline">
                                     @csrf
-                                    <button type="submit" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-xs font-bold rounded-md transition-all">
+                                    <button type="submit"
+                                        class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-xs font-bold rounded-md transition-all">
                                         <i class="ri-logout-box-r-line mr-1"></i> Logout Sekarang
                                     </button>
                                 </form>
@@ -380,11 +404,12 @@
                 @endif
 
                 @if($errors->any())
-                    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)" 
+                    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)"
                         class="mb-8 bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-md">
                         <div class="flex items-center gap-2 mb-2">
                             <i class="ri-error-warning-fill text-red-500"></i>
-                            <span class="text-[11px] font-black uppercase tracking-widest text-red-500">Validation Error</span>
+                            <span class="text-[11px] font-black uppercase tracking-widest text-red-500">Validation
+                                Error</span>
                         </div>
                         <ul class="list-disc list-inside text-xs text-red-500">
                             @foreach($errors->all() as $error)
@@ -449,13 +474,13 @@
                 toggleTheme() {
                     this.darkMode = !this.darkMode;
                     const theme = this.darkMode ? 'dark' : 'light';
-                    
+
                     // Set localStorage
                     localStorage.setItem('theme', theme);
-                    
+
                     // Set cookie untuk persist antar reload dan bisa dipakai server-side
                     document.cookie = `theme=${theme}; path=/; max-age=31536000`;
-                    
+
                     // Update DOM class
                     if (this.darkMode) {
                         document.documentElement.classList.add('dark');
@@ -466,24 +491,24 @@
 
                 handleLogout() {
                     const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
-            Swal.fire({
+                    Swal.fire({
                         title: 'Confirm Logout',
                         text: "Sesi administrasi akan diakhiri.",
-                icon: 'warning',
-                showCancelButton: true,
+                        icon: 'warning',
+                        showCancelButton: true,
                         background: this.darkMode ? '#0A0A0A' : '#fff',
                         color: this.darkMode ? '#fff' : '#000',
-                confirmButtonColor: primaryColor || '#fa9a08',
+                        confirmButtonColor: primaryColor || '#fa9a08',
                         cancelButtonColor: '#1e1e1e',
                         confirmButtonText: 'Yes, Sign Out',
-                customClass: {
+                        customClass: {
                             popup: 'rounded-lg border border-white/5',
                             confirmButton: 'rounded-md text-xs font-bold px-5 py-2.5',
                             cancelButton: 'rounded-md text-xs font-bold px-5 py-2.5'
-                }
-            }).then((result) => {
+                        }
+                    }).then((result) => {
                         if (result.isConfirmed) document.getElementById('logout-form').submit();
-            });
+                    });
                 }
             }));
 
@@ -499,7 +524,7 @@
             if (alertType && alertTitle && alertMessage) {
                 const isDarkMode = document.documentElement.classList.contains('dark');
                 const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
-                
+
                 Swal.fire({
                     title: alertTitle,
                     text: alertMessage,
@@ -517,7 +542,7 @@
         });
 
         // Helper function untuk SweetAlert2 dengan theme konsisten
-        window.showAlert = function(config = {}) {
+        window.showAlert = function (config = {}) {
             const isDark = document.documentElement.classList.contains('dark');
             const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
             const defaultConfig = {
