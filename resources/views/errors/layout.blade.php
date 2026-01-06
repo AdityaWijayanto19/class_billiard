@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Kesalahan pada sistem')</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+     <script src="https://cdn.tailwindcss.com"></script>
+     <link rel="icon" type="image/png" href="/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
 
     <style>
