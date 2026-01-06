@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Class Billiard</title>
 
-    <link rel="icon" type="image/png" href="/logo.png">
+    <link rel="shortcut icon" href="{{ asset('favicon.png') }}" type="image/x-icon">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

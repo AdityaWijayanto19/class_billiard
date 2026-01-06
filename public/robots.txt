@@ -1,2 +1,7 @@
 User-agent: *
-Disallow:
+Allow: /
+Allow: /menu
+Disallow: /admin
+Disallow: /login
+
+Sitemap: https://classbilliard.com/sitemap.xml
