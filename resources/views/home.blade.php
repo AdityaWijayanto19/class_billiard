@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Class Billiard</title>
-
+    <meta name="description" content="Class Billiard - Premium Billiard Lounge & Bar. Nikmati fasilitas meja billiard terbaik, pro coaching, dan fine dining di Pangkalan Bun.">
     <link rel="icon" type="image/png" href="{{ asset('favicon.png?v=' . time()) }}">
     <link rel="shortcut icon" type="image/png" href="{{ asset('favicon.png?v=' . time()) }}">
 

@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menu - Class Billiard</title>
-        <link rel="shortcut icon" href="{{ asset('favicon.png') }}" type="image/x-icon">
+          <link rel="icon" type="image/png" href="{{ asset('favicon.png?v=' . time()) }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('favicon.png?v=' . time()) }}">
     <!-- Google Font Montserrat (sesuai dengan home page) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
